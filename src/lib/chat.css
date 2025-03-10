@@ -89,3 +89,55 @@
 .chat-message:hover {
   opacity: 1;
 }
+
+.chat-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.conversation-starters {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: var(--chat--border-radius);
+  background-color: var(--chat--color-light-shade-50);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.starters-title {
+  font-size: 0.9rem;
+  color: var(--chat--color-typing);
+  margin-bottom: 0.75rem;
+  font-weight: 500;
+}
+
+.starters-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.starter-button {
+  background-color: var(--chat--color-white);
+  color: var(--chat--color-primary);
+  border: 1px solid var(--chat--color-primary);
+  border-radius: 1rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all var(--chat--transition-duration) ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.starter-button:hover {
+  background-color: var(--chat--color-primary);
+  color: var(--chat--color-white);
+  transform: translateY(-1px);
+}
+
+.starter-button:active {
+  transform: translateY(0);
+}

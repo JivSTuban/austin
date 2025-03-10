@@ -1,69 +1,74 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 210 50% 98%;
-    --foreground: 224 71.4% 4.1%;
+    /* Updated color palette using the specified hex codes */
+    --primary-blue: 210 40% 47%;      /* #4a78a6 */
+    --light-gray: 210 16% 89%;        /* #dce1e7 */
+    --off-white: 345 100% 99%;        /* #fffbfc */
+    --dark-blue: 222 28% 15%;         /* #1b2232 */
+
+    --background: var(--off-white);
+    --foreground: var(--dark-blue);
 
     --card: 0 0% 100%;
-    --card-foreground: 224 71.4% 4.1%;
+    --card-foreground: var(--dark-blue);
 
     --popover: 0 0% 100%;
-    --popover-foreground: 224 71.4% 4.1%;
+    --popover-foreground: var(--dark-blue);
 
-    --primary: 220.9 39.3% 11%;
-    --primary-foreground: 210 20% 98%;
+    --primary: var(--primary-blue);
+    --primary-foreground: var(--off-white);
 
-    --secondary: 220 14.3% 95.9%;
-    --secondary-foreground: 220.9 39.3% 11%;
+    --secondary: var(--light-gray);
+    --secondary-foreground: var(--dark-blue);
 
-    --muted: 220 14.3% 95.9%;
+    --muted: var(--light-gray);
     --muted-foreground: 220 8.9% 46.1%;
 
-    --accent: 220 14.3% 95.9%;
-    --accent-foreground: 220.9 39.3% 11%;
+    --accent: var(--primary-blue);
+    --accent-foreground: var(--off-white);
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 20% 98%;
+    --destructive-foreground: var(--off-white);
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 224 71.4% 4.1%;
+    --border: var(--light-gray);
+    --input: var(--light-gray);
+    --ring: var(--primary-blue);
 
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 224 71.4% 4.1%;
-    --foreground: 210 20% 98%;
+    --background: var(--dark-blue);
+    --foreground: var(--off-white);
 
-    --card: 224 71.4% 4.1%;
-    --card-foreground: 210 20% 98%;
+    --card: var(--dark-blue);
+    --card-foreground: var(--off-white);
 
-    --popover: 224 71.4% 4.1%;
-    --popover-foreground: 210 20% 98%;
+    --popover: var(--dark-blue);
+    --popover-foreground: var(--off-white);
 
-    --primary: 210 20% 98%;
-    --primary-foreground: 220.9 39.3% 11%;
+    --primary: var(--primary-blue);
+    --primary-foreground: var(--off-white);
 
     --secondary: 215 27.9% 16.9%;
-    --secondary-foreground: 210 20% 98%;
+    --secondary-foreground: var(--off-white);
 
     --muted: 215 27.9% 16.9%;
     --muted-foreground: 217.9 10.6% 64.9%;
 
-    --accent: 215 27.9% 16.9%;
-    --accent-foreground: 210 20% 98%;
+    --accent: var(--primary-blue);
+    --accent-foreground: var(--off-white);
 
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 20% 98%;
+    --destructive-foreground: var(--off-white);
 
     --border: 215 27.9% 16.9%;
     --input: 215 27.9% 16.9%;
-    --ring: 216 12.2% 83.9%;
+    --ring: var(--primary-blue);
   }
 }
 
@@ -161,6 +166,50 @@
     box-shadow: 
       rgba(255, 255, 255, 0.2) -10px -10px 30px, 
       rgba(0, 0, 0, 0.1) 10px 10px 30px;
+  }
+
+  /* Listing Card Styles */
+  .listing-card {
+    width: 410px;
+    height: 254px;
+    border-radius: 4px;
+    background: #212121;
+    display: flex;
+    gap: 5px;
+    padding: .4em;
+  }
+
+  .listing-card p {
+    height: 100%;
+    flex: 1;
+    overflow: hidden;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all .5s;
+    background: #dce1e7;
+    border: 1px solid #1b2232;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .listing-card p:hover {
+    flex: 4;
+  }
+
+  .listing-card p span {
+    min-width: 14em;
+    padding: .5em;
+    text-align: center;
+    transform: rotate(-90deg);
+    transition: all .5s;
+    text-transform: uppercase;
+    color: #1b2232;
+    letter-spacing: .1em;
+  }
+
+  .listing-card p:hover span {
+    transform: rotate(0);
   }
 }
 

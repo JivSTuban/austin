@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react';
-import { Award, Home, Users } from 'lucide-react';
+import { Award, Home, MessageCircle, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useImageLoad } from '@/lib/animations';
 import { useAgentData } from '@/hooks/useAgentData';
 import { Loading } from '@/components/LoadingStates';
+import siAustinImage from '../../public/siAustin.png';
 
 const ProfileCard = () => {
   const { imageStyle, onLoad } = useImageLoad();
   const [animate, setAnimate] = useState(false);
   const [rotation, setRotation] = useState({ x: 0, y: 0 });
+  const [showChat, setShowChat] = useState(false);
   const { agent, isLoading, error } = useAgentData('X1-ZUtpaayyyrapzd_82rpg');
 
   useEffect(() => {
@@ -30,6 +32,28 @@ const ProfileCard = () => {
 
   const handleMouseLeave = () => {
     setRotation({ x: 0, y: 0 });
+  };
+
+  const toggleChat = () => {
+    setShowChat(!showChat);
+    // Find the chat element and toggle its visibility
+    const chatElement = document.getElementById('n8n-chat');
+    if (chatElement) {
+      const chatWindow = chatElement.querySelector('.chat-window');
+      if (chatWindow) {
+        if (chatWindow.classList.contains('hidden')) {
+          chatWindow.classList.remove('hidden');
+        } else {
+          chatWindow.classList.add('hidden');
+        }
+      } else {
+        // If the chat window isn't found, click the toggle button if it exists
+        const toggleButton = chatElement.querySelector('.chat-toggle');
+        if (toggleButton) {
+          (toggleButton as HTMLElement).click();
+        }
+      }
+    }
   };
 
   if (isLoading || !agent) {
@@ -75,7 +99,7 @@ const ProfileCard = () => {
         <div className="lg:w-1/3 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-blue-300/30 to-indigo-400/30 lg:hidden" />
           <img
-            src={agent.photourl}
+            src={siAustinImage}
             alt={agent.name}
             className={cn(
               'w-full h-full object-cover lg:absolute lg:inset-0',
@@ -87,15 +111,28 @@ const ProfileCard = () => {
         </div>
         <div className="lg:w-2/3 p-6 lg:p-8 flex flex-col justify-between relative z-10">
           <div>
-            <h2
-              className={cn(
-                'text-2xl font-semibold mb-1',
-                animate ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4',
-                'transition-all duration-500 delay-100'
-              )}
-            >
-              {agent.name} <img src="https://static1.squarespace.com/static/5fcee1780cd30a4efbe3d2a8/t/5fd7ea3909e8b172b0d72c6a/1740643969440/" alt="reafco logo" className="h-6 w-auto ml-2 inline-block mb-2" />
-            </h2>
+            <div className="flex justify-between items-start">
+              <h2
+                className={cn(
+                  'text-2xl font-semibold mb-1',
+                  animate ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4',
+                  'transition-all duration-500 delay-100'
+                )}
+              >
+                {agent.name} <img src="https://static1.squarespace.com/static/5fcee1780cd30a4efbe3d2a8/t/5fd7ea3909e8b172b0d72c6a/1740643969440/" alt="reafco logo" className="h-6 w-auto ml-2 inline-block mb-2" />
+              </h2>
+              {/* <button
+                onClick={toggleChat}
+                className={cn(
+                  'flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-colors',
+                  animate ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4',
+                  'transition-all duration-500 delay-150'
+                )}
+              >
+                <MessageCircle className="w-5 h-5" />
+                <span>Chat with me</span>
+              </button> */}
+            </div>
             <p
               className={cn(
                 'text-gray-600 mb-6 max-w-lg',

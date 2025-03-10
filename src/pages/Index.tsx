@@ -1,4 +1,3 @@
-
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Home, MessageCircle, Star } from 'lucide-react';
@@ -98,12 +97,12 @@ const Index = () => {
               className="opacity-0 animate-fade-in"
               style={{ animationDelay: '300ms', animationFillMode: 'forwards' }}
             >
-              <h2 className="text-3xl md:text-4xl font-semibold tracking-tight mb-4">
-                Your Real Estate Journey
-              </h2>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                Discover how I can help you at every step of your real estate experience
-              </p>
+             <button 
+              className="inline-flex items-center justify-center px-6 py-3 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+              onClick={() => window.open('https://docs.google.com/forms/d/e/1FAIpQLSf3M-Z5b0mr6ObERDv_1GMyAd66k7ym80dcqjCCxHVmAbaLlA/viewform?usp=sf_link', '_blank')}
+             >
+              GET TO KNOW YOUR GOALS!
+             </button>
             </div>
           </div>
 
@@ -156,6 +155,37 @@ const Index = () => {
                 </Link>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+      {/* Featured Listings Section */}
+      <section className="py-16 px-6 bg-austin-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-semibold tracking-tight mb-4 text-austin-dark">
+              Featured Listings
+            </h2>
+            <p className="text-lg text-austin-dark/80 max-w-2xl mx-auto">
+              Explore our handpicked selection of premium properties across Austin
+            </p>
+          </div>
+          
+          <div className="flex flex-wrap justify-center gap-8">
+            {/* Listing Card 1 */}
+            <div className="listing-card">
+              <p><span>Columbus, OH</span></p>
+              <p><span>Canton, OH</span></p>
+              <p><span>Cleveland, OH</span></p>
+              <p><span>Dayton, OH</span></p>
+            </div>
+          </div>
+          <div className="text-center mt-12">
+            <Link 
+              to="/listings" 
+              className="inline-flex items-center px-6 py-3 rounded-full bg-austin-blue text-austin-white hover:bg-austin-blue/90 transition-all"
+            >
+              View All Listings <ArrowRight className="w-4 h-4 ml-2" />
+            </Link>
           </div>
         </div>
       </section>
