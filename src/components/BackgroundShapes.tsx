@@ -4,6 +4,11 @@ import { cn } from '@/lib/utils';
 
 const BackgroundShapes: React.FC = () => {
   return (
+    <div style={{ position: 'absolute', zIndex: -1 }}>
+      {/* Existing background shapes code */}
+    </div>
+  );
+  return (
     <div className="fixed inset-0 z-[-2] overflow-hidden pointer-events-none">
       {/* Floating Cube */}
       <div className="shape shape-1 floating-slow">

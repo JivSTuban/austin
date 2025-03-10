@@ -16,7 +16,7 @@ const Reviews = () => {
   const [filterPropertyType, setFilterPropertyType] = useState<string | null>(null);
   const [filterBuyerType, setFilterBuyerType] = useState<string | null>(null);
   const { reviews } = useAgentData('X1-ZUtpaayyyrapzd_82rpg');
-  const [filteredReviews, setFilteredReviews] = useState([]);
+  const [filteredReviews, setFilteredReviews] = useState<any[]>([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -50,6 +50,7 @@ const Reviews = () => {
         return;
       }
 
+      console.log('Raw reviews:', reviews);
       let result = reviews.map(review => {
         const propertyType = getPropertyTypeFromDescription(review.workDescription || '');
         const buyerType = getBuyerTypeFromDescription(review.workDescription || '');
@@ -66,8 +67,8 @@ const Reviews = () => {
         }
 
         return {
-          id: review.reviewId || Date.now(), // Fallback ID if reviewId is missing
-          author: review.reviewerName || review.reviewerScreenName || 'Anonymous',
+          id: review.reviewId || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`, // Ensure unique fallback ID
+          author: review.reviewerName || review.reviewerScreenName || (review.reviewerName === "" && review.reviewerScreenName === "" ? "Anonymous" : review.reviewerName || review.reviewerScreenName),
           rating: review.rating || 0,
           createdate: formattedDate,
           title: review.workDescription || 'Review',
@@ -134,11 +135,11 @@ const Reviews = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <main className="flex-grow container mx-auto px-4 py-8">
+      <main className="flex-grow container mx-auto px-4 py-8 mt-16">
         <div className="mb-8">
           <button
             onClick={() => navigate('/')}
-            className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
+            className="flex items-center text-gray-600 hover:text-gray-900 transition-colors mb-4"
           >
             <ArrowLeft className="w-5 h-5 mr-2" />
             Back to Home
@@ -263,7 +264,7 @@ const Reviews = () => {
               </p>
             </div>
           ) : (
-            filteredReviews.map((review) => (
+            filteredReviews.map((review: any) => (
               <ReviewCard key={`review-${review.id}`} review={review} index={review.id} />
             ))
           )}
