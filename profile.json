@@ -1,0 +1,47 @@
+{
+  "displayUser": {
+    "encodedZuid": "X1-ZUtpaayyyrapzd_82rpg",
+    "name": "Austin McClain",
+    "screenName": "awmcclain",
+    "businessAddress": {
+      "businessName": "REAFCO",
+      "address1": "765 Parsons Ave",
+      "address2": "",
+      "city": "Columbus",
+      "postalCode": "43206",
+      "state": "OH"
+    },
+    "email": "austin@reafco.com",
+    "phoneNumbers": {
+      "business": "(330) 354-9849",
+      "cell": "(614) 710-4827"
+    },
+    "ratings": {
+      "average": 5,
+      "count": 39
+    },
+    "profilePhotoSrc": "https://photos.zillowstatic.com/fp/189152c44b75ea56a3badc8147e405e8-h_l.jpg"
+  },
+  "agentSalesStats": {
+    "averageValueThreeYear": 161139,
+    "countAllTime": 94,
+    "countLastYear": 43,
+    "priceRangeThreeYearMax": 645900,
+    "priceRangeThreeYearMin": 25000
+  },
+  "getToKnowMe": {
+    "description": "Whether this is your first home or you're an experienced real estate investor, I can help. My goal is to help my clients gain financial independence through home ownership. I leverage technology to be as efficient as possible to help my clients win in this competitive market. Give me a call, text, or email to get started!&#160;&#160;",
+    "languages": [],
+    "specialties": ["Buyer's Agent", "Listing Agent", "First Time Homebuyers", "Investment Properties"]
+  },
+  "graphQLData": {
+    "premiumAgentHeader": {
+      "businessCard": {
+        "brandColor": "#B50000",
+        "companyInfo": {
+          "logoUrl": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAgEASABIAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCABEAEQDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6"
+        }
+      }
+    }
+  }
+}

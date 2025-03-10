@@ -1,0 +1,253 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 50% 98%;
+    --foreground: 224 71.4% 4.1%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 224 71.4% 4.1%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 71.4% 4.1%;
+
+    --primary: 220.9 39.3% 11%;
+    --primary-foreground: 210 20% 98%;
+
+    --secondary: 220 14.3% 95.9%;
+    --secondary-foreground: 220.9 39.3% 11%;
+
+    --muted: 220 14.3% 95.9%;
+    --muted-foreground: 220 8.9% 46.1%;
+
+    --accent: 220 14.3% 95.9%;
+    --accent-foreground: 220.9 39.3% 11%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 20% 98%;
+
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 224 71.4% 4.1%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 224 71.4% 4.1%;
+    --foreground: 210 20% 98%;
+
+    --card: 224 71.4% 4.1%;
+    --card-foreground: 210 20% 98%;
+
+    --popover: 224 71.4% 4.1%;
+    --popover-foreground: 210 20% 98%;
+
+    --primary: 210 20% 98%;
+    --primary-foreground: 220.9 39.3% 11%;
+
+    --secondary: 215 27.9% 16.9%;
+    --secondary-foreground: 210 20% 98%;
+
+    --muted: 215 27.9% 16.9%;
+    --muted-foreground: 217.9 10.6% 64.9%;
+
+    --accent: 215 27.9% 16.9%;
+    --accent-foreground: 210 20% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 20% 98%;
+
+    --border: 215 27.9% 16.9%;
+    --input: 215 27.9% 16.9%;
+    --ring: 216 12.2% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  html, body {
+    @apply antialiased scroll-smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    background-image: 
+      radial-gradient(at 80% 10%, hsla(260, 100%, 85%, 0.2) 0px, transparent 50%),
+      radial-gradient(at 10% 90%, hsla(290, 100%, 80%, 0.2) 0px, transparent 50%),
+      radial-gradient(at 40% 50%, hsla(220, 100%, 85%, 0.1) 0px, transparent 50%),
+      radial-gradient(at 95% 95%, hsla(190, 100%, 80%, 0.15) 0px, transparent 50%);
+    background-attachment: fixed;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Add animated background shapes */
+  body::before,
+  body::after {
+    content: "";
+    position: fixed;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    z-index: -1;
+    filter: blur(120px);
+    opacity: 0.15;
+  }
+
+  body::before {
+    top: -150px;
+    left: -150px;
+    background: linear-gradient(to right, #4f46e5, #7c3aed);
+    animation: float-slow 25s ease-in-out infinite alternate;
+  }
+
+  body::after {
+    bottom: -150px;
+    right: -150px;
+    background: linear-gradient(to right, #3b82f6, #a855f7);
+    animation: float-slow 20s ease-in-out infinite alternate-reverse;
+  }
+
+  input, textarea, select, button {
+    font-family: inherit;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-medium tracking-tight;
+  }
+
+  h1 {
+    @apply text-3xl sm:text-4xl md:text-5xl leading-tight;
+  }
+
+  h2 {
+    @apply text-2xl sm:text-3xl md:text-4xl leading-tight;
+  }
+
+  h3 {
+    @apply text-xl sm:text-2xl md:text-3xl leading-tight;
+  }
+
+  /* Base transitions for interactive elements */
+  a, button, input, select, textarea {
+    @apply transition-all duration-250 ease-in-out;
+  }
+
+  /* Glass morphism */
+  .glass {
+    @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-sm;
+  }
+
+  .dark .glass {
+    @apply bg-black/30 backdrop-blur-md border border-white/10 shadow-md;
+  }
+  
+  /* 3D Card effect */
+  .card-3d {
+    @apply relative transition-all duration-500;
+    transform-style: preserve-3d;
+    transform: perspective(1000px) rotateX(0) rotateY(0);
+  }
+  
+  .card-3d:hover {
+    transform: perspective(1000px) rotateX(2deg) rotateY(5deg);
+    box-shadow: 
+      rgba(255, 255, 255, 0.2) -10px -10px 30px, 
+      rgba(0, 0, 0, 0.1) 10px 10px 30px;
+  }
+}
+
+/* Page transitions */
+.page-enter {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 350ms, transform 350ms;
+}
+
+.page-exit {
+  opacity: 1;
+}
+
+.page-exit-active {
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 250ms, transform 250ms;
+}
+
+/* Floating animation for 3D elements */
+@keyframes float {
+  0% {
+    transform: translateY(0px) translateX(0px) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-10px) translateX(5px) rotate(5deg);
+  }
+  50% {
+    transform: translateY(5px) translateX(-5px) rotate(-5deg);
+  }
+  75% {
+    transform: translateY(-5px) translateX(-10px) rotate(2deg);
+  }
+  100% {
+    transform: translateY(0px) translateX(0px) rotate(0deg);
+  }
+}
+
+@keyframes float-slow {
+  0% {
+    transform: translateY(0px) translateX(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-20px) translateX(20px) scale(1.1);
+  }
+  100% {
+    transform: translateY(0px) translateX(0px) scale(1);
+  }
+}
+
+.floating {
+  animation: float 10s ease-in-out infinite;
+}
+
+.floating-slow {
+  animation: float-slow 20s ease-in-out infinite;
+}
+
+/* 3D shape classes */
+.shape {
+  position: absolute;
+  z-index: -1;
+  opacity: 0.6;
+}
+
+.shape-1 {
+  top: 20%;
+  left: 10%;
+}
+
+.shape-2 {
+  top: 60%;
+  right: 10%;
+}
+
+.shape-3 {
+  bottom: 15%;
+  left: 15%;
+}
+
+.shape-4 {
+  top: 10%;
+  right: 15%;
+}
