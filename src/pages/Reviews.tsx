@@ -7,6 +7,21 @@ import ReviewCard from '@/components/ReviewCard';
 import { cn } from '@/lib/utils';
 import { useAgentData } from '@/hooks/useAgentData';
 
+interface RawReview {
+  reviewid: number;
+  reviewername: string;
+  reviewerscreenname: string;
+  rating: number;
+  comment: string;
+  createdate: string;
+  workdescription: string;
+  localknowledge: number;
+  processexpertise: number;
+  responsiveness: number;
+  negotiationskills: number;
+  [key: string]: any; // Allow other properties
+}
+
 const propertyTypes = ['All', 'Single Family', 'Multi-Family', 'Condo', 'Apartment', 'Other'];
 const buyerTypes = ['All', 'Buyer', 'Seller', 'Both', 'Other'];
 
@@ -16,7 +31,22 @@ const Reviews = () => {
   const [filterPropertyType, setFilterPropertyType] = useState<string | null>(null);
   const [filterBuyerType, setFilterBuyerType] = useState<string | null>(null);
   const { reviews } = useAgentData('X1-ZUtpaayyyrapzd_82rpg');
-  const [filteredReviews, setFilteredReviews] = useState<any[]>([]);
+interface ProcessedReview {
+  id: string | number;
+  author: string;
+  rating: number;
+  createdate: string;
+  title: string;
+  content: string;
+  propertyType: string;
+  buyerType: string;
+  localKnowledge: number;
+  processExpertise: number;
+  responsiveness: number;
+  negotiationSkills: number;
+}
+
+const [filteredReviews, setFilteredReviews] = useState<ProcessedReview[]>([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -51,34 +81,33 @@ const Reviews = () => {
       }
 
       console.log('Raw reviews:', reviews);
-      let result = reviews.map(review => {
-        const propertyType = getPropertyTypeFromDescription(review.workDescription || '');
-        const buyerType = getBuyerTypeFromDescription(review.workDescription || '');
+      let result = ((reviews as unknown) as RawReview[]).map(review => {
+        const propertyType = getPropertyTypeFromDescription(review.workdescription || '');
+        const buyerType = getBuyerTypeFromDescription(review.workdescription || '');
         
-        // Parse and format the date correctly
-        let formattedDate = new Date().toISOString();
+        // Parse the date and ensure it's in ISO format
+        let formattedDate = "";
         try {
-          const createDate = new Date(review.createDate);
-          if (!isNaN(createDate.getTime())) {
-            formattedDate = createDate.toISOString();
-          }
+          formattedDate = new Date(review.createdate).toISOString();
+          console.log('Review date:', review.createdate, 'Formatted:', formattedDate); // Debug log
         } catch (e) {
           console.error('Error parsing date:', e);
+          formattedDate = "2025-03-10T00:00:00.000Z"; // Fallback date
         }
 
         return {
-          id: review.reviewId || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`, // Ensure unique fallback ID
-          author: review.reviewerName || review.reviewerScreenName || (review.reviewerName === "" && review.reviewerScreenName === "" ? "Anonymous" : review.reviewerName || review.reviewerScreenName),
+          id: review.reviewid || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          author: review.reviewername || review.reviewerscreenname || "Anonymous",
           rating: review.rating || 0,
           createdate: formattedDate,
-          title: review.workDescription || 'Review',
+          title: review.workdescription || 'Review',
           content: review.comment || 'No comment provided',
           propertyType,
           buyerType,
-          localKnowledge: review.localKnowledge || 0,
-          processExpertise: review.processExpertise || 0,
+          localKnowledge: review.localknowledge || 0,
+          processExpertise: review.processexpertise || 0,
           responsiveness: review.responsiveness || 0,
-          negotiationSkills: review.negotiationSkills || 0
+          negotiationSkills: review.negotiationskills || 0
         };
       });
       

@@ -41,18 +41,29 @@ const Index = () => {
     };
 
     return {
-      id: review.reviewId,
-      author: review.reviewerName || review.reviewerScreenName || 'Anonymous',
+      id: review.reviewid,
+      author: review.reviewername || review.reviewerscreenname || 'Anonymous',
       rating: review.rating,
-      createdate: review.createDate,
-      title: review.workDescription || 'Review',
+      createdate: (() => {
+        try {
+          const date = new Date(review.createdate);
+          if (isNaN(date.getTime())) {
+            throw new Error('Invalid date');
+          }
+          return date.toISOString();
+        } catch (e) {
+          console.error('Error parsing date:', e, 'for review:', review.reviewid);
+          return "2025-03-10T00:00:00.000Z"; // Fallback date
+        }
+      })(),
+      title: review.workdescription || 'Review',
       content: review.comment,
-      propertyType: getPropertyType(review.workDescription),
-      buyerType: getBuyerType(review.workDescription),
-      localKnowledge: review.localKnowledge,
-      processExpertise: review.processExpertise,
+      propertyType: getPropertyType(review.workdescription),
+      buyerType: getBuyerType(review.workdescription),
+      localKnowledge: review.localknowledge,
+      processExpertise: review.processexpertise,
       responsiveness: review.responsiveness,
-      negotiationSkills: review.negotiationSkills
+      negotiationSkills: review.negotiationskills
     };
   });
 

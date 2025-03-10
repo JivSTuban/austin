@@ -32,19 +32,19 @@ export interface Agent {
 }
 
 export interface Review {
-  reviewId: number;
-  encodedZuid: string;
-  reviewerName: string;
-  reviewerScreenName: string;
+  reviewid: number;
+  encodedzuid: string;
+  reviewername: string;
+  reviewerscreenname: string;
   rating: number;
   comment: string;
-  createDate: string;
-  workDescription: string;
-  localKnowledge: number;
-  processExpertise: number;
+  createdate: string;
+  workdescription: string;
+  localknowledge: number;
+  processexpertise: number;
   responsiveness: number;
-  negotiationSkills: number;
-  reviewerId: string | null;
+  negotiationskills: number;
+  reviewerid: string | null;
 }
 
 interface AgentData {
@@ -116,7 +116,11 @@ export const useAgentData = (encodedZuid: string): AgentData => {
           .eq('encodedzuid', encodedZuid)
           .order('"createdate"', { ascending: false });
 
-          console.log('Reviews data:', reviewsData);
+          console.log('Raw reviews from database:', reviewsData?.map(r => ({
+            id: r.reviewid,
+            date: r.createdate,
+            raw_date: r.createdate
+          })));
         if (reviewsError) {
           throw reviewsError;
         }
