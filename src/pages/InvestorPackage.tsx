@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Building, TrendingUp, DollarSign, FileText, Map, BarChart, Download, ChevronDown, ChevronUp, Home, Users, Calculator } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { Building, TrendingUp, DollarSign, FileText, Map, BarChart, Download, ChevronDown, ChevronUp, Home, Users, Calculator, Contact } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -17,6 +17,9 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import Navbar from '@/components/Navbar';
+import { useRolodex } from '@/hooks/useRolodex';
+import BackgroundShapes from '@/components/BackgroundShapes';
+import RolodexCard from '@/components/RolodexCard';
 
 interface PropertyData {
   id: number;
@@ -33,45 +36,32 @@ interface PropertyData {
 
 const InvestorPackage = () => {
   const [expandedProperty, setExpandedProperty] = useState<number | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState('Basement');
+  const [selectedArea, setSelectedArea] = useState('');
+  const { contacts, isLoading, error } = useRolodex();
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const sampleProperties: PropertyData[] = [
-    {
-      id: 1,
-      address: "123 Investment Ave, Austin, TX 78701",
-      price: 425000,
-      beds: 3,
-      baths: 2,
-      sqft: 1850,
-      roi: 7.2,
-      capRate: 5.8,
-      cashFlow: 450,
-      imageUrl: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"
-    },
-    {
-      id: 2,
-      address: "456 Rental Blvd, Austin, TX 78704",
-      price: 375000,
-      beds: 2,
-      baths: 2,
-      sqft: 1200,
-      roi: 8.1,
-      capRate: 6.2,
-      cashFlow: 520,
-      imageUrl: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1475&q=80"
-    },
-    {
-      id: 3,
-      address: "789 Cash Flow St, Austin, TX 78745",
-      price: 550000,
-      beds: 4,
-      baths: 3,
-      sqft: 2400,
-      roi: 6.8,
-      capRate: 5.5,
-      cashFlow: 650,
-      imageUrl: "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"
-    }
-  ];
+  // Extract unique categories from contacts
+  const uniqueCategories = useMemo(() => {
+    const categories = contacts.map(contact => contact.category);
+    return [...new Set(categories)].sort();
+  }, [contacts]);
+
+  // Extract unique areas from contacts
+  const uniqueAreas = useMemo(() => {
+    const areas = contacts.map(contact => contact.area);
+    return [...new Set(areas)].sort();
+  }, [contacts]);
+
+  const filteredContacts = contacts.filter((contact) => {
+    return (
+      contact && 
+      contact.name && 
+      contact.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+      (selectedCategory === '' || contact.category === selectedCategory) &&
+      (selectedArea === '' || contact.area === selectedArea)
+    );
+  });
 
   const togglePropertyExpansion = (id: number) => {
     setExpandedProperty(expandedProperty === id ? null : id);
@@ -80,6 +70,7 @@ const InvestorPackage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
+     
       
       <div className="pt-24 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="text-center mb-12">
@@ -92,11 +83,11 @@ const InvestorPackage = () => {
         </div>
 
         <div className="mb-16">
-          <Tabs defaultValue="properties" className="w-full">
+          <Tabs defaultValue="rolodex" className="w-full">
             <TabsList className="grid w-full grid-cols-4 mb-8">
-              <TabsTrigger value="properties" className="text-sm sm:text-base">
-                <Building className="w-4 h-4 mr-2" />
-                Properties
+              <TabsTrigger value="rolodex" className="text-sm sm:text-base">
+                <Contact className="w-4 h-4 mr-2" />
+                Rolodex
               </TabsTrigger>
               <TabsTrigger value="market" className="text-sm sm:text-base">
                 <TrendingUp className="w-4 h-4 mr-2" />
@@ -112,100 +103,69 @@ const InvestorPackage = () => {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="properties" className="space-y-8">
+            <TabsContent value="rolodex" className="space-y-8">
+              <div className="flex flex-col md:flex-row gap-4 mb-6">
+                <div className="relative flex-grow">
+                  <input
+                    type="text"
+                    placeholder="Search contacts..."
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    value={searchQuery || ""}
+                  />
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                  </div>
+                </div>
+                <select
+                  className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                >
+                  <option value="">All Categories</option>
+                  {uniqueCategories.map(category => (
+                    <option key={category} value={category}>{category}</option>
+                  ))}
+                </select>
+                <select
+                  className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-1/2"
+                  value={selectedArea}
+                  onChange={(e) => setSelectedArea(e.target.value)}
+                >
+                  <option value="">All Areas</option>
+                  {uniqueAreas.map(area => (
+                    <option key={area} value={area}>{area}</option>
+                  ))}
+                </select>
+              </div>
+
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {sampleProperties.map((property) => (
-                  <Card key={property.id} className="overflow-hidden transition-all duration-200 hover:shadow-lg">
-                    <div className="h-48 overflow-hidden">
-                      <img 
-                        src={property.imageUrl} 
-                        alt={property.address} 
-                        className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
-                      />
-                    </div>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-lg">{property.address}</CardTitle>
-                      <CardDescription className="flex items-center mt-1">
-                        <DollarSign className="w-4 h-4 mr-1" />
-                        ${property.price.toLocaleString()}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="pb-2">
-                      <div className="grid grid-cols-3 gap-2 mb-4 text-sm">
-                        <div className="flex flex-col items-center p-2 bg-gray-50 rounded-md">
-                          <Home className="w-4 h-4 mb-1 text-gray-600" />
-                          <span className="font-medium">{property.beds} beds</span>
-                        </div>
-                        <div className="flex flex-col items-center p-2 bg-gray-50 rounded-md">
-                          <Users className="w-4 h-4 mb-1 text-gray-600" />
-                          <span className="font-medium">{property.baths} baths</span>
-                        </div>
-                        <div className="flex flex-col items-center p-2 bg-gray-50 rounded-md">
-                          <Map className="w-4 h-4 mb-1 text-gray-600" />
-                          <span className="font-medium">{property.sqft} sqft</span>
-                        </div>
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-600">ROI:</span>
-                          <span className="font-medium text-green-600">{property.roi}%</span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-600">Cap Rate:</span>
-                          <span className="font-medium text-green-600">{property.capRate}%</span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-600">Monthly Cash Flow:</span>
-                          <span className="font-medium text-green-600">${property.cashFlow}</span>
-                        </div>
-                      </div>
-                    </CardContent>
-                    <CardFooter>
-                      <Button 
-                        variant="outline" 
-                        className="w-full"
-                        onClick={() => togglePropertyExpansion(property.id)}
-                      >
-                        {expandedProperty === property.id ? (
-                          <>
-                            <ChevronUp className="w-4 h-4 mr-2" />
-                            Hide Details
-                          </>
-                        ) : (
-                          <>
-                            <ChevronDown className="w-4 h-4 mr-2" />
-                            View Details
-                          </>
-                        )}
-                      </Button>
-                    </CardFooter>
-                    
-                    {expandedProperty === property.id && (
-                      <div className="px-6 pb-6 pt-0 border-t border-gray-100">
-                        <h4 className="font-medium text-sm mb-2">Investment Analysis</h4>
-                        <p className="text-sm text-gray-600 mb-4">
-                          This property offers excellent investment potential with a projected {property.roi}% return on investment.
-                          With a cap rate of {property.capRate}% and monthly cash flow of ${property.cashFlow}, this property
-                          represents a strong addition to your investment portfolio.
-                        </p>
-                        <Button className="w-full">
-                          <FileText className="w-4 h-4 mr-2" />
-                          Request Full Analysis
-                        </Button>
-                      </div>
-                    )}
-                  </Card>
-                ))}
+                {filteredContacts.length > 0 ? (
+                  filteredContacts.map((contact) => (
+                    <RolodexCard 
+                      key={contact.id} 
+                      initialData={contact} 
+                      onUpdate={(updatedContact) => {
+                        console.log('Contact updated:', updatedContact);
+                      }}
+                    />
+                  ))
+                ) : (
+                  <div className="col-span-full text-center py-8">
+                    <p className="text-gray-500">No contacts found matching your criteria.</p>
+                  </div>
+                )}
               </div>
               
               <div className="flex justify-center mt-8">
                 <Button variant="outline" className="mr-4">
-                  Load More Properties
+                  Load More Contacts
                 </Button>
                 <Button>
                   <FileText className="w-4 h-4 mr-2" />
-                  Request Custom Search
+                  Add New Contact
                 </Button>
               </div>
             </TabsContent>
