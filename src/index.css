@@ -170,8 +170,8 @@
 
   /* Listing Card Styles */
   .listing-card {
-    width: 410px;
-    height: 254px;
+    width: 1910px;
+    height: 454px;
     border-radius: 4px;
     background: #212121;
     display: flex;
@@ -204,12 +204,19 @@
     transform: rotate(-90deg);
     transition: all .5s;
     text-transform: uppercase;
-    color: #1b2232;
+    color: #ffffff;
     letter-spacing: .1em;
+    border: 1px solid #1b2232;
+    border-radius: 24px;
+    background-color: #1b2232B3;
+    opacity: 0;
+    visibility: hidden;
   }
 
   .listing-card p:hover span {
     transform: rotate(0);
+    opacity: 1;
+    visibility: visible;
   }
 }
 
@@ -266,12 +273,100 @@
   }
 }
 
+@keyframes float-bounce {
+  0% {
+    transform: translateY(0px) translateX(0px) rotate(0deg);
+  }
+  20% {
+    transform: translateY(-15px) translateX(10px) rotate(5deg);
+  }
+  40% {
+    transform: translateY(10px) translateX(15px) rotate(-3deg);
+  }
+  60% {
+    transform: translateY(-5px) translateX(-15px) rotate(-5deg);
+  }
+  80% {
+    transform: translateY(-12px) translateX(-8px) rotate(3deg);
+  }
+  100% {
+    transform: translateY(0px) translateX(0px) rotate(0deg);
+  }
+}
+
+@keyframes float-wave {
+  0% {
+    transform: translateY(0px) translateX(0px) scale(1) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-12px) translateX(15px) scale(1.05) rotate(3deg);
+  }
+  50% {
+    transform: translateY(8px) translateX(20px) scale(1.1) rotate(-2deg);
+  }
+  75% {
+    transform: translateY(-15px) translateX(-10px) scale(1.05) rotate(-4deg);
+  }
+  100% {
+    transform: translateY(0px) translateX(0px) scale(1) rotate(0deg);
+  }
+}
+
+@keyframes float-pulse {
+  0% {
+    transform: translateY(0px) translateX(0px) scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(-15px) translateX(10px) scale(1.15);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(0px) translateX(0px) scale(1);
+    opacity: 0.6;
+  }
+}
+
+@keyframes float-orbit {
+  0% {
+    transform: translateY(0) translateX(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(15px) translateX(15px) rotate(90deg);
+  }
+  50% {
+    transform: translateY(0) translateX(30px) rotate(180deg);
+  }
+  75% {
+    transform: translateY(-15px) translateX(15px) rotate(270deg);
+  }
+  100% {
+    transform: translateY(0) translateX(0) rotate(360deg);
+  }
+}
+
 .floating {
   animation: float 10s ease-in-out infinite;
 }
 
 .floating-slow {
   animation: float-slow 20s ease-in-out infinite;
+}
+
+.floating-bounce {
+  animation: float-bounce 12s ease-in-out infinite;
+}
+
+.floating-wave {
+  animation: float-wave 15s ease-in-out infinite;
+}
+
+.floating-pulse {
+  animation: float-pulse 8s ease-in-out infinite;
+}
+
+.floating-orbit {
+  animation: float-orbit 20s linear infinite;
 }
 
 /* 3D shape classes */

@@ -79,7 +79,7 @@ const ProfileCard = () => {
     },
     {
       icon: Award,
-      value: 5,
+      value: 3,
       label: 'Years Experience',
       delay: 400,
     },

@@ -13,6 +13,7 @@ import MortgageCalculator from "./pages/MortgageCalculator";
 import HomeEstimateCalculator from "./pages/HomeEstimateCalculator";
 import { pageTransition } from "./lib/animations";
 import BackgroundShapes from "./components/BackgroundShapes";
+import InvestorPackage from "./pages/InvestorPackage";
 
 // Apply page transition to route components
 const TransitionedIndex = pageTransition(Index);
@@ -38,6 +39,7 @@ const App = () => (
           <Route path="/reviews" element={<TransitionedReviews />} />
           <Route path="/forum" element={<TransitionedForum />} />
           <Route path="/maps" element={<TransitionedMaps />} />
+          <Route path="/investor-package" element={<InvestorPackage />} />
           <Route path="/calculators" element={<TransitionedMortgageCalculator />} />
           <Route path="/home-estimate" element={<TransitionedHomeEstimateCalculator />} />
           <Route path="/forum/thread/:threadId" element={<TransitionedForum />} />
