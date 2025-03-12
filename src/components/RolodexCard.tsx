@@ -172,11 +172,11 @@ export default function FlipCard({
             <div className="flex justify-between items-center text-xs text-white/70 mt-3 pt-2 border-t border-white/30">
               <div className="flex items-center gap-1">
                 <Calendar size={12} />
-                <span>Added: {formData.date_added || ""}</span>
+                <span>Added: {formData.date_added ? new Date(formData.date_added).toLocaleDateString() : ""}</span>
               </div>
               <div className="flex items-center gap-1">
                 <RotateCw size={12} />
-                <span>Updated: {formData.last_updated || ""}</span>
+                <span>Updated: {formData.last_updated ? new Date(formData.last_updated).toLocaleDateString() : ""}</span>
               </div>
             </div>
 
@@ -193,7 +193,7 @@ export default function FlipCard({
         </Card>
 
         {/* Back of card - Edit Form */}
-        <Card
+        {/* <Card
           className="card-back"
           style={{ borderColor: secondaryColor, backgroundColor: secondaryColor }}
         >
@@ -357,7 +357,7 @@ export default function FlipCard({
               </div>
             </form>
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
       <style dangerouslySetInnerHTML={{
         __html: `
