@@ -67,7 +67,7 @@ const ProfileCard = () => {
   const stats = [
     {
       icon: Home,
-      value: agent.countalltime,
+      value: 149,
       label: 'Properties Sold',
       delay: 200,
     },
