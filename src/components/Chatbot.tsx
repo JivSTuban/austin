@@ -41,6 +41,14 @@ const Chatbot = () => {
           'Hi there! 👋',
           'I\'m Austin, your real estate assistant. How can I help you today?'
         ],
+        i18n: {
+          en: {
+            title: '💬  Chat with Austin McClain',
+            subtitle: '', // Remove default subtitle
+            footer: '',
+            getStarted: 'Start Exploring'
+          },
+        },
         metadata: {
           source: 'website',
           theme: 'light'

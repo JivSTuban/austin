@@ -72,9 +72,14 @@ const SurveyForm = () => {
     setIsSubmitting(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      console.log('Survey submitted:', formData);
+      const { data, error } = await supabase
+        .from('surveys')
+        .insert([{
+          ...formData,
+          submitted_at: new Date().toISOString()
+        }]);
+
+      if (error) throw error;
       
       // Success message
       toast.success('Thank you for your feedback!', {
@@ -88,10 +93,10 @@ const SurveyForm = () => {
       const form = e.target as HTMLFormElement;
       form.reset();
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error submitting survey:', error);
       toast.error('Something went wrong', {
-        description: 'Please try submitting your feedback again.',
+        description: error.message || 'Please try submitting your feedback again.',
       });
     } finally {
       setIsSubmitting(false);

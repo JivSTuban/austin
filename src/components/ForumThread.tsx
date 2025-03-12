@@ -8,11 +8,12 @@ interface ForumThreadProps {
   thread: {
     id: number;
     title: string;
-    author: string;
+    author: string | undefined; // Author can be undefined
     date: string;
     replies: number;
     excerpt: string;
-    category?: string;
+    category: string;
+    profiles: { username: string; avatar_url: string | null }[];
   };
   index: number;
 }
@@ -133,7 +134,9 @@ const ForumThread = ({ thread, index }: ForumThreadProps) => {
             <div className="flex items-center space-x-3">
               <span className="text-gray-500 flex items-center">
                 <User className="w-3 h-3 mr-1" />
-                <span className="font-medium text-gray-700">{thread.author}</span>
+                <span className="font-medium text-gray-700">
+                  {thread.profiles && thread.profiles[0]?.username ? thread.profiles[0].username : 'Anonymous'}
+                </span>
               </span>
               <span className="text-gray-500 flex items-center">
                 <Clock className="w-3 h-3 mr-1" />

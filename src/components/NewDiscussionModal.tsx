@@ -1,13 +1,16 @@
-
-import { useState, useEffect } from 'react';
-import { X, Send, Users } from 'lucide-react';
+import { useState, useCallback } from 'react';
+import { Send, Users } from 'lucide-react';
 import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface NewDiscussionModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: DiscussionData) => void;
+  onSubmit: (data: DiscussionData) => Promise<void>;
 }
 
 export interface DiscussionData {
@@ -24,174 +27,142 @@ const categories = [
   { id: 'neighborhood', name: 'Neighborhood Discussion' },
 ];
 
-const NewDiscussionModal = ({ isOpen, onClose, onSubmit }: NewDiscussionModalProps) => {
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [category, setCategory] = useState('first-time-buyers');
-  const [isMounted, setIsMounted] = useState(false);
+export function NewDiscussionModal({ isOpen, onClose, onSubmit }: NewDiscussionModalProps) {
+  const [formData, setFormData] = useState({
+    title: '',
+    content: '',
+    category: 'first-time-buyers'
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    setIsMounted(true);
-    return () => setIsMounted(false);
+  const resetForm = useCallback(() => {
+    setFormData({
+      title: '',
+      content: '',
+      category: 'first-time-buyers'
+    });
+    setIsSubmitting(false);
   }, []);
 
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'auto';
-    }
-    return () => {
-      document.body.style.overflow = 'auto';
-    };
-  }, [isOpen]);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!title.trim()) {
-      toast.error('Please enter a title for your discussion');
-      return;
-    }
-    
-    if (!content.trim()) {
-      toast.error('Please enter some content for your discussion');
-      return;
-    }
-    
-    onSubmit({
-      title,
-      content,
-      category
-    });
-    
-    // Reset form
-    setTitle('');
-    setContent('');
-    setCategory('first-time-buyers');
-    
-    // Close modal
+  const handleClose = useCallback(() => {
+    resetForm();
     onClose();
-    
-    // Show success toast
-    toast.success('Discussion created!', {
-      description: 'Your discussion has been posted successfully.',
-    });
-  };
+  }, [onClose, resetForm]);
 
-  if (!isMounted) return null;
+  const handleChange = useCallback((field: keyof typeof formData, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  }, []);
+
+  const handleSubmit = useCallback(async () => {
+    try {
+      if (!formData.title.trim()) {
+        toast.error('Please enter a title');
+        return;
+      }
+
+      if (!formData.content.trim()) {
+        toast.error('Please enter content');
+        return;
+      }
+
+      setIsSubmitting(true);
+      await onSubmit({
+        title: formData.title.trim(),
+        content: formData.content.trim(),
+        category: formData.category
+      });
+      handleClose();
+    } catch (error) {
+      console.error('Error submitting discussion:', error);
+      toast.error('Failed to create discussion');
+      setIsSubmitting(false);
+    }
+  }, [formData, onSubmit, handleClose]);
 
   return (
-    <div 
-      className={cn(
-        "fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300",
-        isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-      )}
-    >
-      {/* Backdrop */}
-      <div 
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-        onClick={onClose}
-        aria-hidden="true"
-        style={{
-          opacity: isOpen ? 1 : 0,
-          transition: 'opacity 300ms ease',
-        }}
-      />
-      
-      {/* Modal */}
-      <div 
-        className={cn(
-          "bg-white w-full max-w-xl rounded-xl shadow-2xl z-10 overflow-hidden",
-          "transform transition-all duration-300",
-          isOpen ? "scale-100" : "scale-95"
-        )}
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-blue-600 to-blue-500 text-white">
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent className="sm:max-w-xl overflow-y-auto max-h-[90vh]">
+        <DialogHeader>
           <div className="flex items-center space-x-2">
-            <Users className="w-5 h-5" />
-            <h3 className="font-medium text-lg">Start a New Discussion</h3>
+            <Users className="w-5 h-5 text-blue-600" />
+            <DialogTitle>Start a New Discussion</DialogTitle>
           </div>
-          <button
-            onClick={onClose}
-            className="p-1 rounded-full hover:bg-white/10 transition-colors"
-            aria-label="Close modal"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-        
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6">
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
-                Category
-              </label>
-              <select
-                id="category"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                required
-              >
+        </DialogHeader>
+
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">
+              Category
+            </label>
+            <Select
+              value={formData.category}
+              onValueChange={value => handleChange('category', value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select a category" />
+              </SelectTrigger>
+              <SelectContent>
                 {categories.map(cat => (
-                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                  <SelectItem key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </SelectItem>
                 ))}
-              </select>
-            </div>
-            
-            <div>
-              <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-                Title
-              </label>
-              <input
-                id="title"
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="What's your discussion about?"
-                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                required
-              />
-            </div>
-            
-            <div>
-              <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">
-                Content
-              </label>
-              <textarea
-                id="content"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                placeholder="Share your thoughts, questions, or experiences..."
-                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent min-h-[150px]"
-                required
-              />
-            </div>
+              </SelectContent>
+            </Select>
           </div>
           
-          <div className="flex justify-end space-x-3 mt-6">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white rounded-md transition-colors flex items-center"
-            >
-              <Send className="w-4 h-4 mr-2" />
-              Post Discussion
-            </button>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">
+              Title
+            </label>
+            <Input
+              value={formData.title}
+              onChange={e => handleChange('title', e.target.value)}
+              placeholder="What's your discussion about?"
+            />
           </div>
-        </form>
-      </div>
-    </div>
+          
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">
+              Content
+            </label>
+            <Textarea
+              value={formData.content}
+              onChange={e => handleChange('content', e.target.value)}
+              placeholder="Share your thoughts, questions, or experiences..."
+              className="min-h-[150px]"
+            />
+          </div>
+        </div>
+        
+        <div className="flex justify-end space-x-3 mt-6">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleClose}
+          >
+            Cancel
+          </Button>
+          <Button
+            type="button"
+            onClick={() => void handleSubmit()}
+            disabled={isSubmitting}
+            className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600"
+          >
+            {isSubmitting ? (
+              <>
+                <Send className="w-4 h-4 mr-2 animate-spin" />
+                Creating...
+              </>
+            ) : (
+              <>
+                <Send className="w-4 h-4 mr-2" />
+                Post Discussion
+              </>
+            )}
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
-};
-
-export default NewDiscussionModal;
+}
