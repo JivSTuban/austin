@@ -1,5 +1,5 @@
-
 import type { Config } from "tailwindcss";
+import tailwindcssAnimate from "tailwindcss-animate";
 
 export default {
 	darkMode: ["class"],
@@ -23,6 +23,12 @@ export default {
 				sans: ['Inter var', 'SF Pro Display', 'system-ui', 'sans-serif'],
 			},
 			colors: {
+				// Custom color palette
+				'austin-blue': '#4a78a6',
+				'austin-gray': '#dce1e7',
+				'austin-white': '#fffbfc',
+				'austin-dark': '#1b2232',
+				
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
@@ -118,5 +124,5 @@ export default {
 			}
 		}
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [tailwindcssAnimate],
 } satisfies Config;

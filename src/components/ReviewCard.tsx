@@ -70,27 +70,31 @@ const ReviewCard = ({ review, index }: ReviewCardProps) => {
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className="p-6">
-        <div className="flex justify-between items-start mb-4">
-          <div className="flex-1 pr-4">
-            <p className="text-base font-semibold text-gray-900 mb-1">{displayName}</p>
-            <p className="text-base leading-relaxed text-gray-700 mb-3">{review.content}</p>
+        <div className="flex justify-between items-start mb-">
+          <div className="flex-1 pr-4 ">
+            <p className="text-base font-semibold text-gray-900 mb-1 flex justify-between">
+              <span>{displayName}</span>
+              <span>
+              {[...Array(5)].map((_, i) => (
+              <Star
+                key={`star-${i}`}
+                className={cn(
+                  "w-4 h-4 inline-block",
+                  i < review.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-200"
+                )}
+              />
+            ))}
+              </span>
+
+
+            </p>
+            <p className="text-base leading-relaxed text-gray-700 mt-4 mb-3">{review.content}</p>
             {review.title && review.title !== 'Review' && (
               <p className="text-sm font-medium text-gray-600 mb-2">{review.title}</p>
             )}
             <p className="text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors tracking-wide">
               {formatDate(review.createdate)}
             </p>
-          </div>
-          <div className="flex space-x-0.5">
-            {[...Array(5)].map((_, i) => (
-              <Star
-                key={`star-${i}`}
-                className={cn(
-                  "w-4 h-4",
-                  i < review.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-200"
-                )}
-              />
-            ))}
           </div>
         </div>
 

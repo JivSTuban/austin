@@ -22,7 +22,7 @@
 
   --chat--header-height: auto;
   --chat--header--padding: var(--chat--spacing);
-  --chat--header--background: var(--chat--color-primary);
+  --chat--header--background: rgba(59, 130, 246, 0.85);
   --chat--header--color: var(--chat--color-white);
   --chat--header--border-top: none;
   --chat--header--border-bottom: none;
@@ -36,10 +36,10 @@
   --chat--message--padding: 1rem 1.25rem;
   --chat--message--border-radius: 1rem;
   --chat--message-line-height: 1.6;
-  --chat--message--bot--background: var(--chat--color-light);
+  --chat--message--bot--background: rgba(248, 250, 252, 0.7);
   --chat--message--bot--color: var(--chat--color-dark);
-  --chat--message--bot--border: 1px solid var(--chat--color-light-shade-100);
-  --chat--message--user--background: var(--chat--color-primary);
+  --chat--message--bot--border: 1px solid rgba(226, 232, 240, 0.5);
+  --chat--message--user--background: rgba(59, 130, 246, 0.85);
   --chat--message--user--color: var(--chat--color-white);
   --chat--message--user--border: none;
   --chat--message--pre--background: rgba(0, 0, 0, 0.03);
@@ -55,37 +55,157 @@
   font-family: system-ui, -apple-system, sans-serif;
 }
 
+/* Glassmorphism for chat window */
 .chat-window {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  transition: transform var(--chat--transition-duration) ease-in-out;
+  background: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+  transition: all var(--chat--transition-duration) ease-in-out !important;
 }
 
 .chat-window:hover {
   transform: translateY(-2px);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15) !important;
 }
 
+/* Glassmorphism for chat toggle button */
 .chat-toggle {
+  background: rgba(59, 130, 246, 0.9) !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
   border-radius: 50%;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  transition: transform var(--chat--transition-duration) ease-in-out;
+  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3) !important;
+  transition: all var(--chat--transition-duration) ease-in-out !important;
 }
 
 .chat-toggle:hover {
   transform: scale(1.05);
+  box-shadow: 0 6px 24px rgba(37, 99, 235, 0.4) !important;
 }
 
 .chat-message {
-  transition: opacity 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 
 .chat-message.bot {
-  opacity: 0.95;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
 }
 
 .chat-message.user {
-  opacity: 0.98;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  box-shadow: 0 2px 10px rgba(37, 99, 235, 0.2) !important;
 }
 
 .chat-message:hover {
   opacity: 1;
+  transform: translateY(-1px);
+}
+
+.chat-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Glassmorphism for conversation starters */
+.conversation-starters {
+  margin-top: 1rem;
+  padding: 1.25rem;
+  border-radius: var(--chat--border-radius);
+  background: rgba(241, 245, 249, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.starters-title {
+  font-size: 0.9rem;
+  color: var(--chat--color-typing);
+  margin-bottom: 0.75rem;
+  font-weight: 500;
+}
+
+.starters-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.starter-button {
+  background: rgba(255, 255, 255, 0.7);
+  color: var(--chat--color-primary);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 1rem;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all var(--chat--transition-duration) ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.starter-button:hover {
+  background: rgba(59, 130, 246, 0.9);
+  color: var(--chat--color-white);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.starter-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.1);
+}
+
+/* Add styling for the chat input area */
+.chat-input-container {
+  background: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border-top: 1px solid rgba(226, 232, 240, 0.5) !important;
+}
+
+.chat-input {
+  background: rgba(255, 255, 255, 0.5) !important;
+  border: 1px solid rgba(203, 213, 225, 0.5) !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+}
+
+/* Add subtle animation for message appearance */
+@keyframes messageAppear {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chat-message {
+  animation: messageAppear 0.3s ease-out;
 }

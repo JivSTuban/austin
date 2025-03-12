@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,15 +7,22 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Reviews from "./pages/Reviews";
 import Forum from "./pages/Forum";
+import Maps from "./pages/Maps";
 import NotFound from "./pages/NotFound";
+import MortgageCalculator from "./pages/MortgageCalculator";
+import HomeEstimateCalculator from "./pages/HomeEstimateCalculator";
 import { pageTransition } from "./lib/animations";
 import BackgroundShapes from "./components/BackgroundShapes";
+import InvestorPackage from "./pages/InvestorPackage";
 
 // Apply page transition to route components
 const TransitionedIndex = pageTransition(Index);
 const TransitionedReviews = pageTransition(Reviews);
 const TransitionedForum = pageTransition(Forum);
+const TransitionedMaps = pageTransition(Maps);
 const TransitionedNotFound = pageTransition(NotFound);
+const TransitionedMortgageCalculator = pageTransition(MortgageCalculator);
+const TransitionedHomeEstimateCalculator = pageTransition(HomeEstimateCalculator);
 
 const queryClient = new QueryClient();
 
@@ -32,6 +38,10 @@ const App = () => (
           <Route path="/" element={<TransitionedIndex />} />
           <Route path="/reviews" element={<TransitionedReviews />} />
           <Route path="/forum" element={<TransitionedForum />} />
+          <Route path="/maps" element={<TransitionedMaps />} />
+          <Route path="/investor-package" element={<InvestorPackage />} />
+          <Route path="/calculators" element={<TransitionedMortgageCalculator />} />
+          <Route path="/home-estimate" element={<TransitionedHomeEstimateCalculator />} />
           <Route path="/forum/thread/:threadId" element={<TransitionedForum />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<TransitionedNotFound />} />

@@ -1,7 +1,6 @@
-
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Home, Star, MessageSquare } from 'lucide-react';
+import { Menu, X, Home, Star, MessageSquare, Map, Calculator, Building, Coins } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const Navbar = () => {
@@ -13,8 +12,13 @@ const Navbar = () => {
 
   const navItems = [
     { path: '/', label: 'Home', icon: Home },
+    { path: '/maps', label: 'Maps', icon: Map },
+    { path: '/investor-package', label: 'Investor Package', icon: Coins },
+    { path: '/calculators', label: 'Calculators', icon: Calculator },
+    { path: '/home-estimate', label: 'Estimate', icon: Building },
     { path: '/reviews', label: 'Reviews', icon: Star },
     { path: '/forum', label: 'Forum', icon: MessageSquare },
+    
   ];
 
   // Handle scroll effects

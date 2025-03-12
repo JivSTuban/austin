@@ -1,7 +1,6 @@
-
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Home, MessageCircle, Star } from 'lucide-react';
+import { ArrowRight, Home, MessageCircle, Star, Building, MapPin, Key } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ProfileCard from '@/components/ProfileCard';
@@ -11,11 +10,47 @@ import { useAgentData } from '@/hooks/useAgentData';
 
 const Index = () => {
   const { agent, reviews } = useAgentData('X1-ZUtpaayyyrapzd_82rpg');
+  const [typedText, setTypedText] = useState('');
+  const fullText = "Your Trusted Real Estate Expert";
+  const [showSubheading, setShowSubheading] = useState(false);
+  const [showProfileCard, setShowProfileCard] = useState(false);
+  const [showIcons, setShowIcons] = useState(false);
 
   // Scroll to top on page load
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  // Typing effect for headline
+  useEffect(() => {
+    if (typedText.length < fullText.length) {
+      const timeout = setTimeout(() => {
+        setTypedText(fullText.substring(0, typedText.length + 1));
+      }, 20);
+      return () => clearTimeout(timeout);
+    } else {
+      // Show subheading after typing completes
+      const timeout = setTimeout(() => {
+        setShowSubheading(true);
+      }, 300);
+      
+      // Show profile card after subheading appears
+      const profileTimeout = setTimeout(() => {
+        setShowProfileCard(true);
+      }, 800);
+      
+      // Show floating icons after profile card appears
+      const iconsTimeout = setTimeout(() => {
+        setShowIcons(true);
+      }, 1200);
+      
+      return () => {
+        clearTimeout(timeout);
+        clearTimeout(profileTimeout);
+        clearTimeout(iconsTimeout);
+      };
+    }
+  }, [typedText]);
 
   // Featured reviews (just showing the top 3)
   const featuredReviews = reviews.slice(0, 3).map(review => {
@@ -72,21 +107,75 @@ const Index = () => {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="pt-28 pb-16 px-6">
-        <div className="max-w-6xl mx-auto text-center">
-          <div
-            className="mb-12 opacity-0 animate-fade-in"
-            style={{ animationDelay: '100ms', animationFillMode: 'forwards' }}
-          >
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight mb-4">
-              Your Trusted Real Estate Expert
+      <section className="pt-28 pb-16 px-6 relative overflow-hidden">
+        {/* Background gradient */}
+        <div className="absolute inset-0 bg-gradient-radial from-blue-50/30 to-transparent opacity-70"></div>
+        
+        {/* Floating elements */}
+        <div className={`absolute inset-0 pointer-events-none transition-opacity duration-1000 ${showIcons ? 'opacity-100' : 'opacity-0'}`}>
+          {/* Top left floating icon */}
+          <div className="absolute top-[15%] left-[10%] floating-bounce" style={{ animationDelay: '0.2s' }}>
+            <div className="bg-blue-100 p-3 rounded-full shadow-lg transform transition-transform duration-300 hover:scale-110 cursor-pointer">
+              <Building className="w-6 h-6 text-blue-600" />
+            </div>
+          </div>
+          
+          {/* Top right floating icon */}
+          <div className="absolute top-[25%] right-[15%] floating-pulse" style={{ animationDelay: '0.5s' }}>
+            <div className="bg-green-100 p-3 rounded-full shadow-lg transform transition-transform duration-300 hover:scale-110 cursor-pointer">
+              <MapPin className="w-6 h-6 text-green-600" />
+            </div>
+          </div>
+          
+          {/* Bottom left floating icon */}
+          <div className="absolute bottom-[20%] left-[20%] floating-wave" style={{ animationDelay: '0.8s' }}>
+            <div className="bg-amber-100 p-3 rounded-full shadow-lg transform transition-transform duration-300 hover:scale-110 cursor-pointer">
+              <Key className="w-6 h-6 text-amber-600" />
+            </div>
+          </div>
+          
+          {/* Bottom right floating icon */}
+          <div className="absolute bottom-[15%] right-[10%] floating-orbit" style={{ animationDelay: '1.1s' }}>
+            <div className="bg-purple-100 p-3 rounded-full shadow-lg transform transition-transform duration-300 hover:scale-110 cursor-pointer">
+              <Home className="w-6 h-6 text-purple-600" />
+            </div>
+          </div>
+          
+          {/* Additional floating icons */}
+          <div className="absolute top-[45%] left-[25%] floating-pulse" style={{ animationDelay: '1.4s' }}>
+            <div className="bg-pink-100 p-3 rounded-full shadow-lg transform transition-transform duration-300 hover:scale-110 cursor-pointer">
+              <Star className="w-6 h-6 text-pink-600" />
+            </div>
+          </div>
+          
+          <div className="absolute top-[35%] right-[30%] floating-bounce" style={{ animationDelay: '1.7s' }}>
+            <div className="bg-indigo-100 p-3 rounded-full shadow-lg transform transition-transform duration-300 hover:scale-110 cursor-pointer">
+              <MessageCircle className="w-6 h-6 text-indigo-600" />
+            </div>
+          </div>
+        </div>
+        
+        <div className="max-w-6xl mx-auto text-center relative z-10">
+          <div className="mb-12">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight mb-4 relative">
+              <span className="inline-block relative">
+                {typedText}
+                <span className={`absolute right-[-8px] top-0 h-full w-[3px] bg-blue-600 ${typedText.length === fullText.length ? 'animate-cursor-blink' : ''}`}></span>
+              </span>
             </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            
+            <p 
+              className={`text-xl text-gray-600 max-w-3xl mx-auto transition-all duration-500 ${showSubheading ? 'opacity-100 transform-none' : 'opacity-0 translate-y-4'}`}
+            >
               Helping you find the perfect home with personalized service and local expertise
             </p>
           </div>
 
-          <ProfileCard />
+          <div 
+            className={`transition-all duration-700 transform ${showProfileCard ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
+          >
+            <ProfileCard />
+          </div>
         </div>
       </section>
 
@@ -98,12 +187,12 @@ const Index = () => {
               className="opacity-0 animate-fade-in"
               style={{ animationDelay: '300ms', animationFillMode: 'forwards' }}
             >
-              <h2 className="text-3xl md:text-4xl font-semibold tracking-tight mb-4">
-                Your Real Estate Journey
-              </h2>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                Discover how I can help you at every step of your real estate experience
-              </p>
+             <button 
+              className="inline-flex items-center justify-center px-6 py-3 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+              onClick={() => window.open('https://docs.google.com/forms/d/e/1FAIpQLSf3M-Z5b0mr6ObERDv_1GMyAd66k7ym80dcqjCCxHVmAbaLlA/viewform?usp=sf_link', '_blank')}
+             >
+              See How I Can Help!
+             </button>
             </div>
           </div>
 
@@ -156,6 +245,70 @@ const Index = () => {
                 </Link>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+      {/* Featured Listings Section */}
+      <section className="py-16 px-6 ">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-semibold tracking-tight mb-4 text-austin-dark">
+              Featured Listings
+            </h2>
+            <p className="text-lg text-austin-dark/80 max-w-2xl mx-auto">
+              Explore our handpicked selection of premium properties across Austin
+            </p>
+          </div>
+          
+          <div className="flex flex-wrap justify-center gap-8">
+            {/* Listing Card 1 */}
+            <div className="listing-card">
+              <p 
+                style={{ 
+                  backgroundImage: "url('https://photos.zillowstatic.com/fp/0487c0f4907b1f34daa72f4e3d29957b-cc_ft_960.jpg')", 
+                  backgroundSize: "cover", 
+                  backgroundPosition: "center" 
+                }}
+                onClick={() => window.open('https://www.zillow.com/homedetails/3509-Pittsburg-Ave-Dayton-OH-45406/34964779_zpid/', '_blank')}
+              >
+                <span>3509 Pittsburg Ave, Dayton, OH 45406</span>
+              </p>
+              <p style={{ 
+                backgroundImage: "url('https://photos.zillowstatic.com/fp/ca279e614e803f05864e850bf0cae134-cc_ft_960.jpg')", 
+                backgroundSize: "cover", 
+                backgroundPosition: "center" 
+              }}
+              onClick={() => window.open('https://www.zillow.com/homedetails/3851-Merrimac-Ave-Dayton-OH-45405/34963806_zpid/', '_blank')}
+              >
+                <span>3851 Merrimac Ave, Dayton, OH 45405</span>
+              </p>
+              <p style={{ 
+                backgroundImage: "url('https://photos.zillowstatic.com/fp/f44175637efd52ae993f7605f600b73d-cc_ft_960.jpg')", 
+                backgroundSize: "cover", 
+                backgroundPosition: "center" 
+              }}
+              onClick={() => window.open('https://www.zillow.com/homedetails/123-Notre-Dame-Ave-Dayton-OH-45404/35090037_zpid/', '_blank')}
+              >
+               <span>123 Notre Dame Ave, Dayton, OH 45404</span>
+              </p>
+              <p style={{ 
+                backgroundImage: "url('https://photos.zillowstatic.com/fp/7d3c34641255ff774c323e480fe25bf2-cc_ft_960.jpg')", 
+                backgroundSize: "cover", 
+                backgroundPosition: "center" 
+              }}
+              onClick={() => window.open('https://www.zillow.com/homedetails/1325-1327-Phillips-Ave-Dayton-OH-45410/2056958528_zpid/', '_blank')}
+              >
+               <span>1325-1327 Phillips Ave, Dayton, OH 45410</span>
+              </p>
+            </div>
+          </div>
+          <div className="text-center mt-12">
+            <Link 
+              to="/listings" 
+              className="inline-flex items-center px-6 py-3 rounded-full bg-austin-blue text-austin-white hover:bg-austin-blue/90 transition-all"
+            >
+              View All Listings <ArrowRight className="w-4 h-4 ml-2" />
+            </Link>
           </div>
         </div>
       </section>

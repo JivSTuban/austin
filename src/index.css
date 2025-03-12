@@ -1,69 +1,74 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 210 50% 98%;
-    --foreground: 224 71.4% 4.1%;
+    /* Updated color palette using the specified hex codes */
+    --primary-blue: 210 40% 47%;      /* #4a78a6 */
+    --light-gray: 210 16% 89%;        /* #dce1e7 */
+    --off-white: 345 100% 99%;        /* #fffbfc */
+    --dark-blue: 222 28% 15%;         /* #1b2232 */
+
+    --background: var(--off-white);
+    --foreground: var(--dark-blue);
 
     --card: 0 0% 100%;
-    --card-foreground: 224 71.4% 4.1%;
+    --card-foreground: var(--dark-blue);
 
     --popover: 0 0% 100%;
-    --popover-foreground: 224 71.4% 4.1%;
+    --popover-foreground: var(--dark-blue);
 
-    --primary: 220.9 39.3% 11%;
-    --primary-foreground: 210 20% 98%;
+    --primary: var(--primary-blue);
+    --primary-foreground: var(--off-white);
 
-    --secondary: 220 14.3% 95.9%;
-    --secondary-foreground: 220.9 39.3% 11%;
+    --secondary: var(--light-gray);
+    --secondary-foreground: var(--dark-blue);
 
-    --muted: 220 14.3% 95.9%;
+    --muted: var(--light-gray);
     --muted-foreground: 220 8.9% 46.1%;
 
-    --accent: 220 14.3% 95.9%;
-    --accent-foreground: 220.9 39.3% 11%;
+    --accent: var(--primary-blue);
+    --accent-foreground: var(--off-white);
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 20% 98%;
+    --destructive-foreground: var(--off-white);
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 224 71.4% 4.1%;
+    --border: var(--light-gray);
+    --input: var(--light-gray);
+    --ring: var(--primary-blue);
 
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 224 71.4% 4.1%;
-    --foreground: 210 20% 98%;
+    --background: var(--dark-blue);
+    --foreground: var(--off-white);
 
-    --card: 224 71.4% 4.1%;
-    --card-foreground: 210 20% 98%;
+    --card: var(--dark-blue);
+    --card-foreground: var(--off-white);
 
-    --popover: 224 71.4% 4.1%;
-    --popover-foreground: 210 20% 98%;
+    --popover: var(--dark-blue);
+    --popover-foreground: var(--off-white);
 
-    --primary: 210 20% 98%;
-    --primary-foreground: 220.9 39.3% 11%;
+    --primary: var(--primary-blue);
+    --primary-foreground: var(--off-white);
 
     --secondary: 215 27.9% 16.9%;
-    --secondary-foreground: 210 20% 98%;
+    --secondary-foreground: var(--off-white);
 
     --muted: 215 27.9% 16.9%;
     --muted-foreground: 217.9 10.6% 64.9%;
 
-    --accent: 215 27.9% 16.9%;
-    --accent-foreground: 210 20% 98%;
+    --accent: var(--primary-blue);
+    --accent-foreground: var(--off-white);
 
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 20% 98%;
+    --destructive-foreground: var(--off-white);
 
     --border: 215 27.9% 16.9%;
     --input: 215 27.9% 16.9%;
-    --ring: 216 12.2% 83.9%;
+    --ring: var(--primary-blue);
   }
 }
 
@@ -162,6 +167,57 @@
       rgba(255, 255, 255, 0.2) -10px -10px 30px, 
       rgba(0, 0, 0, 0.1) 10px 10px 30px;
   }
+
+  /* Listing Card Styles */
+  .listing-card {
+    width: 1910px;
+    height: 454px;
+    border-radius: 4px;
+    background: #212121;
+    display: flex;
+    gap: 5px;
+    padding: .4em;
+  }
+
+  .listing-card p {
+    height: 100%;
+    flex: 1;
+    overflow: hidden;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all .5s;
+    background: #dce1e7;
+    border: 1px solid #1b2232;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .listing-card p:hover {
+    flex: 4;
+  }
+
+  .listing-card p span {
+    min-width: 14em;
+    padding: .5em;
+    text-align: center;
+    transform: rotate(-90deg);
+    transition: all .5s;
+    text-transform: uppercase;
+    color: #ffffff;
+    letter-spacing: .1em;
+    border: 1px solid #1b2232;
+    border-radius: 24px;
+    background-color: #1b2232B3;
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .listing-card p:hover span {
+    transform: rotate(0);
+    opacity: 1;
+    visibility: visible;
+  }
 }
 
 /* Page transitions */
@@ -217,12 +273,100 @@
   }
 }
 
+@keyframes float-bounce {
+  0% {
+    transform: translateY(0px) translateX(0px) rotate(0deg);
+  }
+  20% {
+    transform: translateY(-15px) translateX(10px) rotate(5deg);
+  }
+  40% {
+    transform: translateY(10px) translateX(15px) rotate(-3deg);
+  }
+  60% {
+    transform: translateY(-5px) translateX(-15px) rotate(-5deg);
+  }
+  80% {
+    transform: translateY(-12px) translateX(-8px) rotate(3deg);
+  }
+  100% {
+    transform: translateY(0px) translateX(0px) rotate(0deg);
+  }
+}
+
+@keyframes float-wave {
+  0% {
+    transform: translateY(0px) translateX(0px) scale(1) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-12px) translateX(15px) scale(1.05) rotate(3deg);
+  }
+  50% {
+    transform: translateY(8px) translateX(20px) scale(1.1) rotate(-2deg);
+  }
+  75% {
+    transform: translateY(-15px) translateX(-10px) scale(1.05) rotate(-4deg);
+  }
+  100% {
+    transform: translateY(0px) translateX(0px) scale(1) rotate(0deg);
+  }
+}
+
+@keyframes float-pulse {
+  0% {
+    transform: translateY(0px) translateX(0px) scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(-15px) translateX(10px) scale(1.15);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(0px) translateX(0px) scale(1);
+    opacity: 0.6;
+  }
+}
+
+@keyframes float-orbit {
+  0% {
+    transform: translateY(0) translateX(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(15px) translateX(15px) rotate(90deg);
+  }
+  50% {
+    transform: translateY(0) translateX(30px) rotate(180deg);
+  }
+  75% {
+    transform: translateY(-15px) translateX(15px) rotate(270deg);
+  }
+  100% {
+    transform: translateY(0) translateX(0) rotate(360deg);
+  }
+}
+
 .floating {
   animation: float 10s ease-in-out infinite;
 }
 
 .floating-slow {
   animation: float-slow 20s ease-in-out infinite;
+}
+
+.floating-bounce {
+  animation: float-bounce 12s ease-in-out infinite;
+}
+
+.floating-wave {
+  animation: float-wave 15s ease-in-out infinite;
+}
+
+.floating-pulse {
+  animation: float-pulse 8s ease-in-out infinite;
+}
+
+.floating-orbit {
+  animation: float-orbit 20s linear infinite;
 }
 
 /* 3D shape classes */
