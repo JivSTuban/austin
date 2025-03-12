@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Home, Star, MessageSquare, Map, Calculator, Building, Coins } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import ProfileDropdown from './ProfileDropdown';
+import { useAuth } from '@/lib/AuthContext';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -58,7 +60,7 @@ const Navbar = () => {
         </Link>
 
         {/* Desktop Menu */}
-        <div className="hidden md:flex items-center space-x-8">
+        <div className="hidden md:flex items-center space-x-6">
           {navItems.map((item) => (
             <Link
               key={item.path}
@@ -73,6 +75,9 @@ const Navbar = () => {
               {item.label}
             </Link>
           ))}
+          <div className="ml-2">
+            <ProfileDropdown />
+          </div>
         </div>
 
         {/* Mobile Menu Button */}
@@ -111,6 +116,9 @@ const Navbar = () => {
             {item.label}
           </Link>
         ))}
+        <div className="py-4">
+          <ProfileDropdown />
+        </div>
       </div>
     </nav>
   );

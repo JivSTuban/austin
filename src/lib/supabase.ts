@@ -59,12 +59,22 @@ const customFetch = async (url: string, options: RequestInit): Promise<Response>
 // Create Supabase client with custom fetch
 export const supabase: SupabaseClient = createClient(supabaseUrl, supabaseKey, {
   auth: {
-    persistSession: false
+    persistSession: true,
+    storageKey: 'austin-auth-token',
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
   },
   global: {
     fetch: customFetch,
     headers: {
       'Content-Type': 'application/json'
     }
+  }
+});
+
+// Initialize session on load
+supabase.auth.getSession().then(({ data: { session } }) => {
+  if (session) {
+    console.log('Initial session loaded:', session);
   }
 });

@@ -19,7 +19,7 @@ interface RawReview {
   processexpertise: number;
   responsiveness: number;
   negotiationskills: number;
-  [key: string]: any; // Allow other properties
+  [key: string]: any;
 }
 
 const propertyTypes = ['All', 'Single Family', 'Multi-Family', 'Condo', 'Apartment', 'Other'];

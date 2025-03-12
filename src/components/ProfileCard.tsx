@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { useImageLoad } from '@/lib/animations';
 import { useAgentData } from '@/hooks/useAgentData';
 import { Loading } from '@/components/LoadingStates';
-import siAustinImage from '../../public/siAustin.png';
+import siAustinImage from '/siAustin.png';
 
 const ProfileCard = () => {
   const { imageStyle, onLoad } = useImageLoad();
