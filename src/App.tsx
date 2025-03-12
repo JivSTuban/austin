@@ -20,6 +20,8 @@ import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import ThreadView from "./pages/ThreadView";
 import UsernamePage from "./pages/UsernamePage"; // Import UsernamePage
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +30,7 @@ const App = () => (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <TooltipProvider>
+          <Navbar />
           <Toaster />
           <Sonner
             position="bottom-left"
@@ -52,6 +55,7 @@ const App = () => (
             <Route path="/username" element={<UsernamePage />} /> {/* Add UsernamePage route */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <Footer />
           </TooltipProvider>
         </AuthProvider>
       </QueryClientProvider>

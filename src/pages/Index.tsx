@@ -5,8 +5,11 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ProfileCard from '@/components/ProfileCard';
 import ReviewCard from '@/components/ReviewCard';
+import PropertySlider from '@/components/PropertySlider';
 import { cn } from '@/lib/utils';
 import { useAgentData } from '@/hooks/useAgentData';
+import { HoverButton } from "@/components/ui/hover-button";
+
 
 const Index = () => {
   const { agent, reviews } = useAgentData('X1-ZUtpaayyyrapzd_82rpg');
@@ -104,7 +107,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar />
+     
 
       {/* Hero Section */}
       <section className="pt-28 pb-16 px-6 relative overflow-hidden">
@@ -174,7 +177,7 @@ const Index = () => {
           <div 
             className={`transition-all duration-700 transform ${showProfileCard ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
           >
-            <ProfileCard />
+            <ProfileCard name="Austin McClain" email="austin@realestate.com" phone="(512) 555-1234" />
           </div>
         </div>
       </section>
@@ -260,48 +263,7 @@ const Index = () => {
             </p>
           </div>
           
-          <div className="flex flex-wrap justify-center gap-8">
-            {/* Listing Card 1 */}
-            <div className="listing-card">
-              <p 
-                style={{ 
-                  backgroundImage: "url('https://photos.zillowstatic.com/fp/0487c0f4907b1f34daa72f4e3d29957b-cc_ft_960.jpg')", 
-                  backgroundSize: "cover", 
-                  backgroundPosition: "center" 
-                }}
-                onClick={() => window.open('https://www.zillow.com/homedetails/3509-Pittsburg-Ave-Dayton-OH-45406/34964779_zpid/', '_blank')}
-              >
-                <span>3509 Pittsburg Ave, Dayton, OH 45406</span>
-              </p>
-              <p style={{ 
-                backgroundImage: "url('https://photos.zillowstatic.com/fp/ca279e614e803f05864e850bf0cae134-cc_ft_960.jpg')", 
-                backgroundSize: "cover", 
-                backgroundPosition: "center" 
-              }}
-              onClick={() => window.open('https://www.zillow.com/homedetails/3851-Merrimac-Ave-Dayton-OH-45405/34963806_zpid/', '_blank')}
-              >
-                <span>3851 Merrimac Ave, Dayton, OH 45405</span>
-              </p>
-              <p style={{ 
-                backgroundImage: "url('https://photos.zillowstatic.com/fp/f44175637efd52ae993f7605f600b73d-cc_ft_960.jpg')", 
-                backgroundSize: "cover", 
-                backgroundPosition: "center" 
-              }}
-              onClick={() => window.open('https://www.zillow.com/homedetails/123-Notre-Dame-Ave-Dayton-OH-45404/35090037_zpid/', '_blank')}
-              >
-               <span>123 Notre Dame Ave, Dayton, OH 45404</span>
-              </p>
-              <p style={{ 
-                backgroundImage: "url('https://photos.zillowstatic.com/fp/7d3c34641255ff774c323e480fe25bf2-cc_ft_960.jpg')", 
-                backgroundSize: "cover", 
-                backgroundPosition: "center" 
-              }}
-              onClick={() => window.open('https://www.zillow.com/homedetails/1325-1327-Phillips-Ave-Dayton-OH-45410/2056958528_zpid/', '_blank')}
-              >
-               <span>1325-1327 Phillips Ave, Dayton, OH 45410</span>
-              </p>
-            </div>
-          </div>
+          <PropertySlider />
           <div className="text-center mt-12">
             <Link 
               to="/listings" 
@@ -390,9 +352,10 @@ const Index = () => {
         </div>
       </section>
 
-      <Footer />
+    
     </div>
   );
 };
 
 export default Index;
+

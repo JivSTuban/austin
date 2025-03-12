@@ -134,9 +134,8 @@ const HomeEstimateCalculator = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 pt-16">
-      <Navbar />
-      
+    <div className="min-h-screen bg-gradient-to-b  pt-16">
+
       <main className="container mx-auto px-4 py-12">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
