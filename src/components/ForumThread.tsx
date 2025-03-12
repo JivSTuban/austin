@@ -1,6 +1,5 @@
-
 import { useState } from 'react';
-import { MessageSquare, ChevronRight, Clock, User } from 'lucide-react';
+import { MessageSquare, ChevronRight, Clock, User, Edit, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
@@ -14,11 +13,14 @@ interface ForumThreadProps {
     excerpt: string;
     category: string;
     profiles: { username: string; avatar_url: string | null }[];
+    user_id?: string; // Add user_id to identify the poster
   };
   index: number;
+  style?: React.CSSProperties;
+  currentUserId?: string; // Add current user ID to check if user is the poster
 }
 
-const ForumThread = ({ thread, index }: ForumThreadProps) => {
+const ForumThread = ({ thread, index, style, currentUserId }: ForumThreadProps) => {
   const [rotation, setRotation] = useState({ x: 0, y: 0 });
   
   // 3D card effect on mouse move
@@ -90,21 +92,18 @@ const ForumThread = ({ thread, index }: ForumThreadProps) => {
     }
   };
 
+  // Check if current user is the poster
+  const isAuthor = currentUserId && thread.user_id && currentUserId === thread.user_id;
+
   return (
-    <Link 
-      to={`/forum/thread/${thread.id}`}
-      className="block group"
-      style={{
-        opacity: 0,
-        transform: 'translateY(10px)',
-        animation: `fade-in 0.3s ease forwards ${animationDelay}`,
-      }}
-    >
+    <div className="relative block group">
       <div 
         className="card-3d glass rounded-lg overflow-hidden transition-all duration-300 hover:shadow-lg group-hover:translate-x-1 border border-gray-100"
         style={{
           transform: `perspective(1000px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
-          transition: 'transform 0.2s ease-out'
+          transition: 'transform 0.2s ease-out',
+          opacity: 0,
+          animation: `fade-in 0.3s ease forwards ${animationDelay}`,
         }}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
@@ -114,7 +113,35 @@ const ForumThread = ({ thread, index }: ForumThreadProps) => {
             <h3 className="font-medium text-lg text-gray-900 group-hover:text-blue-600 transition-colors">
               {thread.title}
             </h3>
-            <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-500 transition-all transform group-hover:translate-x-1" />
+            <div className="flex items-center">
+              {isAuthor && (
+                <div className="flex space-x-2 mr-2">
+                  <Link 
+                    to={`/forum/edit/${thread.id}`}
+                    onClick={(e) => e.stopPropagation()}
+                    className="p-1.5 rounded-full bg-blue-50 text-blue-500 hover:bg-blue-100 hover:text-blue-700 transition-colors"
+                    title="Edit thread"
+                  >
+                    <Edit className="w-4 h-4" />
+                  </Link>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (window.confirm('Are you sure you want to delete this thread?')) {
+                        // Add delete functionality here
+                        console.log('Delete thread:', thread.id);
+                      }
+                    }}
+                    className="p-1.5 rounded-full bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-700 transition-colors"
+                    title="Delete thread"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+              <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-500 transition-all transform group-hover:translate-x-1" />
+            </div>
           </div>
           
           {thread.category && (
@@ -151,8 +178,15 @@ const ForumThread = ({ thread, index }: ForumThreadProps) => {
           </div>
         </div>
       </div>
-    </Link>
+      
+      <Link 
+        to={`/forum/thread/${thread.id}`}
+        className="absolute inset-0 z-0"
+        aria-label={`View thread: ${thread.title}`}
+      />
+    </div>
   );
 };
 
 export default ForumThread;
+

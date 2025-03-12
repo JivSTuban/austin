@@ -9,7 +9,7 @@ const PrivacyPolicy = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar />
+    
       <div className="flex-grow pt-28 pb-16 px-6">
         <div className="max-w-4xl mx-auto prose prose-blue">
           <h1>Privacy Policy</h1>
@@ -85,7 +85,7 @@ const PrivacyPolicy = () => {
           </p>
         </div>
       </div>
-      <Footer />
+    
     </div>
   );
 };

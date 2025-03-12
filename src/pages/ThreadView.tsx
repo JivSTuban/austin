@@ -158,13 +158,13 @@ const ThreadView = () => {
             <div className="space-y-4">
               <div className="flex items-center space-x-4">
                 <Avatar className="w-10 h-10">
-                  <AvatarImage src={thread.profiles.avatar_url || undefined} />
+                  <AvatarImage src={thread.profiles?.avatar_url || undefined} />
                   <AvatarFallback>
-                    {thread.profiles.username?.charAt(0).toUpperCase()}
+                    {thread.profiles?.username?.charAt(0).toUpperCase() || 'U'}
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <div className="font-medium">{thread.profiles.username}</div>
+                  <div className="font-medium">{thread.profiles?.username || 'Anonymous'}</div>
                   <div className="text-sm text-gray-500 flex items-center">
                     <Clock className="w-3 h-3 mr-1" />
                     {formatDate(thread.date)}

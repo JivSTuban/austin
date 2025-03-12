@@ -163,7 +163,6 @@ const [filteredReviews, setFilteredReviews] = useState<ProcessedReview[]>([]);
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar />
       <main className="flex-grow container mx-auto px-4 py-8 mt-16">
         <div className="mb-8">
           <button
@@ -299,7 +298,6 @@ const [filteredReviews, setFilteredReviews] = useState<ProcessedReview[]>([]);
           )}
         </div>
       </main>
-      <Footer />
     </div>
   );
 };

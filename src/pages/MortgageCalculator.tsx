@@ -389,7 +389,7 @@ const MortgageCalculator = () => {
   }, [calculateRehabMetrics]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 pt-16">
+    <div className="min-h-screen  pt-16">
       <Navbar />
       
       <main className="container mx-auto px-4 py-12">

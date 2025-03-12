@@ -1,0 +1,114 @@
+/* ProfileCard.css */
+.profile-card-container {
+  perspective: 1000px;
+  width: 1000px;
+  height: 500px;
+  margin: 0 auto;
+}
+
+.profile-card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.8s;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.profile-card.flipped {
+  transform: rotateY(180deg);
+}
+
+.profile-card-front,
+.profile-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.profile-card-back {
+  transform: rotateY(180deg);
+}
+
+.card-video {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+.profile-content,
+.profile-details {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 20px;
+  color: white;
+  text-align: center;
+}
+
+.profile-initials {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #F08A5D;
+  color: #1b2232;
+  border-radius: 50%;
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.profile-name {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 10px 0 5px;
+  color: white;
+}
+
+.profile-title {
+  font-size: 16px;
+  color: #F08A5D;
+  margin-bottom: 15px;
+}
+
+.contact-info {
+  margin-top: 20px;
+  width: 100%;
+}
+
+.profile-email,
+.profile-phone {
+  margin: 5px 0;
+  font-size: 14px;
+  color: white;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .profile-card-container {
+    width: 350px;
+    height: 350px;
+  }
+  
+  .profile-initials {
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+  }
+  
+  .profile-name {
+    font-size: 20px;
+  }
+}

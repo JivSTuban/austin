@@ -1,0 +1,26 @@
+.property-slider-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.property-slider-container .cursor-pointer {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.property-view-button {
+  background-color: #F08A5D; /* Orange secondary color from the memory */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.property-view-button:hover {
+  background-color: #e67e4d;
+  transform: scale(1.05);
+}
