@@ -21,6 +21,7 @@ export default {
 		extend: {
 			fontFamily: {
 				sans: ['Inter var', 'SF Pro Display', 'system-ui', 'sans-serif'],
+				script: ['Allura', 'cursive'],
 			},
 			colors: {
 				// Custom color palette

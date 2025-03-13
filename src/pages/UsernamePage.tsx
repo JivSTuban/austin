@@ -24,7 +24,8 @@ const UsernamePage = () => {
 
     setIsSubmitting(true);
     try {
-      const { error } = await supabase
+
+      const { data, error } = await supabase
         .from('profiles')
         .update({ username: username.trim() })
         .eq('id', userId);
@@ -34,7 +35,9 @@ const UsernamePage = () => {
       }
 
       toast.success(`Username updated to ${username}!`);
+     
       navigate('/', { replace: true });
+     
     } catch (error) {
       console.error('Error updating username:', error);
       toast.error('Failed to update username', {

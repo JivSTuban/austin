@@ -343,21 +343,26 @@ const Forum = () => {
               filteredThreads.length > 0 ? (
                 <div className="space-y-4">
                   {filteredThreads.map((thread, index) => (
-                    <ForumThread
-                      key={`forum-thread-${thread.id}`}
+                    <ForumThread 
+                      key={thread.id} 
                       thread={{
                         id: thread.id,
                         title: thread.title,
-                        author: thread.profiles && Array.isArray(thread.profiles) && thread.profiles[0]?.username ? thread.profiles[0].username : 'Unknown', // Pass author's username with fallback
+                        author: thread.profiles?.[0]?.username,
                         date: thread.date,
-                        replies: thread.replies_count, // Pass replies count
+                        replies: thread.replies_count,
                         excerpt: thread.excerpt,
                         category: thread.category,
-                        profiles: thread.profiles && Array.isArray(thread.profiles) ? thread.profiles : [], // Pass the profiles array with fallback
-                        user_id: thread.author_id // Pass the author_id as user_id
+                        profiles: thread.profiles || [],
+                        author_id: thread.author_id
                       }}
                       index={index}
-                      currentUserId={user?.id} // Pass current user ID to check if user is the author
+                      onThreadDeleted={(threadId) => {
+                        // Filter out the deleted thread from state
+                        setFilteredThreads(prevThreads => 
+                          prevThreads.filter(t => t.id !== threadId)
+                        );
+                      }}
                     />
                   ))}
                 </div>
@@ -391,7 +396,7 @@ const Forum = () => {
         </div>
       </div>
       
-      <Footer />
+   
       
       {/* New discussion modal */}
       <NewDiscussionModal

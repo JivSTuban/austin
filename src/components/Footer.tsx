@@ -1,6 +1,5 @@
-
 import { Link } from 'react-router-dom';
-import { Facebook, Instagram, Linkedin, Mail, Phone } from 'lucide-react';
+import { Facebook, Instagram, Linkedin, Mail, Phone, Code } from 'lucide-react';
 import { useAgentData } from '@/hooks/useAgentData';
 
 const Footer = () => {
@@ -10,7 +9,7 @@ const Footer = () => {
   return (
     <footer className="bg-gradient-to-b from-transparent to-gray-50/60 pt-16 pb-8 px-6">
       <div className="max-w-6xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
           <div className="space-y-4">
             <h3 className="text-xl font-medium">{agent?.name}</h3>
             <p className="text-gray-600 max-w-sm">
@@ -18,7 +17,7 @@ const Footer = () => {
             </p>
             <div className="flex space-x-4 pt-2">
               <a 
-                href="https://facebook.com" 
+                href="https://www.facebook.com/McClainTeamReafco" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-gray-500 hover:text-blue-600 transition-colors"
@@ -27,7 +26,7 @@ const Footer = () => {
                 <Facebook className="w-5 h-5" />
               </a>
               <a 
-                href="https://instagram.com" 
+                href="https://instagram.com/austinmcclain_realtor?igshid=MmVlMjlkMTBhMg==" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-gray-500 hover:text-blue-600 transition-colors"
@@ -36,7 +35,7 @@ const Footer = () => {
                 <Instagram className="w-5 h-5" />
               </a>
               <a 
-                href="https://linkedin.com" 
+                href="https://www.linkedin.com/in/austinmcclain1/" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-gray-500 hover:text-blue-600 transition-colors"
@@ -64,6 +63,45 @@ const Footer = () => {
                 <Link to="/forum" className="text-gray-600 hover:text-blue-600 transition-colors">
                   Forum
                 </Link>
+              </li>
+            </ul>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="text-xl font-medium">Credits</h3>
+            <ul className="space-y-2">
+              <li>
+                <a 
+                  href="https://jivstuban.me/" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center text-gray-600 hover:text-blue-600 transition-colors"
+                >
+                  <Code className="w-4 h-4 mr-2" />
+                  Jiv Tuban
+                </a>
+              </li>
+              <li>
+                <a 
+                  href="https://aldrinvitorillo.me/" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center text-gray-600 hover:text-blue-600 transition-colors"
+                >
+                  <Code className="w-4 h-4 mr-2" />
+                  Aldrin Vitorillo
+                </a>
+              </li>
+              <li>
+                <a 
+                  href="http://rotosystems.net/?" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center text-gray-600 hover:text-blue-600 transition-colors"
+                >
+                  <Code className="w-4 h-4 mr-2" />
+                  rotoststems.net
+                </a>
               </li>
             </ul>
           </div>

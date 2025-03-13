@@ -79,6 +79,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     await supabase.auth.signOut();
+    toast.success("Successfully signed out", {
+      description: "You have been logged out of your account"
+    });
   };
 
   const value = {
