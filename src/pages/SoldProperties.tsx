@@ -4,13 +4,14 @@ import SoldPropertyCard from '@/components/SoldPropertyCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, Search, Home, RefreshCw } from 'lucide-react';
+import { Loader2, Search, Home, RefreshCw, Calendar } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 const SoldProperties: React.FC = () => {
   const [selectedCity, setSelectedCity] = useState<string | undefined>(undefined);
+  const [selectedYear, setSelectedYear] = useState<string | undefined>(undefined);
   const [searchQuery, setSearchQuery] = useState('');
-  
+
   const { 
     properties, 
     isLoading, 
@@ -18,31 +19,37 @@ const SoldProperties: React.FC = () => {
     retry,
     retryCount,
     maxRetries
-  } = useSoldProperties(selectedCity);
+  } = useSoldProperties();
 
   // Get unique cities for the filter dropdown
   const uniqueCities = Array.from(
     new Set(properties.map(property => property.city))
   ).sort();
 
-  // Filter properties based on search query
+  // Get unique years for the filter dropdown
+  const uniqueYears = Array.from(
+    new Set(properties.map(property => property.year))
+  ).sort((a, b) => b - a); // Sort years in descending order
+
+  // Filter properties based on search query, city, and year
   const filteredProperties = properties.filter(property => 
-    property.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    property.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    property.year.toString().includes(searchQuery)
+    (selectedCity ? property.city === selectedCity : true) &&
+    (selectedYear ? property.year.toString() === selectedYear : true) &&
+    (
+      property.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      property.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      property.year.toString().includes(searchQuery)
+    )
   );
 
   return (
-    <div className="container mx-auto py-8 px-4 md:px-6">
+    <div className="container mt-10 py-8 px-4 md:px-6 ">
       <div className="flex flex-col items-start gap-4 mb-8">
         <h1 className="text-3xl font-bold flex items-center gap-2">
           <Home className="h-8 w-8 text-[#F08A5D]" />
           <span>Sold Properties</span>
         </h1>
-        <p className="text-gray-600 max-w-3xl">
-          Browse through our database of sold properties in Austin and surrounding areas. 
-          Filter by city or use the search to find specific properties.
-        </p>
+      
       </div>
 
       {/* Filters and Search */}
@@ -69,16 +76,36 @@ const SoldProperties: React.FC = () => {
             <div className="w-full md:w-64">
               <Select
                 value={selectedCity}
-                onValueChange={(value) => setSelectedCity(value || undefined)}
+                onValueChange={(value) => setSelectedCity(value === "all" ? undefined : value)}
               >
                 <SelectTrigger>
+                  <Home className="h-4 w-4 mr-2 text-gray-500" />
                   <SelectValue placeholder="Filter by city" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Cities</SelectItem>
+                  <SelectItem value="all">All Cities</SelectItem>
                   {uniqueCities.map((city) => (
                     <SelectItem key={city} value={city}>
                       {city}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="w-full md:w-64">
+              <Select
+                value={selectedYear}
+                onValueChange={(value) => setSelectedYear(value === "all" ? undefined : value)}
+              >
+                <SelectTrigger>
+                  <Calendar className="h-4 w-4 mr-2 text-gray-500" />
+                  <SelectValue placeholder="Filter by year" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Years</SelectItem>
+                  {uniqueYears.map((year) => (
+                    <SelectItem key={year} value={year.toString()}>
+                      {year}
                     </SelectItem>
                   ))}
                 </SelectContent>

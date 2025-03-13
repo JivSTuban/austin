@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Home, MessageCircle, Star, Building, MapPin, Key } from 'lucide-react';
 import Navbar from '@/components/Navbar';
@@ -10,8 +10,11 @@ import { cn } from '@/lib/utils';
 import { useAgentData } from '@/hooks/useAgentData';
 import { HoverButton } from "@/components/ui/hover-button";
 
+import { Parallax, ParallaxLayer } from '@react-spring/parallax'
+
 
 const Index = () => {
+  const parallaxRef = useRef(null);
   const { agent, reviews } = useAgentData('X1-ZUtpaayyyrapzd_82rpg');
   const [typedText, setTypedText] = useState('');
   const fullText = "Your Trusted Real Estate Expert";
@@ -107,255 +110,228 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-     
-
-      {/* Hero Section */}
-      <section className="pt-28 pb-16 px-6 relative overflow-hidden">
-        {/* Background gradient */}
-        <div className="absolute inset-0 bg-gradient-radial from-blue-50/30 to-transparent opacity-70"></div>
+      <Parallax ref={parallaxRef} pages={2.3} className="relative">
+        {/* Background Image 1 (2.png) */}
+        <ParallaxLayer
+          offset={0}
+          speed={0.3}
+          factor={3}
+          style={{
+            backgroundImage: 'url(/indexImg/2.png)',
+            backgroundSize: '100%',
+            marginTop: '3%',
+            backgroundPosition: 'center top',
+            backgroundRepeat: 'no-repeat',
+            zIndex: 0,
+          }}
+        />
         
-        {/* Floating elements */}
-        <div className={`absolute inset-0 pointer-events-none transition-opacity duration-1000 ${showIcons ? 'opacity-100' : 'opacity-0'}`}>
-          {/* Top left floating icon */}
-          <div className="absolute top-[15%] left-[10%] floating-bounce" style={{ animationDelay: '0.2s' }}>
-            <div className="bg-blue-100 p-3 rounded-full shadow-lg transform transition-transform duration-300 hover:scale-110 cursor-pointer">
-              <Building className="w-6 h-6 text-blue-600" />
-            </div>
-          </div>
-          
-          {/* Top right floating icon */}
-          <div className="absolute top-[25%] right-[15%] floating-pulse" style={{ animationDelay: '0.5s' }}>
-            <div className="bg-green-100 p-3 rounded-full shadow-lg transform transition-transform duration-300 hover:scale-110 cursor-pointer">
-              <MapPin className="w-6 h-6 text-green-600" />
-            </div>
-          </div>
-          
-          {/* Bottom left floating icon */}
-          <div className="absolute bottom-[20%] left-[20%] floating-wave" style={{ animationDelay: '0.8s' }}>
-            <div className="bg-amber-100 p-3 rounded-full shadow-lg transform transition-transform duration-300 hover:scale-110 cursor-pointer">
-              <Key className="w-6 h-6 text-amber-600" />
-            </div>
-          </div>
-          
-          {/* Bottom right floating icon */}
-          <div className="absolute bottom-[15%] right-[10%] floating-orbit" style={{ animationDelay: '1.1s' }}>
-            <div className="bg-purple-100 p-3 rounded-full shadow-lg transform transition-transform duration-300 hover:scale-110 cursor-pointer">
-              <Home className="w-6 h-6 text-purple-600" />
-            </div>
-          </div>
-          
-          {/* Additional floating icons */}
-          <div className="absolute top-[45%] left-[25%] floating-pulse" style={{ animationDelay: '1.4s' }}>
-            <div className="bg-pink-100 p-3 rounded-full shadow-lg transform transition-transform duration-300 hover:scale-110 cursor-pointer">
-              <Star className="w-6 h-6 text-pink-600" />
-            </div>
-          </div>
-          
-          <div className="absolute top-[35%] right-[30%] floating-bounce" style={{ animationDelay: '1.7s' }}>
-            <div className="bg-indigo-100 p-3 rounded-full shadow-lg transform transition-transform duration-300 hover:scale-110 cursor-pointer">
-              <MessageCircle className="w-6 h-6 text-indigo-600" />
-            </div>
-          </div>
+        {/* Background Image 2 (3.png) */}
+        <ParallaxLayer
+          offset={0}
+          speed={0.2}
+          factor={3.5}
+          style={{
+            backgroundImage: 'url(/indexImg/name.svg)',
+            backgroundSize: '95%',
+            marginTop: '5%',
+            backgroundPosition: 'top',
+            backgroundRepeat: 'no-repeat',
+            zIndex: 0,
+          }}
+
+        >
+        <div className="absolute inset-0 pointer-events-none">
+       
         </div>
-        
-        <div className="max-w-6xl mx-auto text-center relative z-10">
-          <div className="mb-12">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight mb-4 relative">
-              <span className="inline-block relative">
-                {typedText}
-                <span className={`absolute right-[-8px] top-0 h-full w-[3px] bg-blue-600 ${typedText.length === fullText.length ? 'animate-cursor-blink' : ''}`}></span>
-              </span>
-            </h1>
-            
-            <p 
-              className={`text-xl text-gray-600 max-w-3xl mx-auto transition-all duration-500 ${showSubheading ? 'opacity-100 transform-none' : 'opacity-0 translate-y-4'}`}
-            >
-              Helping you find the perfect home with personalized service and local expertise
-            </p>
-          </div>
-
-          <div 
-            className={`transition-all duration-700 transform ${showProfileCard ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
-          >
-            <ProfileCard name="Austin McClain" email="austin@realestate.com" phone="(512) 555-1234" />
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="py-16 px-6 bg-gradient-to-b from-transparent to-gray-50/30">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <div
-              className="opacity-0 animate-fade-in"
-              style={{ animationDelay: '300ms', animationFillMode: 'forwards' }}
-            >
-             <button 
-              className="inline-flex items-center justify-center px-6 py-3 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
-              onClick={() => window.open('https://docs.google.com/forms/d/e/1FAIpQLSf3M-Z5b0mr6ObERDv_1GMyAd66k7ym80dcqjCCxHVmAbaLlA/viewform?usp=sf_link', '_blank')}
-             >
-              See How I Can Help!
-             </button>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                title: "Explore the Market",
-                description: "Get access to detailed market insights and property listings to find your perfect match.",
-                icon: Home,
-                color: "bg-blue-50 text-blue-600",
-                link: "/",
-                delay: 400
-              },
-              {
-                title: "Read Verified Reviews",
-                description: "See what clients say about their experience working with me on their real estate journey.",
-                icon: Star,
-                color: "bg-amber-50 text-amber-600",
-                link: "/reviews",
-                delay: 500
-              },
-              {
-                title: "Join the Community",
-                description: "Connect with other home buyers, share experiences, and get valuable advice in our forum.",
-                icon: MessageCircle,
-                color: "bg-green-50 text-green-600",
-                link: "/forum",
-                delay: 600
-              }
-            ].map((feature, index) => (
-              <div
-                key={feature.title}
-                className="glass p-6 rounded-xl transition-all duration-300 hover:shadow-md"
-                style={{
-                  opacity: 0,
-                  transform: 'translateY(20px)',
-                  animation: `fade-in 0.5s ease forwards ${feature.delay}ms`,
-                }}
-              >
-                <div className={cn("w-12 h-12 rounded-full flex items-center justify-center mb-4", feature.color)}>
-                  <feature.icon className="w-6 h-6" />
+        </ParallaxLayer>
+      
+        {/* Hero Section */}
+        <ParallaxLayer offset={0.99} speed={0.5} className="z-2">
+          <section className="pt-1 pb-16 px-2 relative overflow-hidden">
+            {/* Floating elements */}
+            <div className={`absolute inset-0 pointer-events-none transition-opacity duration-1000 ${showIcons ? 'opacity-100' : 'opacity-0'}`}>
+              {/* Top left floating icon */}
+              <div className="absolute top-[1%] left-[10%] floating-bounce" style={{ animationDelay: '0.2s' }}>
+                <div className="bg-blue-100 p-3 rounded-full shadow-lg transform transition-transform duration-300 hover:scale-110 cursor-pointer">
+                  <Building className="w-6 h-6 text-blue-600" />
                 </div>
-                <h3 className="text-xl font-medium mb-2">{feature.title}</h3>
-                <p className="text-gray-600 mb-4">{feature.description}</p>
-                <Link
-                  to={feature.link}
-                  className="inline-flex items-center text-blue-600 hover:text-blue-800 transition-colors"
+              </div>
+              
+              {/* Top right floating icon */}
+              <div className="absolute top-[25%] right-[15%] floating-pulse" style={{ animationDelay: '0.5s' }}>
+                <div className="bg-green-100 p-3 rounded-full shadow-lg transform transition-transform duration-300 hover:scale-110 cursor-pointer">
+                  <MapPin className="w-6 h-6 text-green-600" />
+                </div>
+              </div>
+              
+              {/* Bottom left floating icon */}
+              <div className="absolute bottom-[20%] left-[20%] floating-wave" style={{ animationDelay: '0.8s' }}>
+                <div className="bg-amber-100 p-3 rounded-full shadow-lg transform transition-transform duration-300 hover:scale-110 cursor-pointer">
+                  <Key className="w-6 h-6 text-amber-600" />
+                </div>
+              </div>
+              
+              {/* Bottom right floating icon */}
+              <div className="absolute bottom-[15%] right-[10%] floating-orbit" style={{ animationDelay: '1.1s' }}>
+                <div className="bg-purple-100 p-3 rounded-full shadow-lg transform transition-transform duration-300 hover:scale-110 cursor-pointer">
+                  <Home className="w-6 h-6 text-purple-600" />
+                </div>
+              </div>
+              
+              {/* Additional floating icons */}
+              <div className="absolute top-[45%] left-[25%] floating-pulse" style={{ animationDelay: '1.4s' }}>
+                <div className="bg-pink-100 p-3 rounded-full shadow-lg transform transition-transform duration-300 hover:scale-110 cursor-pointer">
+                  <Star className="w-6 h-6 text-pink-600" />
+                </div>
+              </div>
+              
+              <div className="absolute top-[35%] right-[30%] floating-bounce" style={{ animationDelay: '1.7s' }}>
+                <div className="bg-indigo-100 p-3 rounded-full shadow-lg transform transition-transform duration-300 hover:scale-110 cursor-pointer">
+                  <MessageCircle className="w-6 h-6 text-indigo-600" />
+                </div>
+              </div>
+            </div>
+           
+            <div className="max-w-6xl mx-auto text-center relative z-10">
+              <div className="mb-12">
+                <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+                  {typedText}
+                  <span className="animate-blink">|</span>
+                </h1>
+                <p 
+                  className={`text-xl text-gray-600 max-w-3xl mx-auto transition-all duration-500 ${showSubheading ? 'opacity-100 transform-none' : 'opacity-0 translate-y-4'}`}
                 >
-                  Learn more <ArrowRight className="w-4 h-4 ml-1" />
+                  Helping you find the perfect home with personalized service and local expertise
+                </p>
+              </div>
+
+              <div 
+                className={`transition-all duration-700 transform ${showProfileCard ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
+              >
+                <ProfileCard name="Austin McClain" email="austin@realestate.com" phone="(512) 555-1234" />
+              </div>
+            </div>
+            <div className="text-center mt-10 mb-12">
+                <div
+                  className="opacity-0 animate-fade-in"
+                  style={{ animationDelay: '300ms', animationFillMode: 'forwards' }}
+                >
+                 <button 
+                  className="inline-flex items-center justify-center px-6 py-3 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                  onClick={() => window.open('https://docs.google.com/forms/d/e/1FAIpQLSf3M-Z5b0mr6ObERDv_1GMyAd66k7ym80dcqjCCxHVmAbaLlA/viewform?usp=sf_link', '_blank')}
+                 >
+                  See How I Can Help!
+                </button>
+                </div>
+              </div>
+          </section>
+        </ParallaxLayer>
+
+        {/* Features Section */}
+        <ParallaxLayer offset={1.25} speed={0.2} className="z-50">
+          <section className="py-16 px-6">
+            <div className="max-w-6xl mx-auto">
+             
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
+                {/* Service 1 */}
+                <div 
+                  className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-xl transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
+                >
+                  <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center mb-6">
+                    <Home className="w-8 h-8 text-blue-600" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">Home Buying</h3>
+                  <p className="text-gray-600 mb-4">
+                    Find your dream home with personalized search, expert negotiation, and guidance through every step of the buying process.
+                  </p>
+                  <Link 
+                    to="/services" 
+                    className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium"
+                  >
+                    Learn more <ArrowRight className="w-4 h-4 ml-1" />
+                  </Link>
+                </div>
+
+                {/* Service 2 */}
+                <div 
+                  className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-xl transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
+                >
+                  <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mb-6">
+                    <Building className="w-8 h-8 text-green-600" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">Home Selling</h3>
+                  <p className="text-gray-600 mb-4">
+                    Maximize your home's value with strategic pricing, professional marketing, and skilled negotiation to ensure a smooth selling experience.
+                  </p>
+                  <Link 
+                    to="/services" 
+                    className="inline-flex items-center text-green-600 hover:text-green-800 font-medium"
+                  >
+                    Learn more <ArrowRight className="w-4 h-4 ml-1" />
+                  </Link>
+                </div>
+
+                {/* Service 3 */}
+                <div 
+                  className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-xl transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
+                >
+                  <div className="w-14 h-14 bg-amber-100 rounded-full flex items-center justify-center mb-6">
+                    <Star className="w-8 h-8 text-amber-600" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">Investment Properties</h3>
+                  <p className="text-gray-600 mb-4">
+                    Build your real estate portfolio with expert guidance on investment properties, market analysis, and long-term growth strategies.
+                  </p>
+                  <Link 
+                    to="/investor-package" 
+                    className="inline-flex items-center text-amber-600 hover:text-amber-800 font-medium"
+                  >
+                    Learn more <ArrowRight className="w-4 h-4 ml-1" />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </section>
+        </ParallaxLayer>
+
+        {/* Reviews Section */}
+        <ParallaxLayer offset={1.65} speed={0.1} className="z-10">
+          <section className="py-16 px-6">
+            <div className="max-w-6xl mx-auto">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">What My Clients Say</h2>
+                <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                  Don't just take my word for it. Here's what my clients have to say about their experience working with me.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+                {featuredReviews.map((review, index) => (
+                  <ReviewCard 
+                    key={review.id}
+                    review={review}
+                    index={index}
+                  />
+                ))}
+              </div>
+
+              <div className="text-center mt-12">
+                <Link 
+                  to="/reviews" 
+                  className="inline-flex items-center justify-center px-6 py-3 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                >
+                  View All Reviews <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-      {/* Featured Listings Section */}
-      <section className="py-16 px-6 ">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-semibold tracking-tight mb-4 text-austin-dark">
-              Featured Listings
-            </h2>
-            <p className="text-lg text-austin-dark/80 max-w-2xl mx-auto">
-              Explore our handpicked selection of premium properties across Austin
-            </p>
-          </div>
-          
-          <PropertySlider />
-          <div className="text-center mt-12">
-            <Link 
-              to="/listings" 
-              className="inline-flex items-center px-6 py-3 rounded-full bg-austin-blue text-austin-white hover:bg-austin-blue/90 transition-all"
-            >
-              View All Listings <ArrowRight className="w-4 h-4 ml-2" />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Reviews Section */}
-      <section className="py-16 px-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-semibold tracking-tight mb-4">
-              What Clients Say
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Read about the experiences of satisfied clients who found their dream homes
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {featuredReviews.map((review, index) => (
-              <ReviewCard key={review.id} review={review} index={index} />
-            ))}
-          </div>
-
-          <div className="text-center mt-10">
-            <Link
-              to="/reviews"
-              className="inline-flex items-center justify-center px-6 py-3 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
-            >
-              View All Reviews <ArrowRight className="w-4 h-4 ml-2" />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Contact Section */}
-      <section className="py-16 px-6 bg-gradient-to-b from-transparent to-blue-50/30">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-semibold tracking-tight mb-4">
-              Get in Touch
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Ready to start your real estate journey? Contact me today!
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
-            {[
-              {
-                title: "Email",
-                value: agent?.email,
-                href: `mailto:${agent?.email}`
-              },
-              {
-                title: "Phone",
-                value: agent?.phonecell,
-                href: `tel:${agent?.phonecell}`
-              },
-              {
-                title: "Zillow",
-                value: "Austin McClain",
-                href: "https://www.zillow.com/profile/awmcclain"
-              }
-            ].map((contact, index) => (
-              <a
-                key={contact.title}
-                href={contact.href}
-                className="card-3d glass p-6 rounded-xl text-center transition-all duration-500 hover:shadow-lg transform hover:scale-105"
-                style={{
-                  opacity: 0,
-                  transform: 'translateY(20px)',
-                  animation: `fade-in 0.5s ease-out forwards ${400 + index * 100}ms`
-                }}
-              >
-                <h3 className="text-gray-500 text-sm mb-2">{contact.title}</h3>
-                <p className="text-lg font-medium text-blue-600">{contact.value}</p>
-              </a>
-            ))}
-          </div>
-        </div>
-      </section>
-
-    
+            </div>
+          </section>
+        </ParallaxLayer>
+      </Parallax>
+     
     </div>
   );
 };
 
 export default Index;
-

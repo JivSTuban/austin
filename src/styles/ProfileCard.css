@@ -1,8 +1,8 @@
 /* ProfileCard.css */
 .profile-card-container {
   perspective: 1000px;
-  width: 1000px;
-  height: 500px;
+  width: 810px;
+  height: 400px;
   margin: 0 auto;
 }
 

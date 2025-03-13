@@ -60,6 +60,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                 autoPlay
                 playsInline
                 muted
+                loop
                 onTimeUpdate={(e) => {
                   const video = e.target as HTMLVideoElement;
                   if (video.currentTime >= 3) {

@@ -1,6 +1,6 @@
 import { supabase } from './supabase';
 
-const log = (...args: any[]) => console.log('[ForumHelpers]', ...args);
+const log = (...args: unknown[]) => console.log('[ForumHelpers]', ...args);
 
 export const ensureProfile = async (userId: string, email: string | undefined, avatarUrl: string | undefined) => {
   log('Ensuring profile exists:', { userId, email });
@@ -84,6 +84,110 @@ export const createForumThread = async (
     };
   } catch (error) {
     log('Error in createForumThread:', error);
+    throw error;
+  }
+};
+
+export const updateForumThread = async (
+  threadId: number,
+  userId: string,
+  data: {
+    title: string;
+    content: string;
+    category: string;
+  }
+) => {
+  log('Updating forum thread:', { threadId, userId, data });
+
+  try {
+    // First check if user owns this thread
+    log('Checking thread ownership');
+    const { data: thread, error: getError } = await supabase
+      .from('forum_threads')
+      .select('author_id')
+      .eq('id', threadId)
+      .single();
+
+    if (getError) {
+      log('Error checking thread ownership:', getError);
+      console.error('Full error details:', JSON.stringify(getError));
+      throw new Error('Failed to verify thread ownership');
+    }
+
+    log('Thread data retrieved:', thread);
+
+    if (!thread) {
+      log('Thread not found');
+      throw new Error('Thread not found');
+    }
+
+    if (thread.author_id !== userId) {
+      log('Unauthorized update attempt. Thread author_id:', thread.author_id, 'User ID:', userId);
+      throw new Error('You do not have permission to update this thread');
+    }
+
+    // Update the thread
+    log('Updating thread with data:', data);
+    const { error: updateError } = await supabase
+      .from('forum_threads')
+      .update({
+        title: data.title,
+        excerpt: data.content,
+        category: data.category
+        // Removed updated_at as it doesn't exist in the schema
+      })
+      .eq('id', threadId);
+
+    if (updateError) {
+      log('Thread update error:', updateError);
+      console.error('Full update error details:', JSON.stringify(updateError));
+      throw new Error('Failed to update thread');
+    }
+
+    log('Thread updated successfully');
+    return { success: true, threadId };
+  } catch (error) {
+    log('Error in updateForumThread:', error);
+    throw error;
+  }
+};
+
+export const deleteForumThread = async (threadId: number, userId: string) => {
+  log('Deleting forum thread:', { threadId, userId });
+
+  try {
+    // First check if user owns this thread
+    const { data: thread, error: getError } = await supabase
+      .from('forum_threads')
+      .select('author_id')
+      .eq('id', threadId)
+      .single();
+
+    if (getError) {
+      log('Error checking thread ownership:', getError);
+      throw new Error('Failed to verify thread ownership');
+    }
+
+    if (thread.author_id !== userId) {
+      log('Unauthorized delete attempt');
+      throw new Error('You do not have permission to delete this thread');
+    }
+
+    // Delete the thread
+    const { error: deleteError } = await supabase
+      .from('forum_threads')
+      .delete()
+      .eq('id', threadId);
+
+    if (deleteError) {
+      log('Thread deletion error:', deleteError);
+      throw new Error('Failed to delete thread');
+    }
+
+    log('Thread deleted successfully');
+    return { success: true };
+  } catch (error) {
+    log('Error in deleteForumThread:', error);
     throw error;
   }
 };

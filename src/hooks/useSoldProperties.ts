@@ -55,7 +55,7 @@ export const useSoldProperties = (city?: string): SoldPropertiesData => {
         console.log('Fetching sold properties for city:', city);
         // Build query
         let query = supabase
-          .from('soldProperties')
+          .from('soldproperties')
           .select();
         
         // Filter by city if provided
@@ -66,7 +66,7 @@ export const useSoldProperties = (city?: string): SoldPropertiesData => {
         // Execute query
         const { data, error: fetchError } = await query
           .order('year', { ascending: false });
-
+        console.log('Fetched properties:', data);
         if (fetchError) {
           throw fetchError;
         }

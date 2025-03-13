@@ -33,8 +33,24 @@ const AuthCallback = () => {
         console.log('Session in callback:', session);
 
         if (session?.user) {
-          // Redirect to username page to set username
-          navigate(`/username?id=${session.user.id}&email=${session.user.email}`, { replace: true });
+          // Check if user already has a username set in their profile
+          const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('username')
+            .eq('id', session.user.id)
+            .single();
+
+          if (profileError) {
+            console.error('Error fetching profile:', profileError);
+          }
+
+          // Only redirect to username page if user doesn't have a username or it's null
+          if (!profile || !profile.username) {
+            navigate(`/username?id=${session.user.id}&email=${session.user.email}`, { replace: true });
+          } else {
+            // User already has a username, redirect to home page
+            navigate('/', { replace: true });
+          }
         } else {
           throw new Error('No session established');
         }
