@@ -4,13 +4,15 @@ import SoldPropertyCard from '@/components/SoldPropertyCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, Search, Home, RefreshCw, Calendar } from 'lucide-react';
+import { Loader2, Search, Home, RefreshCw, Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 const SoldProperties: React.FC = () => {
   const [selectedCity, setSelectedCity] = useState<string | undefined>(undefined);
   const [selectedYear, setSelectedYear] = useState<string | undefined>(undefined);
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const propertiesPerPage = 9;
 
   const { 
     properties, 
@@ -41,6 +43,19 @@ const SoldProperties: React.FC = () => {
       property.year.toString().includes(searchQuery)
     )
   );
+
+  // Calculate pagination values
+  const totalPages = Math.ceil(filteredProperties.length / propertiesPerPage);
+  const startIndex = (currentPage - 1) * propertiesPerPage;
+  const endIndex = startIndex + propertiesPerPage;
+  const currentProperties = filteredProperties.slice(startIndex, endIndex);
+
+  // Handle page changes
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+    // Scroll to top of the properties grid
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <div className="container mt-10 py-8 px-4 md:px-6 ">
@@ -156,11 +171,106 @@ const SoldProperties: React.FC = () => {
           </div>
           
           {filteredProperties.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredProperties.map((property) => (
-                <SoldPropertyCard key={property.uuid} property={property} />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {currentProperties.map((property) => (
+                  <SoldPropertyCard key={property.uuid} property={property} />
+                ))}
+              </div>
+
+              {/* Pagination */}
+              {filteredProperties.length > propertiesPerPage && (
+                <div className="flex items-center justify-between mt-8">
+                  <div className="text-sm text-muted-foreground">
+                    Showing {startIndex + 1}-{Math.min(endIndex, filteredProperties.length)} of {filteredProperties.length} properties
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                      Previous
+                    </Button>
+                    <div className="flex items-center gap-1">
+                      {totalPages <= 5 ? (
+                        // If total pages is 5 or less, show all page numbers
+                        Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => (
+                          <Button
+                            key={pageNumber}
+                            variant={pageNumber === currentPage ? "outline" : "outline"}
+                            size="sm"
+                            onClick={() => handlePageChange(pageNumber)}
+                            className={`w-8 ${pageNumber === currentPage ? 'bg-[#F08A5D] text-white hover:bg-[#F08A5D] hover:text-white' : ''}`}
+                          >
+                            {pageNumber}
+                          </Button>
+                        ))
+                      ) : (
+                        // If more than 5 pages, show limited numbers with ellipsis
+                        <>
+                          <Button
+                            variant={currentPage === 1 ? "outline" : "outline"}
+                            size="sm"
+                            onClick={() => handlePageChange(1)}
+                            className={`w-8 ${currentPage === 1 ? 'bg-[#F08A5D] text-white hover:bg-[#F08A5D] hover:text-white' : ''}`}
+                          >
+                            1
+                          </Button>
+
+                          {currentPage > 3 && <span className="px-2 text-muted-foreground">...</span>}
+
+                          {Array.from({ length: totalPages }, (_, i) => i + 1)
+                            .filter(pageNumber => {
+                              if (currentPage <= 3) {
+                                return pageNumber > 1 && pageNumber < 5;
+                              } else if (currentPage >= totalPages - 2) {
+                                return pageNumber > totalPages - 4 && pageNumber < totalPages;
+                              }
+                              return pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1;
+                            })
+                            .map(pageNumber => (
+                              <Button
+                                key={pageNumber}
+                                variant={pageNumber === currentPage ? "outline" : "outline"}
+                                size="sm"
+                                onClick={() => handlePageChange(pageNumber)}
+                                className={`w-8 ${pageNumber === currentPage ? 'bg-[#F08A5D] text-white hover:bg-[#F08A5D] hover:text-white' : ''}`}
+                              >
+                                {pageNumber}
+                              </Button>
+                            ))}
+
+                          {currentPage < totalPages - 2 && (
+                            <span className="px-2 text-muted-foreground">...</span>
+                          )}
+
+                          <Button
+                            variant={currentPage === totalPages ? "outline" : "outline"}
+                            size="sm"
+                            onClick={() => handlePageChange(totalPages)}
+                            className={`w-8 ${currentPage === totalPages ? 'bg-[#F08A5D] text-white hover:bg-[#F08A5D] hover:text-white' : ''}`}
+                          >
+                            {totalPages}
+                          </Button>
+                        </>
+                      )}
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                    >
+                      Next
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </>
           ) : (
             <div className="flex flex-col items-center justify-center text-center p-12 border rounded-lg bg-gray-50">
               <Home className="h-12 w-12 text-gray-300 mb-4" />

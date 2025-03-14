@@ -13,7 +13,7 @@ const Footer = () => {
           <div className="space-y-4">
             <h3 className="text-xl font-medium">{agent?.name}</h3>
             <p className="text-gray-600 max-w-sm">
-              {agent?.description || 'Helping people find their dream homes in Ohio with expertise and dedication.'}
+              Helping people find their dream homes in Ohio with expertise and dedication.
             </p>
             <div className="flex space-x-4 pt-2">
               <a 
@@ -100,7 +100,7 @@ const Footer = () => {
                   className="flex items-center text-gray-600 hover:text-blue-600 transition-colors"
                 >
                   <Code className="w-4 h-4 mr-2" />
-                  rotoststems.net
+                  rotosystems.net
                 </a>
               </li>
             </ul>

@@ -1,8 +1,10 @@
 import React from 'react';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
-import { Home } from 'lucide-react';
+import { Home, MapPin, Calendar } from 'lucide-react';
 import { SoldProperty } from '@/hooks/useSoldProperties';
+import { motion } from "framer-motion";
+import { GlowingEffect } from '@/components/ui/glowing-effect';
 
 interface SoldPropertyCardProps {
   property: SoldProperty;
@@ -30,7 +32,6 @@ const SoldPropertyCard: React.FC<SoldPropertyCardProps> = ({ property }) => {
     const defaultState = 'oh'; // Default state code
     
     // Create the Zillow URL format similar to the example provided
-    // Example: https://www.zillow.com/b/505-e-temple-st-washington-court-house-oh-9QmMGN/
     const zillowUrl = `https://www.zillow.com/homes/${formattedAddress}-${formattedCity}-${defaultState}/`;
     
     // Open in a new tab
@@ -38,33 +39,60 @@ const SoldPropertyCard: React.FC<SoldPropertyCardProps> = ({ property }) => {
   };
 
   return (
-    <Card 
-      className="overflow-hidden transition-all duration-200 hover:shadow-lg cursor-pointer" 
+    <motion.div
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
       onClick={handleZillowRedirect}
+      className="min-h-[14rem] list-none"
     >
-      <CardHeader className="bg-[#1b2232] text-white p-4 flex flex-row items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Home className="h-5 w-5" />
-          <h3 className="font-semibold text-lg truncate">
-  {property.address.length > 30 ? property.address.slice(0, 30) + "..." : property.address}
-</h3>
-        </div>
-        <Badge className="bg-[#F08A5D] hover:bg-[#F08A5D]/90">{property.year}</Badge>
-      </CardHeader>
-      <CardContent className="p-4">
-        <div className="grid grid-cols-2 gap-2 text-sm">
-          <div className="flex flex-col">
-            <span className="text-gray-500">City</span>
-            <span className="font-medium">{property.city}</span>
+      <div className="relative h-full rounded-[1.25rem] border-[0.75px] border-border p-2 md:rounded-[1.5rem] md:p-3">
+        <GlowingEffect
+          spread={40}
+          glow={true}
+          disabled={false}
+          proximity={64}
+          inactiveZone={0.01}
+          borderWidth={3}
+        />
+        <div className="relative flex h-full flex-col justify-between gap-6 overflow-hidden rounded-xl border-[0.75px] bg-background p-6 shadow-sm dark:shadow-[0px_0px_27px_0px_rgba(45,45,45,0.3)] md:p-6">
+          <div className="relative flex flex-1 flex-col justify-between gap-3">
+            <div className="w-fit rounded-lg border-[0.75px] border-border bg-muted p-2">
+              <Home className="h-4 w-4 text-[#F08A5D]" />
+            </div>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="pt-0.5 text-xl leading-[1.375rem] font-semibold font-sans tracking-[-0.04em] md:text-2xl md:leading-[1.875rem] text-balance text-foreground truncate max-w-[300px]">
+                  {property.address}
+                </h3>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <MapPin className="h-4 w-4" />
+                    <span className="text-xs uppercase tracking-wider">Location</span>
+                  </div>
+                  <p className="text-sm font-medium text-foreground">
+                    {property.city}
+                  </p>
+                </div>
+                <div className="flex flex-col items-end gap-1">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <span className="text-xs uppercase tracking-wider">Sold</span>
+                    <Calendar className="h-4 w-4" />
+                  </div>
+                  <Badge 
+                    className="bg-[#F08A5D]/10 hover:bg-[#F08A5D]/20 text-[#F08A5D] border-[#F08A5D]/20"
+                  >
+                    {property.year}
+                  </Badge>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="flex flex-col">
-            <span className="text-gray-500">Added</span>
-            <span className="font-medium">{formatDate(property.date_added)}</span>
-          </div>
-         
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </motion.div>
   );
 };
 

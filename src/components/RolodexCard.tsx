@@ -1,34 +1,39 @@
 "use client"
 
-import type React from "react"
-
 import { useState } from "react"
+import { cn } from "@/lib/utils"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
+import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent } from "@/components/ui/card"
+import { Textarea } from "@/components/ui/textarea"
 import {
-  User,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog"
+import {
   Building2,
   Phone,
   Mail,
   Globe,
-  FileText,
   MapPin,
-  Tag,
   Calendar,
   RotateCw,
   Edit,
   Save,
+  X
 } from "lucide-react"
 import { useRolodex, RolodexContact } from "@/hooks/useRolodex"
 
-interface FlipCardProps {
+interface RolodexCardProps {
   initialData?: RolodexContact
-  primaryColor?: string
-  secondaryColor?: string
   onUpdate?: (updatedContact: RolodexContact) => void
+  className?: string
 }
 
 const defaultData: RolodexContact = {
@@ -46,16 +51,15 @@ const defaultData: RolodexContact = {
   last_updated: new Date().toISOString().split("T")[0],
 }
 
-export default function FlipCard({
+export default function RolodexCard({
   initialData = defaultData,
-  primaryColor = "#1b2232", 
-  secondaryColor = "#F08A5D", 
-  onUpdate
-}: FlipCardProps) {
-  const [isFlipped, setIsFlipped] = useState(false)
+  onUpdate,
+  className
+}: RolodexCardProps) {
+  const [isEditing, setIsEditing] = useState(false)
+  const [showDetails, setShowDetails] = useState(false)
   const [formData, setFormData] = useState<RolodexContact>({
     ...initialData,
-    // Ensure no null values for input fields
     name: initialData.name || "",
     company: initialData.company || "",
     number_1: initialData.number_1 || "",
@@ -81,10 +85,8 @@ export default function FlipCard({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log("Form submitted:", formData)
     
     if (formData.id) {
-      // Update existing contact
       const { id, ...updates } = formData
       const updatedContact = await updateContact(id, updates)
       
@@ -93,312 +95,332 @@ export default function FlipCard({
       }
     }
     
-    setIsFlipped(false)
+    setIsEditing(false)
+    setShowDetails(false)
   }
 
-  return (
-    <div className="card">
-      <div 
-        className={`card-inner ${isFlipped ? "flipped" : ""}`}
-        onClick={() => !isFlipped && setIsFlipped(true)}
-      >
-        {/* Front of card - Contact Display */}
-        <Card
-          className="card-front"
-          style={{ borderColor: primaryColor, backgroundColor: primaryColor }}
-        >
-          <CardContent className="pt-3 flex flex-col h-full w-full text-sm">
-            <div className="text-center mb-4">
-              <div
-                className="w-16 h-16 rounded-full mx-auto bg-white p-1 shadow-lg mb-2"
-                style={{ border: `3px solid ${primaryColor}` }}
-              >
-                <div
-                  className="w-full h-full rounded-full flex items-center justify-center text-xl font-bold"
-                  style={{ backgroundColor: primaryColor, color: "white" }}
-                >
-                  {formData.name
-                    .split(" ")
-                    .map((n) => n[0])
-                    .slice(0, 2)
-                    .join("")}
-                </div>
-              </div>
-              <h2 className="text-xl font-bold text-white">{formData.name || ""}</h2>
-              <p className="text-white/80 text-xs">{formData.category || ""}</p>
-            </div>
-
-            <div className="space-y-3 flex-grow text-white">
-              <div className="flex items-center gap-2">
-                <Building2 className="text-white/80 shrink-0" size={16} />
-                <div>
-                  <p className="font-medium">{formData.company || ""}</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Phone className="text-white/80 shrink-0" size={16} />
-                <div>
-                  <p>{formData.number_1 || ""}</p>
-                  {formData.number_2 && <p className="text-xs text-white/70">{formData.number_2 || ""}</p>}
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Mail className="text-white/80 shrink-0" size={16} />
-                <p className="truncate">{formData.email || ""}</p>
-              </div>
-
-              {formData.website && (
-                <div className="flex items-center gap-2">
-                  <Globe className="text-white/80 shrink-0" size={16} />
-                  <p className="truncate">{formData.website || ""}</p>
-                </div>
-              )}
-
-              <div className="flex items-center gap-2">
-                <MapPin className="text-white/80 shrink-0" size={16} />
-                <p>{formData.area || ""}</p>
-              </div>
-
-              {formData.notes && (
-                <div className="flex gap-2 mt-2">
-                  <FileText className="text-white/80 shrink-0" size={16} />
-                  <p className="text-xs text-white/80 line-clamp-2">{formData.notes || ""}</p>
-                </div>
-              )}
-            </div>
-
-            <div className="flex justify-between items-center text-xs text-white/70 mt-3 pt-2 border-t border-white/30">
-              <div className="flex items-center gap-1">
-                <Calendar size={12} />
-                <span>Added: {formData.date_added ? new Date(formData.date_added).toLocaleDateString() : ""}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <RotateCw size={12} />
-                <span>Updated: {formData.last_updated ? new Date(formData.last_updated).toLocaleDateString() : ""}</span>
-              </div>
-            </div>
-
-            <Button 
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsFlipped(true);
-              }} 
-              className="mt-2 py-1 h-8 text-xs bg-white text-black hover:bg-white/90"
-            >
-              <Edit size={14} className="mr-1" /> Edit Contact
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Back of card - Edit Form */}
-        {/* <Card
-          className="card-back"
-          style={{ borderColor: secondaryColor, backgroundColor: secondaryColor }}
-        >
-          <CardContent className="p-4 overflow-y-auto">
-            <form 
-              onSubmit={(e) => {
-                e.stopPropagation();
-                handleSubmit(e);
-              }} 
-              className="space-y-3 text-sm"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="grid grid-cols-1 gap-3">
-                <div className="space-y-1">
-                  <Label htmlFor="name" className="flex items-center gap-1 text-xs text-white">
-                    <User size={14} /> Name
-                  </Label>
-                  <Input
-                    id="name"
-                    name="name"
-                    value={formData.name || ""}
-                    onChange={handleChange}
-                    required
-                    className="border-white/30 h-8 text-sm bg-white/10 text-white placeholder:text-white/50"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <Label htmlFor="company" className="flex items-center gap-1 text-xs text-white">
-                    <Building2 size={14} /> Company
-                  </Label>
-                  <Input
-                    id="company"
-                    name="company"
-                    value={formData.company || ""}
-                    onChange={handleChange}
-                    required
-                    className="border-white/30 h-8 text-sm bg-white/10 text-white placeholder:text-white/50"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="space-y-1">
-                    <Label htmlFor="number_1" className="flex items-center gap-1 text-xs text-white">
-                      <Phone size={14} /> Primary Number
-                    </Label>
-                    <Input
-                      id="number_1"
-                      name="number_1"
-                      value={formData.number_1 || ""}
-                      onChange={handleChange}
-                      required
-                      className="border-white/30 h-8 text-sm bg-white/10 text-white placeholder:text-white/50"
-                    />
-                  </div>
-
-                  <div className="space-y-1">
-                    <Label htmlFor="number_2" className="flex items-center gap-1 text-xs text-white">
-                      <Phone size={14} /> Secondary
-                    </Label>
-                    <Input
-                      id="number_2"
-                      name="number_2"
-                      value={formData.number_2 || ""}
-                      onChange={handleChange}
-                      className="border-white/30 h-8 text-sm bg-white/10 text-white placeholder:text-white/50"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-1">
-                  <Label htmlFor="email" className="flex items-center gap-1 text-xs text-white">
-                    <Mail size={14} /> Email
-                  </Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    value={formData.email || ""}
-                    onChange={handleChange}
-                  
-                    className="border-white/30 h-8 text-sm bg-white/10 text-white placeholder:text-white/50"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <Label htmlFor="website" className="flex items-center gap-1 text-xs text-white">
-                    <Globe size={14} /> Website
-                  </Label>
-                  <Input
-                    id="website"
-                    name="website"
-                    value={formData.website || ""}
-                    onChange={handleChange}
-                    className="border-white/30 h-8 text-sm bg-white/10 text-white placeholder:text-white/50"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="space-y-1">
-                    <Label htmlFor="area" className="flex items-center gap-1 text-xs text-white">
-                      <MapPin size={14} /> Area
-                    </Label>
-                    <Input
-                      id="area"
-                      name="area"
-                      value={formData.area || ""}
-                      onChange={handleChange}
-                      required
-                      className="border-white/30 h-8 text-sm bg-white/10 text-white placeholder:text-white/50"
-                    />
-                  </div>
-
-                  <div className="space-y-1">
-                    <Label htmlFor="category" className="flex items-center gap-1 text-xs text-white">
-                      <Tag size={14} /> Category
-                    </Label>
-                    <Input
-                      id="category"
-                      name="category"
-                      value={formData.category || ""}
-                      onChange={handleChange}
-                      required
-                      className="border-white/30 h-8 text-sm bg-white/10 text-white placeholder:text-white/50"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-1">
-                  <Label htmlFor="notes" className="flex items-center gap-1 text-xs text-white">
-                    <FileText size={14} /> Notes
-                  </Label>
-                  <Textarea
-                    id="notes"
-                    name="notes"
-                    value={formData.notes || ""}
-                    onChange={handleChange}
-                    className="h-16 border-white/30 resize-none text-sm bg-white/10 text-white placeholder:text-white/50"
-                  />
-                </div>
-              </div>
-
-              <div className="flex justify-between pt-2 border-t border-white/30 mt-3">
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsFlipped(false);
-                  }} 
-                  className="h-7 text-xs bg-transparent border-white text-white hover:bg-white/20"
-                >
-                  Cancel
-                </Button>
-                <Button 
-                  type="submit" 
-                  className="h-7 text-xs bg-white text-black hover:bg-white/90"
-                >
-                  <Save size={14} className="mr-1" /> Save Contact
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card> */}
-      </div>
-      <style dangerouslySetInnerHTML={{
-        __html: `
-        .card {
-          width: 320px;
-          height: 520px;
-          perspective: 1000px;
-        }
-        
-        .card-inner {
-          width: 100%;
-          height: 100%;
-          position: relative;
-          transform-style: preserve-3d;
-          transition: transform 0.999s;
-          cursor: pointer;
-        }
-        
-        .card-inner.flipped {
-          transform: rotateY(180deg);
-        }
-        
-        .card-front,
-        .card-back {
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          backface-visibility: hidden;
-          border-radius: 10px;
-          overflow: hidden;
-        }
-        
-        .card-front {
-          transform: rotateY(0deg);
-        }
-        
-        .card-back {
-          transform: rotateY(180deg);
-        }
-        `
-      }} />
+  const DetailSection = ({ title, children }: { title: string; children: React.ReactNode }) => (
+    <div className="space-y-1.5">
+      <h4 className="text-sm font-medium text-muted-foreground">{title}</h4>
+      <div className="text-sm">{children}</div>
     </div>
+  )
+
+  return (
+    <>
+      <div
+        onClick={() => setShowDetails(true)}
+        className={cn(
+          "group flex flex-col rounded-lg border cursor-pointer",
+          "bg-gradient-to-b from-muted/50 to-muted/10",
+          "p-4 sm:p-6",
+          "hover:from-muted/60 hover:to-muted/20",
+          "transition-colors duration-300",
+          "relative w-full",
+          className
+        )}
+      >
+        <div className="flex flex-col sm:flex-row gap-6">
+          <Avatar className="h-16 w-16 shrink-0">
+            <AvatarFallback className="bg-primary text-primary-foreground text-lg">
+              {formData.name
+                .split(" ")
+                .map((n) => n[0])
+                .slice(0, 2)
+                .join("")}
+            </AvatarFallback>
+          </Avatar>
+          
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-4">
+              <h3 className="text-xl font-semibold truncate">{formData.name}</h3>
+            </div>
+            
+            <div className="space-y-4 text-base text-muted-foreground">
+              <p className="flex items-center gap-3 flex-wrap">
+                <span className="inline-flex items-center gap-2 shrink-0">
+                  <Building2 className="w-5 h-5 shrink-0" />
+                  <span className="font-medium">{formData.category}</span>
+                </span>
+                <span className="truncate">{formData.company}</span>
+              </p>
+              
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6">
+                <p className="flex items-center gap-3">
+                  <Phone className="w-5 h-5 shrink-0" />
+                  <span className="truncate">{formData.number_1}</span>
+                </p>
+                {formData.number_2 && (
+                  <p className="flex items-center gap-3 text-sm">
+                    <Phone className="w-4 h-4 shrink-0 opacity-70" />
+                    <span className="truncate">{formData.number_2}</span>
+                  </p>
+                )}
+              </div>
+              
+              <p className="flex items-center gap-3">
+                <Mail className="w-5 h-5 shrink-0" />
+                <span className="truncate">{formData.email}</span>
+              </p>
+              
+              {formData.website && (
+                <p className="flex items-center gap-3">
+                  <Globe className="w-5 h-5 shrink-0" />
+                  <span className="truncate">{formData.website}</span>
+                </p>
+              )}
+              
+              <p className="flex items-center gap-3">
+                <MapPin className="w-5 h-5 shrink-0" />
+                <span className="truncate">{formData.area}</span>
+              </p>
+            </div>
+            
+            {formData.notes && (
+              <div className="mt-4 text-sm text-muted-foreground">
+                <p className="line-clamp-2">{formData.notes}</p>
+              </div>
+            )}
+            
+            <div className="mt-4 pt-4 border-t flex flex-col sm:flex-row justify-between gap-2 text-xs text-muted-foreground">
+              <div className="flex items-center gap-1 shrink-0">
+                <Calendar className="w-3 h-3" />
+                Added: {new Date(formData.date_added).toLocaleDateString()}
+              </div>
+              <div className="flex items-center gap-1 shrink-0">
+                <RotateCw className="w-3 h-3" />
+                Updated: {new Date(formData.last_updated).toLocaleDateString()}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <Dialog open={showDetails} onOpenChange={setShowDetails}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          {isEditing ? (
+            <>
+              <DialogHeader>
+                <DialogTitle>Edit Contact</DialogTitle>
+                <DialogDescription>
+                  Make changes to the contact information below.
+                </DialogDescription>
+              </DialogHeader>
+
+              <form onSubmit={handleSubmit} className="grid gap-4 py-4">
+                <div className="grid gap-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="name">Name</Label>
+                    <Input
+                      id="name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                  
+                  <div className="grid gap-2">
+                    <Label htmlFor="company">Company</Label>
+                    <Input
+                      id="company"
+                      name="company"
+                      value={formData.company}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="number_1">Primary Phone</Label>
+                      <Input
+                        id="number_1"
+                        name="number_1"
+                        value={formData.number_1}
+                        onChange={handleChange}
+                        required
+                      />
+                    </div>
+                    
+                    <div className="grid gap-2">
+                      <Label htmlFor="number_2">Secondary Phone</Label>
+                      <Input
+                        id="number_2"
+                        name="number_2"
+                        value={formData.number_2}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="grid gap-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                  
+                  <div className="grid gap-2">
+                    <Label htmlFor="website">Website</Label>
+                    <Input
+                      id="website"
+                      name="website"
+                      value={formData.website}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="area">Area</Label>
+                      <Input
+                        id="area"
+                        name="area"
+                        value={formData.area}
+                        onChange={handleChange}
+                        required
+                      />
+                    </div>
+                    
+                    <div className="grid gap-2">
+                      <Label htmlFor="category">Category</Label>
+                      <Input
+                        id="category"
+                        name="category"
+                        value={formData.category}
+                        onChange={handleChange}
+                        required
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="grid gap-2">
+                    <Label htmlFor="notes">Notes</Label>
+                    <Textarea
+                      id="notes"
+                      name="notes"
+                      value={formData.notes}
+                      onChange={handleChange}
+                      className="h-20"
+                    />
+                  </div>
+                </div>
+
+                <DialogFooter>
+                  <Button type="button" variant="outline" onClick={() => setIsEditing(false)}>
+                    Cancel
+                  </Button>
+                  <Button type="submit">
+                    <Save className="w-4 h-4 mr-2" />
+                    Save Changes
+                  </Button>
+                </DialogFooter>
+              </form>
+            </>
+          ) : (
+            <>
+              <DialogHeader>
+                <div className="flex items-start gap-4">
+                  <Avatar className="h-16 w-16">
+                    <AvatarFallback className="text-lg bg-primary text-primary-foreground">
+                      {formData.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .slice(0, 2)
+                        .join("")}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="space-y-1">
+                    <DialogTitle className="text-2xl">{formData.name}</DialogTitle>
+                    <DialogDescription className="text-base">
+                      {formData.category} at {formData.company}
+                    </DialogDescription>
+                  </div>
+                </div>
+              </DialogHeader>
+
+              <div className="grid gap-6 py-4">
+                <div className="grid gap-4">
+                  <DetailSection title="Contact Information">
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <p className="flex items-center gap-2 text-base">
+                          <Phone className="w-4 h-4" />
+                          {formData.number_1}
+                        </p>
+                        {formData.number_2 && (
+                          <p className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <Phone className="w-4 h-4" />
+                            {formData.number_2}
+                          </p>
+                        )}
+                      </div>
+                      <div className="space-y-2">
+                        <p className="flex items-center gap-2 text-base">
+                          <Mail className="w-4 h-4" />
+                          <a href={`mailto:${formData.email}`} className="hover:underline">
+                            {formData.email}
+                          </a>
+                        </p>
+                        {formData.website && (
+                          <p className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <Globe className="w-4 h-4" />
+                            <a href={formData.website} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                              {formData.website}
+                            </a>
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </DetailSection>
+
+                  <DetailSection title="Location">
+                    <p className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4" />
+                      {formData.area}
+                    </p>
+                  </DetailSection>
+
+                  {formData.notes && (
+                    <DetailSection title="Notes">
+                      <p className="whitespace-pre-wrap">{formData.notes}</p>
+                    </DetailSection>
+                  )}
+
+                  <DetailSection title="Record Details">
+                    <div className="grid sm:grid-cols-2 gap-4 text-sm text-muted-foreground">
+                      <p className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4" />
+                        Added: {new Date(formData.date_added).toLocaleDateString()}
+                      </p>
+                      <p className="flex items-center gap-2">
+                        <RotateCw className="w-4 h-4" />
+                        Updated: {new Date(formData.last_updated).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </DetailSection>
+                </div>
+              </div>
+
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setShowDetails(false)}>
+                  Close
+                </Button>
+                <Button onClick={() => setIsEditing(true)}>
+                  <Edit className="w-4 h-4 mr-2" />
+                  Edit Contact
+                </Button>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }

@@ -1,38 +1,34 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Search, Filter, Star } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
-import ReviewCard from '@/components/ReviewCard';
+import { ArrowLeft, Search, Filter, Star, Plus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAgentData } from '@/hooks/useAgentData';
+import type { Review } from '@/components/ui/client-reviews';
+import { useAuth } from '@/lib/AuthContext';
+import { Button } from '@/components/ui/button';
+import ReviewForm from '@/components/ReviewForm';
+import { supabase } from '@/lib/supabase';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 interface RawReview {
-  reviewid: number;
-  reviewername: string;
-  reviewerscreenname: string;
-  rating: number;
-  comment: string;
+  reviewername: string | null;
+  reviewerscreenname: string | null;
+  rating: number | null;
+  comment: string | null;
   createdate: string;
-  workdescription: string;
-  localknowledge: number;
-  processexpertise: number;
-  responsiveness: number;
-  negotiationskills: number;
-  [key: string]: any;
+  workdescription: string | null;
+  localknowledge: number | null;
+  processexpertise: number | null;
+  responsiveness: number | null;
+  negotiationskills: number | null;
+  reviewerid: string | null;
 }
 
-const propertyTypes = ['All', 'Single Family', 'Multi-Family', 'Condo', 'Apartment', 'Other'];
-const buyerTypes = ['All', 'Buyer', 'Seller', 'Both', 'Other'];
-
-const Reviews = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterRating, setFilterRating] = useState<number | null>(null);
-  const [filterPropertyType, setFilterPropertyType] = useState<string | null>(null);
-  const [filterBuyerType, setFilterBuyerType] = useState<string | null>(null);
-  const { reviews } = useAgentData('X1-ZUtpaayyyrapzd_82rpg');
 interface ProcessedReview {
-  id: string | number;
+  id: string;
   author: string;
   rating: number;
   createdate: string;
@@ -44,34 +40,31 @@ interface ProcessedReview {
   processExpertise: number;
   responsiveness: number;
   negotiationSkills: number;
+  workDescription: string;
+  comment: string;
+  userId: string;
+  updatedAt?: string;
 }
 
-const [filteredReviews, setFilteredReviews] = useState<ProcessedReview[]>([]);
+const propertyTypes = ['All', 'Single Family', 'Multi-Family', 'Condo', 'Apartment', 'Other'];
+const buyerTypes = ['All', 'Buyer', 'Seller', 'Both', 'Other'];
+
+export default function Reviews() {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterRating, setFilterRating] = useState<number | null>(null);
+  const [filterPropertyType, setFilterPropertyType] = useState<string | null>(null);
+  const [filterBuyerType, setFilterBuyerType] = useState<string | null>(null);
+  const [filteredReviews, setFilteredReviews] = useState<ProcessedReview[]>([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingReview, setEditingReview] = useState<ProcessedReview | null>(null);
+  const { user, session } = useAuth();
+  const { reviews } = useAgentData('X1-ZUtpaayyyrapzd_82rpg');
 
-  // Extract property types from work descriptions
-  const getPropertyTypeFromDescription = (description: string) => {
-    if (!description) return 'Other';
-    const desc = description.toLowerCase();
-    if (desc.includes('single family')) return 'Single Family';
-    if (desc.includes('multiple occupancy')) return 'Multi-Family';
-    if (desc.includes('condo')) return 'Condo';
-    if (desc.includes('apartment')) return 'Apartment';
-    return 'Other';
-  };
-
-  const getBuyerTypeFromDescription = (description: string) => {
-    if (!description) return 'Other';
-    const desc = description.toLowerCase();
-    if (desc.startsWith('bought')) return 'Buyer';
-    if (desc.startsWith('sold')) return 'Seller';
-    if (desc.includes('bought and sold')) return 'Both';
-    return 'Other';
-  };
-
+  // Same useEffect and handlers from before...
   useEffect(() => {
     try {
       setIsLoading(true);
@@ -80,26 +73,22 @@ const [filteredReviews, setFilteredReviews] = useState<ProcessedReview[]>([]);
         return;
       }
 
-      console.log('Raw reviews:', reviews);
       let result = ((reviews as unknown) as RawReview[]).map(review => {
-        const propertyType = getPropertyTypeFromDescription(review.workdescription || '');
-        const buyerType = getBuyerTypeFromDescription(review.workdescription || '');
-        
-        // Parse the date and ensure it's in ISO format
-        let formattedDate = "";
-        try {
-          formattedDate = new Date(review.createdate).toISOString();
-          console.log('Review date:', review.createdate, 'Formatted:', formattedDate); // Debug log
-        } catch (e) {
-          console.error('Error parsing date:', e);
-          formattedDate = "2025-03-10T00:00:00.000Z"; // Fallback date
-        }
+        const propertyType = review.workdescription?.toLowerCase().includes('single family') ? 'Single Family' 
+          : review.workdescription?.toLowerCase().includes('condo') ? 'Condo'
+          : review.workdescription?.toLowerCase().includes('apartment') ? 'Apartment'
+          : 'Other';
 
+        const buyerType = review.workdescription?.toLowerCase().startsWith('bought') ? 'Buyer'
+          : review.workdescription?.toLowerCase().startsWith('sold') ? 'Seller'
+          : review.workdescription?.toLowerCase().includes('bought and sold') ? 'Both'
+          : 'Other';
+        
         return {
-          id: review.reviewid || `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          id: review.reviewerid || crypto.randomUUID(),
           author: review.reviewername || review.reviewerscreenname || "Anonymous",
           rating: review.rating || 0,
-          createdate: formattedDate,
+          createdate: review.createdate,
           title: review.workdescription || 'Review',
           content: review.comment || 'No comment provided',
           propertyType,
@@ -107,17 +96,20 @@ const [filteredReviews, setFilteredReviews] = useState<ProcessedReview[]>([]);
           localKnowledge: review.localknowledge || 0,
           processExpertise: review.processexpertise || 0,
           responsiveness: review.responsiveness || 0,
-          negotiationSkills: review.negotiationskills || 0
+          negotiationSkills: review.negotiationskills || 0,
+          userId: review.reviewerid || '',
+          comment: review.comment || '',
+          workDescription: review.workdescription || '',
+          updatedAt: undefined
         };
       });
       
-      // Apply filters
       if (searchTerm) {
         const lowercasedTerm = searchTerm.toLowerCase();
         result = result.filter(review =>
-          (review.title?.toLowerCase() || '').includes(lowercasedTerm) ||
-          (review.content?.toLowerCase() || '').includes(lowercasedTerm) ||
-          (review.author?.toLowerCase() || '').includes(lowercasedTerm)
+          review.title.toLowerCase().includes(lowercasedTerm) ||
+          review.content.toLowerCase().includes(lowercasedTerm) ||
+          review.author.toLowerCase().includes(lowercasedTerm)
         );
       }
       
@@ -133,7 +125,6 @@ const [filteredReviews, setFilteredReviews] = useState<ProcessedReview[]>([]);
         result = result.filter(review => review.buyerType === filterBuyerType);
       }
       
-      // Sort by date (newest first)
       result.sort((a, b) => new Date(b.createdate).getTime() - new Date(a.createdate).getTime());
       
       setFilteredReviews(result);
@@ -147,12 +138,97 @@ const [filteredReviews, setFilteredReviews] = useState<ProcessedReview[]>([]);
     }
   }, [reviews, searchTerm, filterRating, filterPropertyType, filterBuyerType]);
 
-  // Scroll to top on page load
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+  const hasUserReview = () => {
+    return filteredReviews.some(review => review.userId === user?.id);
+  };
 
-  // Reset all filters
+  const handleReviewSubmit = async (data: {
+    rating: number;
+    comment: string;
+    propertyType: string;
+    buyerType: string;
+    workDescription: string;
+  }) => {
+    if (!session?.user) {
+      console.error('No authenticated user');
+      return;
+    }
+
+    try {
+      const reviewData = {
+        reviewername: user?.user_metadata?.name || user?.email,
+        reviewerscreenname: user?.email,
+        rating: data.rating,
+        comment: data.comment,
+        createdate: new Date().toISOString(),
+        workdescription: data.workDescription,
+        localknowledge: data.rating,
+        processexpertise: data.rating,
+        responsiveness: data.rating,
+        negotiationskills: data.rating,
+        reviewerid: session.user.id,
+        updatedAt: new Date().toISOString()
+      };
+
+      if (editingReview) {
+        const { error: updateError } = await supabase
+          .from('reviews')
+          .update(reviewData)
+          .eq('reviewerid', editingReview.id);
+
+        if (updateError) throw updateError;
+        
+        setFilteredReviews(prev => prev.map(review =>
+          review.id === editingReview.id
+            ? { 
+                ...review,
+                rating: data.rating,
+                comment: data.comment,
+                propertyType: data.propertyType,
+                buyerType: data.buyerType,
+                workDescription: data.workDescription,
+                content: data.comment,
+                title: data.workDescription,
+                updatedAt: new Date().toISOString()
+              }
+            : review
+        ));
+      } else {
+        const { error: insertError } = await supabase
+          .from('reviews')
+          .insert([reviewData]);
+
+        if (insertError) throw insertError;
+        
+        const newReview: ProcessedReview = {
+          id: session.user.id,
+          author: reviewData.reviewername || "Anonymous",
+          rating: data.rating,
+          createdate: reviewData.createdate,
+          title: data.workDescription || "Review",
+          content: data.comment || "No comment provided",
+          propertyType: data.propertyType,
+          buyerType: data.buyerType,
+          localKnowledge: data.rating,
+          processExpertise: data.rating,
+          responsiveness: data.rating,
+          negotiationSkills: data.rating,
+          userId: session.user.id,
+          comment: data.comment || "No comment provided",
+          workDescription: data.workDescription || "Review",
+          updatedAt: reviewData.updatedAt
+        };
+        setFilteredReviews(prev => [newReview, ...prev]);
+      }
+
+      setIsFormOpen(false);
+      setEditingReview(null);
+    } catch (error) {
+      console.error('Error submitting review:', error);
+      setError('Failed to submit review. Please ensure all required fields are filled.');
+    }
+  };
+
   const resetFilters = () => {
     setSearchTerm('');
     setFilterRating(null);
@@ -161,6 +237,7 @@ const [filteredReviews, setFilteredReviews] = useState<ProcessedReview[]>([]);
     setIsFilterOpen(false);
   };
 
+  // Same JSX as before...
   return (
     <div className="min-h-screen flex flex-col">
       <main className="flex-grow container mx-auto px-4 py-8 mt-16">
@@ -178,6 +255,79 @@ const [filteredReviews, setFilteredReviews] = useState<ProcessedReview[]>([]);
           <h1 className="text-4xl font-bold">Client Reviews</h1>
           
           <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+            {session && !hasUserReview() && (
+              <>
+                {/* Desktop: Popover */}
+                <div className="hidden md:block">
+                  <Popover open={isFormOpen} onOpenChange={setIsFormOpen}>
+                    <PopoverTrigger asChild>
+                      <Button className="flex items-center gap-2">
+                        <Plus className="w-4 h-4" />
+                        Write a Review
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent 
+                      className="w-[600px] p-0" 
+                      align="end"
+                      side="bottom"
+                      sideOffset={8}
+                    >
+                      <div className="p-6">
+                        <h2 className="text-lg font-semibold mb-4">
+                          {editingReview ? 'Edit Review' : 'Write a Review'}
+                        </h2>
+                        <ReviewForm
+                          initialData={editingReview || undefined}
+                          onSubmit={handleReviewSubmit}
+                          onCancel={() => {
+                            setIsFormOpen(false);
+                            setEditingReview(null);
+                          }}
+                          isEditing={!!editingReview}
+                        />
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                {/* Mobile: Sheet */}
+                <div className="md:hidden">
+                  <Sheet open={isFormOpen} onOpenChange={setIsFormOpen}>
+                    <SheetTrigger asChild>
+                      <Button className="flex items-center gap-2 w-full">
+                        <Plus className="w-4 h-4" />
+                        Write a Review
+                      </Button>
+                    </SheetTrigger>
+                    <SheetContent 
+                      side="bottom" 
+                      className="h-[90vh] p-0"
+                      title={editingReview ? 'Edit Review' : 'Write a Review'}
+                      description="Submit your review of the property and service"
+                    >
+                      <SheetTitle className="p-6 pb-0 text-lg font-semibold">
+                        {editingReview ? 'Edit Review' : 'Write a Review'}
+                      </SheetTitle>
+                      <SheetDescription className="p-6 pt-2 pb-0 text-sm text-muted-foreground">
+                        Share your experience with the property and service
+                      </SheetDescription>
+                      <div className="p-6 pt-4 overflow-y-auto h-full">
+                        <ReviewForm
+                          initialData={editingReview || undefined}
+                          onSubmit={handleReviewSubmit}
+                          onCancel={() => {
+                            setIsFormOpen(false);
+                            setEditingReview(null);
+                          }}
+                          isEditing={!!editingReview}
+                        />
+                      </div>
+                    </SheetContent>
+                  </Sheet>
+                </div>
+              </>
+            )}
+            
             <div className="relative flex-grow sm:max-w-md">
               <input
                 type="text"
@@ -278,28 +428,55 @@ const [filteredReviews, setFilteredReviews] = useState<ProcessedReview[]>([]);
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="max-w-5xl mx-auto py-8">
           {isLoading ? (
-            [...Array(4)].map((_, index) => (
-              <div key={`skeleton-${index}`} className="animate-pulse">
-                <div className="h-64 bg-gray-200 rounded-lg"></div>
-              </div>
-            ))
-          ) : filteredReviews.length === 0 ? (
-            <div className="col-span-2 text-center py-12">
-              <p className="text-gray-500 text-lg">
-                No reviews found matching your criteria.
-              </p>
+            <div className="animate-pulse">
+              <div className="h-[640px] rounded-lg bg-gray-200"></div>
             </div>
           ) : (
-            filteredReviews.map((review: any) => (
-              <ReviewCard key={`review-${review.id}`} review={review} index={review.id} />
-            ))
+            <ScrollArea className="h-[640px] rounded-lg border">
+              <div className="grid grid-cols-2 gap-4 p-4">
+                {filteredReviews.map((review): Review => ({
+                  rating: review.rating,
+                  reviewer: review.author,
+                  roleReviewer: review.propertyType,
+                  review: review.content,
+                  date: new Date(review.updatedAt || review.createdate).toLocaleDateString()
+                })).map(review => (
+                  <article
+                    key={review.reviewer}
+                    className="flex flex-col gap-4 rounded-lg border bg-card p-4"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-1">
+                        <h3 className="font-semibold text-lg">{review.reviewer}</h3>
+                        <p className="text-sm text-muted-foreground">
+                          {review.roleReviewer} • {review.date}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            size={16}
+                            className={cn(
+                              "transition-colors",
+                              i < review.rating 
+                                ? "fill-yellow-400 text-yellow-400" 
+                                : "fill-gray-200 text-gray-200"
+                            )}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    <p className="text-pretty">{review.review}</p>
+                  </article>
+                ))}
+              </div>
+            </ScrollArea>
           )}
         </div>
       </main>
     </div>
   );
-};
-
-export default Reviews;
+}

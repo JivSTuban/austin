@@ -111,11 +111,6 @@ const HomeEstimateCalculator = () => {
       const result = generateComparables();
       setEstimateResult(result);
       setIsCalculating(false);
-      
-      toast({
-        title: "Estimate Complete",
-        description: "Your home value estimate has been calculated",
-      });
     }, 1500);
   }, [zipCode, generateComparables, toast]);
 

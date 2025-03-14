@@ -156,11 +156,6 @@ const MortgageCalculator = () => {
       // Generate amortization schedule
       generateAmortizationSchedule(principal, monthlyInterestRate, numberOfPayments, monthly);
     }
-
-    toast({
-      title: "Calculation complete",
-      description: "Your mortgage details have been calculated",
-    });
   }, [loanAmount, interestRate, loanTerm, downPayment, toast, generateAmortizationSchedule]);
 
   // Format currency
@@ -338,12 +333,7 @@ const MortgageCalculator = () => {
     setTotalRepairCosts(totalCosts);
     setSeventyPercentRule((arv * 0.7) - totalCosts);
     setProfitMargin(arv - totalCosts);
-
-    toast({
-      title: "Calculation complete",
-      description: "Your rehab calculations have been updated",
-    });
-  }, [arv, repairCosts, toast]);
+  }, [arv, repairCosts]);
 
   // Calculate selling costs
   const calculateSellingCosts = useCallback(() => {
@@ -363,13 +353,8 @@ const MortgageCalculator = () => {
     
     const proceeds = sellingPrice - remainingMortgage - totalCosts;
     setNetProceeds(proceeds);
-
-    toast({
-      title: "Calculation complete",
-      description: "Your home selling costs have been calculated",
-    });
   }, [sellingPrice, remainingMortgage, agentCommission, agentCommissionPercent, 
-      sellingConcessions, closingFees, taxes, toast, calculatePrepRepairCosts]);
+      sellingConcessions, closingFees, taxes, calculatePrepRepairCosts]);
 
   // Calculate on mount and when inputs change
   useEffect(() => {

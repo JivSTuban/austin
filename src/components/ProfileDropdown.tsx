@@ -52,7 +52,7 @@ const ProfileDropdown: FC = () => {
   if (!user) return null;
 
   return (
-    <div className="relative">
+    <div className="relative overflow-y-visible">
       <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="relative h-8 w-8 rounded-full">

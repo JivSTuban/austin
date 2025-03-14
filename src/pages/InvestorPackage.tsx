@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Building, TrendingUp, DollarSign, FileText, Map, BarChart, Download, ChevronDown, ChevronUp, Home, Users, Calculator, Contact } from 'lucide-react';
+import { Building, TrendingUp, DollarSign, FileText, Map, BarChart, Download, ChevronDown, ChevronUp, Home, Users, Calculator, Contact, ChevronLeft, ChevronRight } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -36,10 +36,12 @@ interface PropertyData {
 
 const InvestorPackage = () => {
   const [expandedProperty, setExpandedProperty] = useState<number | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState('Basement');
+  const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedArea, setSelectedArea] = useState('');
   const { contacts, isLoading, error } = useRolodex();
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const contactsPerPage = 4;
 
   // Extract unique categories from contacts
   const uniqueCategories = useMemo(() => {
@@ -63,6 +65,17 @@ const InvestorPackage = () => {
     );
   });
 
+  // Calculate pagination values
+  const totalPages = Math.ceil(filteredContacts.length / contactsPerPage);
+  const startIndex = (currentPage - 1) * contactsPerPage;
+  const endIndex = startIndex + contactsPerPage;
+  const currentContacts = filteredContacts.slice(startIndex, endIndex);
+
+  // Handle page changes
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
   const togglePropertyExpansion = (id: number) => {
     setExpandedProperty(expandedProperty === id ? null : id);
   };
@@ -80,22 +93,22 @@ const InvestorPackage = () => {
         </div>
 
         <div className="mb-16">
-          <Tabs defaultValue="rolodex" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 mb-8">
-              <TabsTrigger value="rolodex" className="text-sm sm:text-base">
-                <Contact className="w-4 h-4 mr-2" />
+          <Tabs defaultValue="rolodex" className="w-full h-full">
+            <TabsList className="grid w-full h-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 mb-8 px-2 pt-2 pb-2 bg-gray-100/80 rounded-lg">
+              <TabsTrigger value="rolodex" className="flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium transition-all data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm rounded-md hover:bg-white/50">
+                <Contact className="w-4 h-4" />
                 Rolodex
               </TabsTrigger>
-              <TabsTrigger value="market" className="text-sm sm:text-base">
-                <TrendingUp className="w-4 h-4 mr-2" />
+              <TabsTrigger value="market" className="flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium transition-all data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm rounded-md hover:bg-white/50">
+                <TrendingUp className="w-4 h-4" />
                 Market Analysis
               </TabsTrigger>
-              <TabsTrigger value="financing" className="text-sm sm:text-base">
-                <DollarSign className="w-4 h-4 mr-2" />
+              <TabsTrigger value="financing" className="flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium transition-all data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm rounded-md hover:bg-white/50">
+                <DollarSign className="w-4 h-4" />
                 Financing
               </TabsTrigger>
-              <TabsTrigger value="resources" className="text-sm sm:text-base">
-                <FileText className="w-4 h-4 mr-2" />
+              <TabsTrigger value="resources" className="flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium transition-all data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm rounded-md hover:bg-white/50">
+                <FileText className="w-4 h-4" />
                 Resources
               </TabsTrigger>
             </TabsList>
@@ -138,15 +151,16 @@ const InvestorPackage = () => {
                 </select>
               </div>
 
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {filteredContacts.length > 0 ? (
-                  filteredContacts.map((contact) => (
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-1 lg:grid-cols-2">
+                {currentContacts.length > 0 ? (
+                  currentContacts.map((contact) => (
                     <RolodexCard 
                       key={contact.id} 
                       initialData={contact} 
                       onUpdate={(updatedContact) => {
                         console.log('Contact updated:', updatedContact);
                       }}
+                      className="p-6 sm:p-8"
                     />
                   ))
                 ) : (
@@ -155,6 +169,105 @@ const InvestorPackage = () => {
                   </div>
                 )}
               </div>
+              
+              {filteredContacts.length > 0 && (
+                <div className="flex items-center justify-between mt-8">
+                  <div className="text-sm text-muted-foreground">
+                    Showing {startIndex + 1}-{Math.min(endIndex, filteredContacts.length)} of {filteredContacts.length} contacts
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                      Previous
+                    </Button>
+                    <div className="flex items-center gap-1">
+                      {totalPages <= 7 ? (
+                        // If total pages is 7 or less, show all page numbers
+                        Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => (
+                          <Button
+                            key={pageNumber}
+                            variant={pageNumber === currentPage ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => handlePageChange(pageNumber)}
+                            className="w-8"
+                          >
+                            {pageNumber}
+                          </Button>
+                        ))
+                      ) : (
+                        // If more than 7 pages, show limited numbers with ellipsis
+                        <>
+                          {/* First page */}
+                          <Button
+                            variant={currentPage === 1 ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => handlePageChange(1)}
+                            className="w-8"
+                          >
+                            1
+                          </Button>
+
+                          {/* Show ellipsis if not near the start */}
+                          {currentPage > 3 && (
+                            <span className="px-2 text-muted-foreground">...</span>
+                          )}
+
+                          {/* Pages around current page */}
+                          {Array.from({ length: totalPages }, (_, i) => i + 1)
+                            .filter(pageNumber => {
+                              if (currentPage <= 4) {
+                                return pageNumber > 1 && pageNumber < 6;
+                              } else if (currentPage >= totalPages - 3) {
+                                return pageNumber > totalPages - 5 && pageNumber < totalPages;
+                              }
+                              return pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1;
+                            })
+                            .map(pageNumber => (
+                              <Button
+                                key={pageNumber}
+                                variant={pageNumber === currentPage ? "default" : "outline"}
+                                size="sm"
+                                onClick={() => handlePageChange(pageNumber)}
+                                className="w-8"
+                              >
+                                {pageNumber}
+                              </Button>
+                            ))}
+
+                          {/* Show ellipsis if not near the end */}
+                          {currentPage < totalPages - 2 && (
+                            <span className="px-2 text-muted-foreground">...</span>
+                          )}
+
+                          {/* Last page */}
+                          <Button
+                            variant={currentPage === totalPages ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => handlePageChange(totalPages)}
+                            className="w-8"
+                          >
+                            {totalPages}
+                          </Button>
+                        </>
+                      )}
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                    >
+                      Next
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              )}
               
               <div className="flex justify-center mt-8">
                 <Button variant="outline" className="mr-4">

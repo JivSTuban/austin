@@ -1,120 +1,84 @@
-
-import { useState } from 'react';
-import { Star } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Star } from "lucide-react";
+import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 
 interface ReviewCardProps {
   review: {
-    id: string | number;
     author: string;
     rating: number;
     createdate: string;
-    title: string;
     content: string;
+    title: string;
     propertyType: string;
     buyerType: string;
-    localKnowledge: number;
-    processExpertise: number;
-    responsiveness: number;
-    negotiationSkills: number;
+    updatedAt?: string;
   };
   index: number;
 }
 
 const ReviewCard = ({ review, index }: ReviewCardProps) => {
-  const [rotation, setRotation] = useState({ x: 0, y: 0 });
-  const [isHovered, setIsHovered] = useState(false);
-  const [showDetails, setShowDetails] = useState(false);
-
-  // Get the display name
-  const displayName = review.author || "Anonymous";
-
-  // Format date from ISO string to readable format
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
-    return date.toLocaleDateString(undefined, options);
-  };
-
-  // Animation delay based on index for staggered effect
-  const animationDelay = `${100 + index * 50}ms`;
-
-  const RatingDetail = ({ label, rating }: { label: string; rating: number }) => (
-    <div className="flex items-center justify-between">
-      <span className="text-sm font-medium text-gray-700">{label}</span>
-      <div className="flex space-x-0.5">
-        {[...Array(5)].map((_, i) => (
-          <Star
-            key={`detail-star-${i}`}
-            className={cn(
-              "w-3.5 h-3.5",
-              i < rating ? "text-yellow-400 fill-yellow-400" : "text-gray-200"
-            )}
-          />
-        ))}
-      </div>
-    </div>
-  );
+  const formattedDate = new Date(review.createdate).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 
   return (
-    <div
+    <Card 
+      variant="lifted"
       className={cn(
-        "glass rounded-lg overflow-hidden transition-all duration-300",
-        isHovered ? "shadow-md translate-y-[-2px]" : "hover:shadow-sm"
+        "h-[400px] flex flex-col",
+        "relative overflow-hidden transition-all hover:shadow-lg",
+        "p-6 md:p-8 bg-background"
       )}
-      style={{
-        transform: 'translateY(20px)',
-        animation: `fade-in 0.6s ease-out forwards ${animationDelay}`,
-      }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="p-6">
-        <div className="flex justify-between items-start mb-">
-          <div className="flex-1 pr-4 ">
-            <p className="text-base font-semibold text-gray-900 mb-1 flex justify-between">
-              <span>{displayName}</span>
-              <span>
-              {[...Array(5)].map((_, i) => (
-              <Star
-                key={`star-${i}`}
-                className={cn(
-                  "w-4 h-4 inline-block",
-                  i < review.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-200"
-                )}
-              />
-            ))}
-              </span>
-
-
-            </p>
-            <p className="text-base leading-relaxed text-gray-700 mt-4 mb-3">{review.content}</p>
-            {review.title && review.title !== 'Review' && (
-              <p className="text-sm font-medium text-gray-600 mb-2">{review.title}</p>
-            )}
-            <p className="text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors tracking-wide">
-              {formatDate(review.createdate)}
-            </p>
+      <CardHeader className="flex justify-between items-start space-y-0">
+        <div>
+          <h3 className="font-semibold text-lg text-foreground mb-1">{review.author}</h3>
+          <div className="flex items-center gap-2">
+            <Badge variant="secondary" className="capitalize">
+              {review.propertyType}
+            </Badge>
+            <Badge variant="outline" className="capitalize">
+              {review.buyerType}
+            </Badge>
           </div>
         </div>
+        <div className="flex gap-1">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <Star
+              key={i}
+              size={16}
+              className={cn(
+                i < review.rating
+                  ? "fill-yellow-400 text-yellow-400"
+                  : "fill-muted text-muted"
+              )}
+            />
+          ))}
+        </div>
+      </CardHeader>
 
-        <button
-          onClick={() => setShowDetails(!showDetails)}
-          className="text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
-        >
-          {showDetails ? "Hide Details" : "Show Details"}
-        </button>
+      <CardContent className="flex-grow pt-0">
+        <p className="text-pretty text-base text-muted-foreground line-clamp-[8]">
+          {review.content}
+        </p>
+      </CardContent>
 
-        {showDetails && (
-          <div className="mt-4 pt-4 border-t border-gray-100 space-y-3">
-            <RatingDetail label="Local Knowledge" rating={review.localKnowledge} />
-            <RatingDetail label="Process Expertise" rating={review.processExpertise} />
-            <RatingDetail label="Responsiveness" rating={review.responsiveness} />
-            <RatingDetail label="Negotiation Skills" rating={review.negotiationSkills} />
-          </div>
-        )}
-      </div>
-    </div>
+      <CardFooter className="mt-auto pt-4 flex items-center justify-between border-t">
+        <p className="text-sm text-muted-foreground">
+          {review.updatedAt ? `Updated ${new Date(review.updatedAt).toLocaleDateString()}` : formattedDate}
+        </p>
+        <div className="flex items-center gap-2">
+          <Avatar className="h-8 w-8">
+            <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${review.author}`} />
+            <AvatarFallback>{review.author[0]}</AvatarFallback>
+          </Avatar>
+        </div>
+      </CardFooter>
+    </Card>
   );
 };
 
