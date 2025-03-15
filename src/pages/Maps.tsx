@@ -9,33 +9,19 @@ interface Location {
     lng: number;
   };
 }
+const rapidApiKey = import.meta.env.VITE_NEXT_PUBLIC_RAPIDAPI_KEY;
 
-// Sample locations from the KML file
-const locations: Location[] = [
+// Default locations to use while API data is loading or if API fails
+const defaultLocations: Location[] = [
   {
     name: "404 Wampler Ave, Dayton, OH 45405, USA",
     description: "A | Kettering - Popular suburban area",
-    coordinates: { lat: 39.8024017, lng: -84.211857 }
+    coordinates: { lat: 39.80234, lng: -84.2118587 }
   },
   {
     name: "Oakwood",
     description: "A | Oakwood - Upscale residential area",
     coordinates: { lat: 39.7234, lng: -84.1702 }
-  },
-  {
-    name: "Oregon District",
-    description: "A | Oregon District - Popular for bars and restaurants",
-    coordinates: { lat: 39.7591, lng: -84.1857 }
-  },
-  {
-    name: "Shroyer Park",
-    description: "A | Shroyer Park - Residential neighborhood",
-    coordinates: { lat: 39.7299, lng: -84.1547 }
-  },
-  {
-    name: "Woodbourne-Hyde Park",
-    description: "A | Woodbourne-Hyde Park - Residential area",
-    coordinates: { lat: 39.6389, lng: -84.1597 }
   }
 ];
 
@@ -43,6 +29,8 @@ const Maps = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredLocations, setFilteredLocations] = useState<Location[]>([]);
   const [showResults, setShowResults] = useState(false);
+  const [locations, setLocations] = useState<Location[]>(defaultLocations);
+  const [isLoading, setIsLoading] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   
   // Scroll to top on page load
@@ -67,13 +55,74 @@ const Maps = () => {
     }
   };
 
+  // Fetch location data from API
+  const fetchLocationFromAPI = async (address: string) => {
+    setIsLoading(true);
+    
+    try {
+      const url = new URL('https://google-map-places.p.rapidapi.com/maps/api/geocode/json');
+      url.searchParams.append('address', address);
+      url.searchParams.append('language', 'en');
+      url.searchParams.append('region', 'en');
+      
+      const options = {
+        method: 'GET',
+        headers: {
+          'x-rapidapi-key': rapidApiKey,
+          'x-rapidapi-host': 'google-map-places.p.rapidapi.com'
+        }
+      };
+      
+      const response = await fetch(url.toString(), options);
+      const data = await response.json();
+      
+      if (data.status === 'OK' && data.results.length > 0) {
+        const result = data.results[0];
+        
+        // Create a new location object from the API response
+        const newLocation: Location = {
+          name: result.formatted_address || address,
+          description: `Search result for: ${address}`,
+          coordinates: {
+            lat: result.geometry.location.lat,
+            lng: result.geometry.location.lng
+          }
+        };
+        console.log('New location:', newLocation.coordinates.lat, newLocation.coordinates.lng);
+        
+        // Add the new location to the locations array if it doesn't already exist
+        const locationExists = locations.some(loc => 
+          loc.name === newLocation.name || 
+          (loc.coordinates.lat === newLocation.coordinates.lat && 
+           loc.coordinates.lng === newLocation.coordinates.lng)
+        );
+        
+        if (!locationExists) {
+          const updatedLocations = [...locations, newLocation];
+          setLocations(updatedLocations);
+        }
+        
+        // Return the new location for immediate use
+        return newLocation;
+      } else {
+        console.error('No results found for address:', address);
+        return null;
+      }
+    } catch (error) {
+      console.error('Error fetching location:', error);
+      return null;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Handle location selection
   const handleLocationSelect = (location: Location) => {
     // Update the iframe URL to zoom to the selected location
     if (iframeRef.current) {
       // Create a new URL with zoom parameters
       const baseUrl = "https://www.google.com/maps/d/u/0/embed?mid=1A0dmA2i1Ptobe10tRuicZAba8bUN97I&ehbc=2E312F&noprof=1";
-      const zoomParam = `&ll=${location.coordinates.lat},${location.coordinates.lng}&z=15`;
+      const zoomParam = `&ll=${location.coordinates.lat},${location.coordinates.lng}&z=22`;
       iframeRef.current.src = baseUrl + zoomParam;
       
       // Clear search and hide results
@@ -83,10 +132,37 @@ const Maps = () => {
   };
 
   // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (searchTerm.trim() === '') {
+      return;
+    }
+    
+    // First check if the location already exists in our list
+    const existingLocation = locations.find(location => 
+      location.name.toLowerCase() === searchTerm.toLowerCase()
+    );
+    
+    if (existingLocation) {
+      handleLocationSelect(existingLocation);
+      return;
+    }
+    
+    // If we have filtered locations from the search, use the first one
     if (filteredLocations.length > 0) {
       handleLocationSelect(filteredLocations[0]);
+      return;
+    }
+    
+    // If no existing location is found, fetch from API
+    const newLocation = await fetchLocationFromAPI(searchTerm);
+    
+    if (newLocation) {
+      handleLocationSelect(newLocation);
+    } else {
+      // If API call fails, show an alert
+      alert('Could not find location. Please try a different search term.');
     }
   };
 
@@ -117,10 +193,18 @@ const Maps = () => {
               <button 
                 type="submit"
                 className="bg-blue-600 text-white px-6 py-3 rounded-r-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                disabled={isLoading}
               >
-                Search
+                {isLoading ? 'Searching...' : 'Search'}
               </button>
             </form>
+            
+            {/* Loading indicator */}
+            {isLoading && (
+              <div className="text-center py-4">
+                <p>Searching for location...</p>
+              </div>
+            )}
             
             {/* Search Results Dropdown */}
             {showResults && filteredLocations.length > 0 && (
