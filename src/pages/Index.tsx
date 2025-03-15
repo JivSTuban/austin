@@ -6,8 +6,8 @@ import Footer from '@/components/Footer';
 import ProfileCard from '@/components/ProfileCard';
 import ReviewCard from '@/components/ReviewCard';
 import { useAgentData } from '@/hooks/useAgentData';
-import { Parallax, ParallaxImage, FadeInWhenVisible } from '@/components/ui/parallax';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { ParallaxContainer, ParallaxImage, FadeInWhenVisible, useForegroundParallax } from '@/components/ui/parallax';
 
 const Index = () => {
   const { agent, reviews } = useAgentData('X1-ZUtpaayyyrapzd_82rpg');
@@ -71,61 +71,105 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Hero Section with Parallax */}
-      <div className="relative min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 overflow-hidden">
-        {/* Background Images with Parallax */}
-        <div className="absolute inset-0 z-0">
-          <ParallaxImage
-            src="/indexImg/2.png"
-            alt="Background"
-            className="absolute inset-0 opacity-60"
-            speed={0.3}
-          />
-          <Parallax className="absolute inset-0" speed={0.2} direction="down">
-            <div
-              className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-              style={{ backgroundImage: 'url(/indexImg/name.svg)', backgroundSize: '90%', marginBottom: '30%' }}
-            />
-          </Parallax>
-          <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-transparent" />
-        </div>
-
-        {/* Floating Elements with Motion */}
-        <div className={`absolute inset-0 pointer-events-none transition-opacity duration-1000 ${showIcons ? 'opacity-100' : 'opacity-0'}`}>
-          <motion.div 
-            className="absolute top-[20%] left-[10%]"
-            animate={{ y: [0, -15, 0] }}
-            transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
-          >
-            <div className="bg-blue-100 p-3 rounded-full shadow-lg transform transition-transform duration-300 hover:scale-110 cursor-pointer">
-              <Building className="w-6 h-6 text-blue-600" />
-            </div>
-          </motion.div>
-          <motion.div 
-            className="absolute top-[25%] right-[15%]"
-            animate={{ scale: [1, 1.1, 1] }}
-            transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
-          >
-            <div className="bg-green-100 p-3 rounded-full shadow-lg transform transition-transform duration-300 hover:scale-110 cursor-pointer">
-              <MapPin className="w-6 h-6 text-green-600" />
-            </div>
-          </motion.div>
-          <motion.div 
-            className="absolute bottom-[25%] right-[10%]"
-            animate={{ rotate: [0, 10, 0, -10, 0] }}
-            transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
-          >
-            <div className="bg-purple-100 p-3 rounded-full shadow-lg transform transition-transform duration-300 hover:scale-110 cursor-pointer">
-              <Home className="w-6 h-6 text-purple-600" />
-            </div>
-          </motion.div>
-        </div>
-
+      {/* Hero Section */}
+      <div className="relative h-[120vh] min-h-[800px] overflow-hidden">
         {/* Hero Content */}
-        <div className="relative z-10 flex flex-col justify-center items-center min-h-screen px-4 pt-28 pb-16">
-          <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{marginTop: '130%'}}></div>
-          <div className="text-center">
+        <div className="absolute inset-0 flex items-center justify-center">
+          {/* Background Container */}
+          <div className="absolute inset-0">
+            <motion.div
+              className="absolute inset-0 bg-gray-100"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              {/* Background Container with Parallax */}
+              <ParallaxContainer>
+                {(scrollProps) => (
+                  <>
+                    <motion.div 
+                      className="absolute inset-0"
+                      style={{
+                        backgroundImage: `url(${import.meta.env.BASE_URL || '/'}indexImg/2.png)`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        scale: scrollProps.backgroundScale,
+                        y: scrollProps.backgroundY
+                      }}
+                    />
+                    <motion.div 
+                      className="absolute inset-0 pointer-events-none"
+                      style={{
+                        backgroundImage: `url(${import.meta.env.BASE_URL || '/'}indexImg/name.svg)`,
+                        backgroundSize: '100%',
+                        backgroundPosition: 'center 25%',
+                        backgroundRepeat: 'no-repeat',
+                        filter: 'blur(3px)',
+                        opacity: scrollProps.watermarkOpacity,
+                        y: scrollProps.watermarkY
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-transparent" />
+                  </>
+                )}
+              </ParallaxContainer>
+            </motion.div>
+          </div>
+
+          {/* Foreground Logo */}
+          <div className="relative z-10 w-full">
+            <motion.div 
+              className="w-full max-w-5xl mx-auto px-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              style={{
+                ...useForegroundParallax()
+              }}
+              transition={{ duration: 1, delay: 0.3 }}
+            >
+              <motion.div 
+                className="relative w-full"
+                animate={{ y: [-5, 5] }}
+                transition={{
+                  repeat: Infinity,
+                  repeatType: "reverse",
+                  duration: 5,
+                  ease: "easeInOut"
+                }}
+              >
+                <img
+                  src={`${import.meta.env.BASE_URL || '/'}indexImg/name.svg`}
+                  alt="Austin McClain"
+                  className="w-full h-auto select-none opacity-0"
+                  style={{ filter: 'drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2))' }}
+                  loading="eager"
+                  decoding="async"
+                  onLoad={(e) => {
+                    e.currentTarget.classList.remove('opacity-0');
+                    e.currentTarget.classList.add('opacity-100', 'transition-opacity', 'duration-500');
+                  }}
+                  onError={(e) => {
+                    console.error('Failed to load logo');
+                    const parent = e.currentTarget.closest('div') as HTMLElement;
+                    if (parent) {
+                      parent.classList.add('hidden');
+                    }
+                  }}
+                />
+              </motion.div>
+            </motion.div>
+          </div>
+        </div>
+      </div>
+
+      {/* Content Section */}
+      <section className="min-h-screen py-24 px-6 relative overflow-hidden">
+        <div className="absolute inset-0 z-0" />
+        
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="text-center mb-16 pt-28">
             <motion.h1 
-              className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight drop-shadow-lg"
+              className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight"
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
@@ -134,7 +178,7 @@ const Index = () => {
               <span className="animate-blink">|</span>
             </motion.h1>
             <motion.p
-              className={`text-xl md:text-2xl text-white/90 max-w-3xl mx-auto transition-all duration-500 ${showSubheading ? 'opacity-100 transform-none' : 'opacity-0 translate-y-4'}`}
+              className={`text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto transition-all duration-500 ${showSubheading ? 'opacity-100 transform-none' : 'opacity-0 translate-y-4'}`}
               initial={{ opacity: 0 }}
               animate={{ opacity: showSubheading ? 1 : 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
@@ -168,21 +212,40 @@ const Index = () => {
               </button>
             </motion.div>
           </div>
-        </div>
-      </div>
 
-      {/* Featured Properties Section */}
-      <section className="py-24 px-6 bg-gray-50 relative overflow-hidden">
-        <Parallax className="absolute inset-0 z-0" speed={0.1} direction="down">
-          <div className="absolute inset-0 bg-gradient-to-b from-gray-100 to-gray-50 opacity-70"></div>
-        </Parallax>
-        
-        <div className="max-w-7xl mx-auto relative z-10">
-          <FadeInWhenVisible className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Featured Properties</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Discover exceptional properties in the most desirable locations
-            </p>
+          <FadeInWhenVisible>
+            <div className="text-center relative py-16">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: '100%' }}
+                transition={{ duration: 1, delay: 0.5 }}
+                className="absolute top-1/2 left-0 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"
+              />
+              <motion.div 
+                className="inline-block relative bg-gray-50 px-8"
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.8 }}
+              >
+                <div className="absolute -left-4 -top-4">
+                  <Home className="w-8 h-8 text-blue-600/20" />
+                </div>
+                <div className="absolute -right-4 -bottom-4">
+                  <Building className="w-8 h-8 text-blue-600/20" />
+                </div>
+                <h2 className="text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-800">
+                  Featured Properties
+                </h2>
+              </motion.div>
+              <motion.p 
+                className="text-xl text-gray-600 max-w-3xl mx-auto mt-6"
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.8, delay: 0.3 }}
+              >
+                Discover exceptional properties in the most desirable locations
+              </motion.p>
+            </div>
           </FadeInWhenVisible>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
@@ -232,51 +295,9 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Services Section */}
-      <section className="py-24 px-6 bg-white relative overflow-hidden">
-        <Parallax className="absolute inset-0 z-0" speed={0.15} direction="up">
-          <div className="absolute inset-0 bg-gradient-to-t from-gray-50 to-white opacity-70"></div>
-        </Parallax>
-        
-        <div className="max-w-7xl mx-auto relative z-10">
-          <FadeInWhenVisible className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">My Services</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Comprehensive real estate services tailored to your needs
-            </p>
-          </FadeInWhenVisible>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            {[
-              { icon: <Home className="w-10 h-10 text-blue-600" />, title: "Home Buying", description: "Find your dream home with personalized search, expert negotiation, and guidance through every step of the buying process.", link: "/services", color: "text-blue-600 hover:text-blue-800" },
-              { icon: <Building className="w-10 h-10 text-green-600" />, title: "Home Selling", description: "Maximize your home's value with strategic pricing, professional marketing, and skilled negotiation to ensure a smooth selling experience.", link: "/services", color: "text-green-600 hover:text-green-800" },
-              { icon: <Star className="w-10 h-10 text-amber-600" />, title: "Investment Properties", description: "Build your real estate portfolio with expert guidance on investment properties, market analysis, and long-term growth strategies.", link: "/investor-package", color: "text-amber-600 hover:text-amber-800" },
-            ].map((service, index) => (
-              <FadeInWhenVisible key={index} delay={index * 0.2}>
-                <div className="bg-white rounded-xl p-8 shadow-lg transform transition-all duration-300 hover:-translate-y-2 hover:shadow-xl h-full">
-                  <motion.div 
-                    className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-6"
-                    whileHover={{ rotate: 10, scale: 1.05 }}
-                  >
-                    {service.icon}
-                  </motion.div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-3">{service.title}</h3>
-                  <p className="text-gray-600 mb-4">{service.description}</p>
-                  <Link to={service.link} className={`inline-flex items-center ${service.color} font-medium`}>
-                    Learn more <ArrowRight className="w-4 h-4 ml-1" />
-                  </Link>
-                </div>
-              </FadeInWhenVisible>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Reviews Section */}
-      <section className="py-24 px-6 bg-gray-50 relative overflow-hidden">
-        <Parallax className="absolute inset-0 z-0" speed={0.1} direction="down">
-          <div className="absolute inset-0 bg-gradient-to-b from-white to-gray-50 opacity-70"></div>
-        </Parallax>
+      <section className="py-24 px-6 relative overflow-hidden">
+        <div className="absolute inset-0 z-0" />
         
         <div className="max-w-7xl mx-auto relative z-10">
           <FadeInWhenVisible className="text-center mb-16">
@@ -289,12 +310,14 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             {featuredReviews.map((review, index) => (
               <FadeInWhenVisible key={review.id} delay={index * 0.2}>
-                <motion.div 
-                  className="bg-white rounded-xl p-6 shadow-md border border-gray-100 h-full"
-                  whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" }}
-                >
-                  <ReviewCard review={review} index={index} />
-                </motion.div>
+                <div className="h-full">
+                  <motion.div 
+                    className="bg-white rounded-xl p-6 shadow-md border border-gray-100 h-full"
+                    whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" }}
+                  >
+                    <ReviewCard review={review} index={index} />
+                  </motion.div>
+                </div>
               </FadeInWhenVisible>
             ))}
           </div>
