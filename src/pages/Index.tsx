@@ -9,6 +9,8 @@ import {
   MapPin,
   Key,
   Search,
+  Phone,
+  X,
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -30,10 +32,54 @@ const Index = () => {
   const [showSubheading, setShowSubheading] = useState(false);
   const [showProfileCard, setShowProfileCard] = useState(false);
   const [showIcons, setShowIcons] = useState(false);
+  const [showFloatingButton, setShowFloatingButton] = useState(false);
+  const [showTestimonialPopup, setShowTestimonialPopup] = useState(false);
+  const [offerDays, setOfferDays] = useState(3);
+  const [offerHours, setOfferHours] = useState(12);
+  const [offerMinutes, setOfferMinutes] = useState(45);
 
   // Scroll to top on page load
   useEffect(() => {
     window.scrollTo(0, 0);
+
+    // Add scroll listener for floating button
+    const handleScroll = () => {
+      if (window.scrollY > 600) {
+        setShowFloatingButton(true);
+      } else {
+        setShowFloatingButton(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    // Show testimonial popup after 15 seconds
+    const testimonialTimer = setTimeout(() => {
+      setShowTestimonialPopup(true);
+    }, 15000);
+
+    // Countdown timer for offer banner
+    const countdownInterval = setInterval(() => {
+      setOfferMinutes((prev) => {
+        if (prev === 0) {
+          setOfferHours((prevHours) => {
+            if (prevHours === 0) {
+              setOfferDays((prevDays) => Math.max(0, prevDays - 1));
+              return 23;
+            }
+            return prevHours - 1;
+          });
+          return 59;
+        }
+        return prev - 1;
+      });
+    }, 60000); // Update every minute
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      clearTimeout(testimonialTimer);
+      clearInterval(countdownInterval);
+    };
   }, []);
 
   // Typing effect for headline
@@ -92,6 +138,87 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      {/* Testimonial Popup */}
+      <motion.div
+        className="fixed bottom-24 left-6 z-50 max-w-xs"
+        initial={{ opacity: 0, x: -100 }}
+        animate={{
+          opacity: showTestimonialPopup ? 1 : 0,
+          x: showTestimonialPopup ? 0 : -100,
+        }}
+        transition={{ duration: 0.5, type: "spring" }}
+      >
+        <div className="bg-white rounded-lg shadow-xl p-4 border border-gray-100 relative">
+          <button
+            onClick={() => setShowTestimonialPopup(false)}
+            className="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
+          >
+            <X className="h-4 w-4" />
+          </button>
+
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+              <span className="text-blue-600 font-semibold">JD</span>
+            </div>
+            <div>
+              <div className="flex items-center mb-1">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star
+                    key={star}
+                    className="w-3 h-3 fill-yellow-400 text-yellow-400"
+                  />
+                ))}
+              </div>
+              <p className="text-sm text-gray-700 mb-2">
+                "Austin helped us find our dream home in just 3 weeks! The
+                process was so smooth."
+              </p>
+              <div className="flex justify-between items-center">
+                <span className="text-xs text-gray-500">Just now</span>
+                <button
+                  onClick={() =>
+                    window.open(
+                      "https://docs.google.com/forms/d/e/1FAIpQLSf3M-Z5b0mr6ObERDv_1GMyAd66k7ym80dcqjCCxHVmAbaLlA/viewform?usp=sf_link",
+                      "_blank"
+                    )
+                  }
+                  className="text-xs font-medium text-blue-600 hover:underline"
+                >
+                  Get Started →
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Floating Contact Button */}
+      <motion.div
+        className="fixed bottom-6 left-6 z-50"
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{
+          opacity: showFloatingButton ? 1 : 0,
+          scale: showFloatingButton ? 1 : 0.8,
+          y: showFloatingButton ? 0 : 20,
+        }}
+        transition={{ duration: 0.3 }}
+      >
+        <motion.div
+          className="relative group"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-blue-400 rounded-full blur-md opacity-75 group-hover:opacity-100 transition duration-200"></div>
+          <button
+            onClick={() => window.open("tel:5125551234")}
+            className="relative flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-full shadow-lg"
+          >
+            <Phone className="h-5 w-5" />
+            <span className="font-medium">Call Now</span>
+          </button>
+        </motion.div>
+      </motion.div>
+
       {/* Hero Section with Parallax */}
       {/* Hero Section */}
       <div className="relative h-[120vh] min-h-[800px] overflow-hidden">
@@ -246,17 +373,60 @@ const Index = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 1.5 }}
             >
-              <button
-                className="inline-flex items-center justify-center px-8 py-4 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors text-lg font-medium"
-                onClick={() =>
-                  window.open(
-                    "https://docs.google.com/forms/d/e/1FAIpQLSf3M-Z5b0mr6ObERDv_1GMyAd66k7ym80dcqjCCxHVmAbaLlA/viewform?usp=sf_link",
-                    "_blank"
-                  )
-                }
-              >
-                See How I Can Help!
-              </button>
+              {/* Enhanced CTA Section */}
+              <div className="flex flex-col items-center space-y-6">
+                <motion.div
+                  className="relative group"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                >
+                  <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-blue-400 rounded-lg blur-md opacity-75 group-hover:opacity-100 transition duration-200"></div>
+                  <button
+                    className="relative flex items-center justify-center gap-2 px-8 py-4 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors text-lg font-medium"
+                    onClick={() =>
+                      window.open(
+                        "https://docs.google.com/forms/d/e/1FAIpQLSf3M-Z5b0mr6ObERDv_1GMyAd66k7ym80dcqjCCxHVmAbaLlA/viewform?usp=sf_link",
+                        "_blank"
+                      )
+                    }
+                  >
+                    <span>See How I Can Help!</span>
+                    <motion.div
+                      animate={{ x: [0, 5, 0] }}
+                      transition={{ repeat: Infinity, duration: 1.5 }}
+                    >
+                      <ArrowRight className="w-5 h-5" />
+                    </motion.div>
+                  </button>
+                </motion.div>
+
+                <motion.div
+                  className="text-sm text-gray-500 max-w-md text-center"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 2 }}
+                >
+                  <span className="font-medium">100+ clients</span> have already
+                  found their dream home this year!
+                </motion.div>
+
+                <motion.div
+                  className="flex items-center gap-1"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 2.2 }}
+                >
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star
+                      key={star}
+                      className="w-4 h-4 fill-yellow-400 text-yellow-400"
+                    />
+                  ))}
+                  <span className="text-sm font-medium ml-1">
+                    5.0 average rating
+                  </span>
+                </motion.div>
+              </div>
             </motion.div>
           </div>
 

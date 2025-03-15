@@ -12,6 +12,7 @@
 
 # production
 /build
+/dist
 
 # misc
 .DS_Store
@@ -68,3 +69,23 @@ logs
 # Temporary files
 *.tmp
 *.temp
+
+# Lock files (uncomment if you want to ignore them)
+# package-lock.json
+# yarn.lock
+# bun.lockb
+
+# Large data files (uncomment if these contain sensitive or large data)
+# *.csv
+# *.json
+
+# Specific files that might contain sensitive data
+# profile.json
+# reviews.json
+# reviews.csv
+# profile.csv
+# reviews_rows.csv
+
+# Specific config files (uncomment if these contain sensitive data)
+# magic-mcp.config.json
+# 21st-dev-config.json
