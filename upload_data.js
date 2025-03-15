@@ -1,10 +1,14 @@
 import { createClient } from '@supabase/supabase-js'
 import * as fs from 'fs';
 import { parse } from 'csv-parse/sync';
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
 
 // Supabase configuration
-const supabaseUrl = 'https://adzokgnahnkjoubwryhj.supabase.co'
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkem9rZ25haG5ram91YndyeWhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE1Nzk4MTMsImV4cCI6MjA1NzE1NTgxM30.OeW5BTQphpXYZhyun7OnGgdeq71hcduW0J83wIBxrhM'
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://adzokgnahnkjoubwryhj.supabase.co'
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkem9rZ25haG5ram91YndyeWhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE1Nzk4MTMsImV4cCI6MjA1NzE1NTgxM30.OeW5BTQphpXYZhyun7OnGgdeq71hcduW0J83wIBxrhM'
 const supabase = createClient(supabaseUrl, supabaseKey)
 
 function parseArrayField(field) {

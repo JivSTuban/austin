@@ -1,0 +1,10 @@
+{
+  "name": "21st-dev-magic",
+  "version": "1.0.0",
+  "api": {
+    "key": "6d8eee1b88c89101759069e4ee2428c27fe6dcf076007eb8190ec30d71ada199"
+  },
+  "server": {
+    "port": 3099
+  }
+}

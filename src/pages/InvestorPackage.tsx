@@ -41,7 +41,7 @@ const InvestorPackage = () => {
   const { contacts, isLoading, error } = useRolodex();
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const contactsPerPage = 4;
+  const contactsPerPage = 6;
 
   // Extract unique categories from contacts
   const uniqueCategories = useMemo(() => {
@@ -151,7 +151,7 @@ const InvestorPackage = () => {
                 </select>
               </div>
 
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-1 lg:grid-cols-2">
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {currentContacts.length > 0 ? (
                   currentContacts.map((contact) => (
                     <RolodexCard 
@@ -160,7 +160,6 @@ const InvestorPackage = () => {
                       onUpdate={(updatedContact) => {
                         console.log('Contact updated:', updatedContact);
                       }}
-                      className="p-6 sm:p-8"
                     />
                   ))
                 ) : (

@@ -8,6 +8,9 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { Badge } from "@/components/ui/badge"
+import { motion } from "framer-motion"
+import { GlowingEffect } from "@/components/ui/glowing-effect"
 import {
   Dialog,
   DialogContent,
@@ -26,7 +29,8 @@ import {
   RotateCw,
   Edit,
   Save,
-  X
+  X,
+  User
 } from "lucide-react"
 import { useRolodex, RolodexContact } from "@/hooks/useRolodex"
 
@@ -58,6 +62,7 @@ export default function RolodexCard({
 }: RolodexCardProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [showDetails, setShowDetails] = useState(false)
+  const [isFlipped, setIsFlipped] = useState(false)
   const [formData, setFormData] = useState<RolodexContact>({
     ...initialData,
     name: initialData.name || "",
@@ -106,95 +111,119 @@ export default function RolodexCard({
     </div>
   )
 
+  // Format date to be more readable
+  const formatDate = (dateString: string) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
+  };
+
   return (
     <>
-      <div
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="min-h-[14rem] h-[280px] w-full list-none"
+        onMouseEnter={() => setIsFlipped(true)}
+        onMouseLeave={() => setIsFlipped(false)}
         onClick={() => setShowDetails(true)}
-        className={cn(
-          "group flex flex-col rounded-lg border cursor-pointer",
-          "bg-gradient-to-b from-muted/50 to-muted/10",
-          "p-4 sm:p-6",
-          "hover:from-muted/60 hover:to-muted/20",
-          "transition-colors duration-300",
-          "relative w-full",
-          className
-        )}
       >
-        <div className="flex flex-col sm:flex-row gap-6">
-          <Avatar className="h-16 w-16 shrink-0">
-            <AvatarFallback className="bg-primary text-primary-foreground text-lg">
-              {formData.name
-                .split(" ")
-                .map((n) => n[0])
-                .slice(0, 2)
-                .join("")}
-            </AvatarFallback>
-          </Avatar>
-          
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-4">
-              <h3 className="text-xl font-semibold truncate">{formData.name}</h3>
-            </div>
-            
-            <div className="space-y-4 text-base text-muted-foreground">
-              <p className="flex items-center gap-3 flex-wrap">
-                <span className="inline-flex items-center gap-2 shrink-0">
-                  <Building2 className="w-5 h-5 shrink-0" />
-                  <span className="font-medium">{formData.category}</span>
-                </span>
-                <span className="truncate">{formData.company}</span>
-              </p>
-              
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6">
-                <p className="flex items-center gap-3">
-                  <Phone className="w-5 h-5 shrink-0" />
-                  <span className="truncate">{formData.number_1}</span>
-                </p>
-                {formData.number_2 && (
-                  <p className="flex items-center gap-3 text-sm">
-                    <Phone className="w-4 h-4 shrink-0 opacity-70" />
-                    <span className="truncate">{formData.number_2}</span>
-                  </p>
-                )}
+        <div className="relative h-full rounded-[1.25rem] border-[0.75px] border-border p-2 md:rounded-[1.5rem] md:p-3">
+          <GlowingEffect
+            spread={40}
+            glow={true}
+            disabled={false}
+            proximity={64}
+            inactiveZone={0.01}
+            borderWidth={3}
+          />
+          <div className={cn(
+            "relative flex h-full flex-col justify-between gap-6 overflow-hidden rounded-xl border-[0.75px] bg-background p-6 shadow-sm dark:shadow-[0px_0px_27px_0px_rgba(45,45,45,0.3)] md:p-6",
+            "transition-all duration-500 transform-gpu",
+            isFlipped ? "rotate-y-180" : "",
+            className
+          )}>
+            {!isFlipped ? (
+              // Front of card
+              <div className="relative flex flex-1 flex-col justify-between gap-3">
+                <div className="w-fit rounded-lg border-[0.75px] border-border bg-muted p-2">
+                  <User className="h-4 w-4 text-[#F08A5D]" />
+                </div>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="pt-0.5 text-xl leading-[1.375rem] font-semibold font-sans tracking-[-0.04em] md:text-2xl md:leading-[1.875rem] text-balance text-foreground truncate max-w-[300px]">
+                      {formData.name}
+                    </h3>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <Building2 className="h-4 w-4" />
+                        <span className="text-xs uppercase tracking-wider">Company</span>
+                      </div>
+                      <p className="text-sm font-medium text-foreground truncate max-w-[150px]">
+                        {formData.company}
+                      </p>
+                    </div>
+                    <div className="flex flex-col items-end gap-1">
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <span className="text-xs uppercase tracking-wider">Category</span>
+                      </div>
+                      <Badge 
+                        className="bg-[#1b2232]/10 hover:bg-[#1b2232]/20 text-[#1b2232] border-[#1b2232]/20"
+                      >
+                        {formData.category}
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
               </div>
-              
-              <p className="flex items-center gap-3">
-                <Mail className="w-5 h-5 shrink-0" />
-                <span className="truncate">{formData.email}</span>
-              </p>
-              
-              {formData.website && (
-                <p className="flex items-center gap-3">
-                  <Globe className="w-5 h-5 shrink-0" />
-                  <span className="truncate">{formData.website}</span>
-                </p>
-              )}
-              
-              <p className="flex items-center gap-3">
-                <MapPin className="w-5 h-5 shrink-0" />
-                <span className="truncate">{formData.area}</span>
-              </p>
-            </div>
-            
-            {formData.notes && (
-              <div className="mt-4 text-sm text-muted-foreground">
-                <p className="line-clamp-2">{formData.notes}</p>
+            ) : (
+              // Back of card (flipped)
+              <div className="relative flex flex-1 flex-col justify-between gap-3 rotate-y-180">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="pt-0.5 text-lg font-semibold font-sans tracking-[-0.04em] text-balance text-foreground truncate max-w-[300px]">
+                      Contact Info
+                    </h3>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="flex items-center gap-2 text-sm">
+                      <Phone className="h-4 w-4 text-[#F08A5D]" />
+                      <span className="text-foreground truncate max-w-[250px]">{formData.number_1}</span>
+                    </p>
+                    <p className="flex items-center gap-2 text-sm">
+                      <Mail className="h-4 w-4 text-[#F08A5D]" />
+                      <span className="text-foreground truncate max-w-[250px]">{formData.email}</span>
+                    </p>
+                    <p className="flex items-center gap-2 text-sm">
+                      <MapPin className="h-4 w-4 text-[#F08A5D]" />
+                      <span className="text-foreground truncate max-w-[250px]">{formData.area}</span>
+                    </p>
+                  </div>
+                  <div className="pt-2 mt-2 border-t border-border">
+                    <p className="text-xs text-muted-foreground line-clamp-2">
+                      {formData.notes || "No notes available"}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex justify-end">
+                  <Badge 
+                    className="bg-[#F08A5D]/10 hover:bg-[#F08A5D]/20 text-[#F08A5D] border-[#F08A5D]/20"
+                  >
+                    Added: {formatDate(formData.date_added)}
+                  </Badge>
+                </div>
               </div>
             )}
-            
-            <div className="mt-4 pt-4 border-t flex flex-col sm:flex-row justify-between gap-2 text-xs text-muted-foreground">
-              <div className="flex items-center gap-1 shrink-0">
-                <Calendar className="w-3 h-3" />
-                Added: {new Date(formData.date_added).toLocaleDateString()}
-              </div>
-              <div className="flex items-center gap-1 shrink-0">
-                <RotateCw className="w-3 h-3" />
-                Updated: {new Date(formData.last_updated).toLocaleDateString()}
-              </div>
-            </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -217,6 +246,7 @@ export default function RolodexCard({
                       value={formData.name}
                       onChange={handleChange}
                       required
+                      className="border-[#1b2232]/20 focus:border-[#1b2232] focus:ring-[#1b2232]/20"
                     />
                   </div>
                   
@@ -228,6 +258,7 @@ export default function RolodexCard({
                       value={formData.company}
                       onChange={handleChange}
                       required
+                      className="border-[#1b2232]/20 focus:border-[#1b2232] focus:ring-[#1b2232]/20"
                     />
                   </div>
                   
@@ -240,6 +271,7 @@ export default function RolodexCard({
                         value={formData.number_1}
                         onChange={handleChange}
                         required
+                        className="border-[#1b2232]/20 focus:border-[#1b2232] focus:ring-[#1b2232]/20"
                       />
                     </div>
                     
@@ -250,6 +282,7 @@ export default function RolodexCard({
                         name="number_2"
                         value={formData.number_2}
                         onChange={handleChange}
+                        className="border-[#1b2232]/20 focus:border-[#1b2232] focus:ring-[#1b2232]/20"
                       />
                     </div>
                   </div>
@@ -263,6 +296,7 @@ export default function RolodexCard({
                       value={formData.email}
                       onChange={handleChange}
                       required
+                      className="border-[#1b2232]/20 focus:border-[#1b2232] focus:ring-[#1b2232]/20"
                     />
                   </div>
                   
@@ -273,6 +307,7 @@ export default function RolodexCard({
                       name="website"
                       value={formData.website}
                       onChange={handleChange}
+                      className="border-[#1b2232]/20 focus:border-[#1b2232] focus:ring-[#1b2232]/20"
                     />
                   </div>
                   
@@ -285,6 +320,7 @@ export default function RolodexCard({
                         value={formData.area}
                         onChange={handleChange}
                         required
+                        className="border-[#1b2232]/20 focus:border-[#1b2232] focus:ring-[#1b2232]/20"
                       />
                     </div>
                     
@@ -296,6 +332,7 @@ export default function RolodexCard({
                         value={formData.category}
                         onChange={handleChange}
                         required
+                        className="border-[#1b2232]/20 focus:border-[#1b2232] focus:ring-[#1b2232]/20"
                       />
                     </div>
                   </div>
@@ -307,7 +344,7 @@ export default function RolodexCard({
                       name="notes"
                       value={formData.notes}
                       onChange={handleChange}
-                      className="h-20"
+                      className="h-20 border-[#1b2232]/20 focus:border-[#1b2232] focus:ring-[#1b2232]/20"
                     />
                   </div>
                 </div>
@@ -316,7 +353,7 @@ export default function RolodexCard({
                   <Button type="button" variant="outline" onClick={() => setIsEditing(false)}>
                     Cancel
                   </Button>
-                  <Button type="submit">
+                  <Button type="submit" className="bg-[#1b2232] hover:bg-[#1b2232]/90">
                     <Save className="w-4 h-4 mr-2" />
                     Save Changes
                   </Button>
@@ -328,7 +365,7 @@ export default function RolodexCard({
               <DialogHeader>
                 <div className="flex items-start gap-4">
                   <Avatar className="h-16 w-16">
-                    <AvatarFallback className="text-lg bg-primary text-primary-foreground">
+                    <AvatarFallback className="text-lg bg-[#1b2232] text-primary-foreground">
                       {formData.name
                         .split(" ")
                         .map((n) => n[0])
@@ -351,26 +388,26 @@ export default function RolodexCard({
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <p className="flex items-center gap-2 text-base">
-                          <Phone className="w-4 h-4" />
+                          <Phone className="w-4 h-4 text-[#F08A5D]" />
                           {formData.number_1}
                         </p>
                         {formData.number_2 && (
                           <p className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Phone className="w-4 h-4" />
+                            <Phone className="w-4 h-4 text-[#F08A5D]/70" />
                             {formData.number_2}
                           </p>
                         )}
                       </div>
                       <div className="space-y-2">
                         <p className="flex items-center gap-2 text-base">
-                          <Mail className="w-4 h-4" />
+                          <Mail className="w-4 h-4 text-[#F08A5D]" />
                           <a href={`mailto:${formData.email}`} className="hover:underline">
                             {formData.email}
                           </a>
                         </p>
                         {formData.website && (
                           <p className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Globe className="w-4 h-4" />
+                            <Globe className="w-4 h-4 text-[#F08A5D]" />
                             <a href={formData.website} target="_blank" rel="noopener noreferrer" className="hover:underline">
                               {formData.website}
                             </a>
@@ -382,7 +419,7 @@ export default function RolodexCard({
 
                   <DetailSection title="Location">
                     <p className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4" />
+                      <MapPin className="w-4 h-4 text-[#F08A5D]" />
                       {formData.area}
                     </p>
                   </DetailSection>
@@ -396,12 +433,12 @@ export default function RolodexCard({
                   <DetailSection title="Record Details">
                     <div className="grid sm:grid-cols-2 gap-4 text-sm text-muted-foreground">
                       <p className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4" />
-                        Added: {new Date(formData.date_added).toLocaleDateString()}
+                        <Calendar className="w-4 h-4 text-[#F08A5D]" />
+                        Added: {formatDate(formData.date_added)}
                       </p>
                       <p className="flex items-center gap-2">
-                        <RotateCw className="w-4 h-4" />
-                        Updated: {new Date(formData.last_updated).toLocaleDateString()}
+                        <RotateCw className="w-4 h-4 text-[#F08A5D]" />
+                        Updated: {formatDate(formData.last_updated)}
                       </p>
                     </div>
                   </DetailSection>
@@ -411,10 +448,6 @@ export default function RolodexCard({
               <DialogFooter>
                 <Button variant="outline" onClick={() => setShowDetails(false)}>
                   Close
-                </Button>
-                <Button onClick={() => setIsEditing(true)}>
-                  <Edit className="w-4 h-4 mr-2" />
-                  Edit Contact
                 </Button>
               </DialogFooter>
             </>

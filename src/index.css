@@ -88,6 +88,7 @@
   
   html, body {
     @apply antialiased scroll-smooth;
+    overflow-x: hidden; /* Prevent horizontal scroll */
   }
 
   body {
@@ -99,7 +100,6 @@
       radial-gradient(at 95% 95%, hsla(190, 100%, 80%, 0.15) 0px, transparent 50%);
     background-attachment: fixed;
     position: relative;
-    overflow-x: hidden;
   }
 
   /* Add animated background shapes */
@@ -177,55 +177,37 @@
       rgba(0, 0, 0, 0.1) 10px 10px 30px;
   }
 
-  /* Listing Card Styles */
-  .listing-card {
-    width: 1910px;
-    height: 454px;
-    border-radius: 4px;
-    background: #212121;
-    display: flex;
-    gap: 5px;
-    padding: .4em;
+  /* Property Card Styles */
+  .property-card {
+    @apply bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300;
   }
 
-  .listing-card p {
-    height: 100%;
-    flex: 1;
-    overflow: hidden;
-    cursor: pointer;
-    border-radius: 2px;
-    transition: all .5s;
-    background: #dce1e7;
-    border: 1px solid #1b2232;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  .property-card-image {
+    @apply h-48 w-full object-cover;
   }
 
-  .listing-card p:hover {
-    flex: 4;
+  .property-card-badge {
+    @apply absolute top-3 left-3 bg-blue-600 text-white text-xs font-semibold px-2 py-1 rounded-full;
   }
 
-  .listing-card p span {
-    min-width: 14em;
-    padding: .5em;
-    text-align: center;
-    transform: rotate(-90deg);
-    transition: all .5s;
-    text-transform: uppercase;
-    color: #ffffff;
-    letter-spacing: .1em;
-    border: 1px solid #1b2232;
-    border-radius: 24px;
-    background-color: #1b2232B3;
-    opacity: 0;
-    visibility: hidden;
+  .property-card-content {
+    @apply p-4;
   }
 
-  .listing-card p:hover span {
-    transform: rotate(0);
-    opacity: 1;
-    visibility: visible;
+  .property-card-title {
+    @apply text-lg font-bold text-gray-900 mb-1;
+  }
+
+  .property-card-location {
+    @apply text-sm text-gray-600 mb-3 flex items-center;
+  }
+
+  .property-card-price {
+    @apply text-lg font-bold text-blue-600;
+  }
+
+  .property-card-features {
+    @apply flex justify-between text-sm text-gray-600 mt-2;
   }
 }
 
@@ -249,6 +231,22 @@
   opacity: 0;
   transform: translateY(-8px);
   transition: opacity 250ms, transform 250ms;
+}
+
+/* Animation for fade-in elements */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.8s forwards;
 }
 
 /* Floating animation for 3D elements */
@@ -352,6 +350,16 @@
   100% {
     transform: translateY(0) translateX(0) rotate(360deg);
   }
+}
+
+/* Animation for blinking cursor */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.animate-blink {
+  animation: blink 1s infinite;
 }
 
 .floating {

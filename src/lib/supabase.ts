@@ -1,13 +1,13 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 // Supabase configuration
-const supabaseUrl = 'https://adzokgnahnkjoubwryhj.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkem9rZ25haG5ram91YndyeWhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE1Nzk4MTMsImV4cCI6MjA1NzE1NTgxM30.OeW5BTQphpXYZhyun7OnGgdeq71hcduW0J83wIBxrhM';
+const supabaseUrl = import.meta.env.VITE_NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 // Custom fetch with retry logic and better error messages
 const customFetch = async (url: string, options: RequestInit): Promise<Response> => {
-  const maxRetries = 3;
-  const baseDelay = 1000; // 1 second
+  const maxRetries = Number(import.meta.env.VITE_NEXT_PUBLIC_API_RETRY_MAX) || 3;
+  const baseDelay = Number(import.meta.env.VITE_NEXT_PUBLIC_API_RETRY_DELAY) || 1000; // 1 second
 
   let lastError: Error | null = null;
 
@@ -28,6 +28,12 @@ const customFetch = async (url: string, options: RequestInit): Promise<Response>
         const errorData = await response.json();
         throw new Error(`Invalid request: ${errorData.message || 'Unknown error'}`);
       }
+      if (response.status === 401) {
+        throw new Error('Unauthorized: Invalid or expired token.');
+      }
+      if (response.status === 403) {
+        throw new Error('Forbidden: Insufficient permissions.');
+      }
       if (response.status === 503) {
         throw new Error('Service temporarily unavailable. Please try again later.');
       }
@@ -37,7 +43,9 @@ const customFetch = async (url: string, options: RequestInit): Promise<Response>
       lastError = error as Error;
 
       // Don't retry on certain errors
-      if (error instanceof Error && error.message.includes('not found')) {
+      if (error instanceof Error && 
+         (error.message.includes('not found') || 
+          error.message.includes('Invalid Refresh Token'))) {
         throw error;
       }
 
@@ -60,9 +68,9 @@ const customFetch = async (url: string, options: RequestInit): Promise<Response>
 export const supabase: SupabaseClient = createClient(supabaseUrl, supabaseKey, {
   auth: {
     persistSession: true,
-    storageKey: 'austin-auth-token',
-    autoRefreshToken: true,
-    detectSessionInUrl: true,
+    storageKey: import.meta.env.VITE_NEXT_PUBLIC_AUTH_STORAGE_KEY || 'austin-auth-token',
+    autoRefreshToken: false, // Disable automatic token refresh to avoid errors when no valid token exists
+    detectSessionInUrl: false, // Disable automatic session detection in URL
   },
   global: {
     fetch: customFetch,
@@ -72,9 +80,24 @@ export const supabase: SupabaseClient = createClient(supabaseUrl, supabaseKey, {
   }
 });
 
-// Initialize session on load
+// Initialize session on load with error handling
 supabase.auth.getSession().then(({ data: { session } }) => {
   if (session) {
-    console.log('Initial session loaded:', session);
+    console.log('Initial session loaded:', session.user.email);
+  } else {
+    console.log('No active session found');
   }
+}).catch(error => {
+  console.warn('Error loading initial session:', error.message);
 });
+
+// Add a helper function to check if user is logged in
+export const isAuthenticated = async (): Promise<boolean> => {
+  try {
+    const { data } = await supabase.auth.getSession();
+    return !!data.session;
+  } catch (error) {
+    console.error('Authentication check failed:', error);
+    return false;
+  }
+};
