@@ -157,7 +157,7 @@ const InvestorPackage = () => {
     { name: 'FAQ', url: '#faq', icon: Contact },
     { name: 'Rolodex', url: '#rolodex', icon: Contact },
     { name: 'Major Cities', url: '#major-cities', icon: TrendingUp },
-    { name: 'Resources', url: '#resources', icon: FileText },
+    { name: 'OMX', url: '#omx', icon: FileText },
   ];
 
   const [activeTab, setActiveTab] = useState('faq');
@@ -176,8 +176,8 @@ const InvestorPackage = () => {
 
         <div className="mb-10 sm:mb-16">
           <Tabs defaultValue="faq" className="w-full h-full">
-            <TabsList className="flex justify-center mb-6 sm:mb-8 bg-transparent overflow-x-auto pb-2 sm:pb-0 w-full">
-              <div className="flex items-center gap-1 sm:gap-3 bg-gray-100/80 border border-gray-200 backdrop-blur-lg py-1 px-1 rounded-full shadow-lg">
+            <TabsList className="flex justify-center mb-6 sm:mb-8 bg-transparent w-full">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 bg-gray-100/80 border border-gray-200 backdrop-blur-lg py-1 px-1 rounded-lg shadow-lg">
                 {tabItems.map((item) => {
                   const Icon = item.icon;
                   const tabValue = item.name.toLowerCase().replace(' ', '-');
@@ -208,17 +208,30 @@ const InvestorPackage = () => {
             </TabsList>
 
             <TabsContent value="faq" className="space-y-8">
-              <FaqSectionWithCategories
-                title="Frequently Asked Questions"
-                description="Find answers to common questions about our real estate investment services"
-                items={faqItems}
-                contactInfo={{
-                  title: "Still have questions?",
-                  description: "Feel free to reach out for more information about our investment services.",
-                  buttonText: "Contact Me",
-                  onContact: () => console.log("Contact button clicked"),
-                }}
-              />
+              <div className="space-y-6 sm:space-y-8">
+                <div className="w-full rounded-lg overflow-hidden shadow-md">
+                  <video 
+                    className="w-full h-auto" 
+                    controls 
+                    poster="/images/faq-poster.jpg"
+                  >
+                    <source src="/vids/FAQvid.mp4" type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+                
+                <FaqSectionWithCategories
+                  title="Frequently Asked Questions"
+                  description="Find answers to common questions about our real estate investment services"
+                  items={faqItems}
+                  contactInfo={{
+                    title: "Still have questions?",
+                    description: "Feel free to reach out for more information about our investment services.",
+                    buttonText: "Contact Me",
+                    onContact: () => console.log("Contact button clicked"),
+                  }}
+                />
+              </div>
             </TabsContent>
 
             <TabsContent value="rolodex" className="space-y-8">
@@ -390,9 +403,9 @@ const InvestorPackage = () => {
             <TabsContent value="major-cities" className="space-y-4 sm:space-y-6">
               <Card>
                 <CardHeader className="pb-2 sm:pb-4">
-                  <CardTitle className="text-xl sm:text-2xl">Major Texas Cities</CardTitle>
+                  <CardTitle className="text-xl sm:text-2xl">Major Ohio Cities</CardTitle>
                   <CardDescription className="text-sm sm:text-base">
-                    Explore investment opportunities in major Texas cities
+                    Explore investment opportunities in major Ohio cities
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -568,76 +581,26 @@ const InvestorPackage = () => {
               </Card>
             </TabsContent>
 
-            <TabsContent value="resources" className="space-y-4 sm:space-y-6">
-              <Card>
-                <CardHeader className="pb-2 sm:pb-4">
-                  <CardTitle className="text-xl sm:text-2xl">Investor Resources</CardTitle>
-                  <CardDescription className="text-sm sm:text-base">
-                    Tools, guides, and resources to help you make informed investment decisions
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2">
-                    <Card>
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-lg">Investment Guides</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <ul className="space-y-3">
-                          <li className="flex items-center">
-                            <FileText className="w-4 h-4 mr-2 text-blue-600 flex-shrink-0" />
-                            <a href="#" className="text-blue-600 hover:underline text-sm sm:text-base">Austin Market Analysis 2023</a>
-                          </li>
-                          <li className="flex items-center">
-                            <FileText className="w-4 h-4 mr-2 text-blue-600 flex-shrink-0" />
-                            <a href="#" className="text-blue-600 hover:underline text-sm sm:text-base">Rental Property Tax Guide</a>
-                          </li>
-                          <li className="flex items-center">
-                            <FileText className="w-4 h-4 mr-2 text-blue-600 flex-shrink-0" />
-                            <a href="#" className="text-blue-600 hover:underline text-sm sm:text-base">Fix & Flip Strategy Guide</a>
-                          </li>
-                          <li className="flex items-center">
-                            <FileText className="w-4 h-4 mr-2 text-blue-600 flex-shrink-0" />
-                            <a href="#" className="text-blue-600 hover:underline text-sm sm:text-base">Long-term Investment Blueprint</a>
-                          </li>
-                        </ul>
-                      </CardContent>
-                    </Card>
-                    
-                    <Card>
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-lg">Calculators & Tools</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <ul className="space-y-3">
-                          <li className="flex items-center">
-                            <Calculator className="w-4 h-4 mr-2 text-blue-600 flex-shrink-0" />
-                            <a href="/calculators" className="text-blue-600 hover:underline text-sm sm:text-base">Mortgage Calculator</a>
-                          </li>
-                          <li className="flex items-center">
-                            <Calculator className="w-4 h-4 mr-2 text-blue-600 flex-shrink-0" />
-                            <a href="#" className="text-blue-600 hover:underline text-sm sm:text-base">ROI Calculator</a>
-                          </li>
-                          <li className="flex items-center">
-                            <Calculator className="w-4 h-4 mr-2 text-blue-600 flex-shrink-0" />
-                            <a href="#" className="text-blue-600 hover:underline text-sm sm:text-base">Cash Flow Analyzer</a>
-                          </li>
-                          <li className="flex items-center">
-                            <Calculator className="w-4 h-4 mr-2 text-blue-600 flex-shrink-0" />
-                            <a href="#" className="text-blue-600 hover:underline text-sm sm:text-base">Rehab Cost Estimator</a>
-                          </li>
-                        </ul>
-                      </CardContent>
-                    </Card>
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button className="w-full text-sm sm:text-base">
-                    <Download className="w-4 h-4 mr-2" />
-                    Download Complete Investor Package
-                  </Button>
-                </CardFooter>
-              </Card>
+            <TabsContent value="omx" className="space-y-4 sm:space-y-6">
+            <div className="w-full rounded-lg overflow-hidden shadow-md">
+             <h2 style={{ textAlign: 'center' }}> Austin Off Market Exclusive Explaination</h2>
+             <br />
+                  <video 
+                    className="w-full h-auto" 
+                    controls 
+                    poster="/images/resourcesVid.jpg"
+                    onTimeUpdate={(e) => {
+                      // Limit playback to 43 seconds
+                      const video = e.target as HTMLVideoElement;
+                      if (video.currentTime > 43) {
+                        video.pause();
+                      }
+                    }}
+                  >
+                    <source src="/vids/resourcesVid.mp4" type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
             </TabsContent>
           </Tabs>
         </div>
