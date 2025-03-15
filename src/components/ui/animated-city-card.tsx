@@ -28,10 +28,9 @@ export function AnimatedCityCard({
       style={{ 
         backgroundColor: bgImage ? 'transparent' : bgColor,
         backgroundImage: bgImage ? `url(${bgImage})` : 'none',
-        backgroundSize: '95%',
+        backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
-        backgroundAttachment: 'fixed',
       }}
     >
       {/* Overlay with blur effect */}
