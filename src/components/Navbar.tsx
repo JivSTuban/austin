@@ -17,7 +17,6 @@ const Navbar = () => {
     { path: '/maps', label: 'Maps', icon: Map },
     { path: '/investor-package', label: 'Investor Package', icon: Coins },
     { path: '/calculators', label: 'Calculators', icon: Calculator },
-    { path: '/home-estimate', label: 'Estimate', icon: Building },
     { path: '/sold-properties', label: 'Sold Properties', icon: DollarSign },
     { path: '/reviews', label: 'Reviews', icon: Star },
     { path: '/forum', label: 'Forum', icon: MessageSquare },

@@ -20,6 +20,9 @@ import Navbar from '@/components/Navbar';
 import { useRolodex } from '@/hooks/useRolodex';
 import BackgroundShapes from '@/components/BackgroundShapes';
 import RolodexCard from '@/components/RolodexCard';
+import { FaqSectionWithCategories } from '@/components/ui/faq-section-with-categories';
+import { motion } from 'framer-motion';
+import { AnimatedCityCard } from '@/components/ui/animated-city-card';
 
 interface PropertyData {
   id: number;
@@ -80,38 +83,156 @@ const InvestorPackage = () => {
     setExpandedProperty(expandedProperty === id ? null : id);
   };
 
+  // FAQ data
+  const faqItems = [
+    {
+      question: "What do you do?",
+      answer: (
+        <>
+          <p>
+            I work as your deal finder and agent, spending most of my time searching for real estate deals. 
+            When I find a good one, I’ll send it to your email with as much detail as possible. 
+            If it matches your buying criteria, I’ll draft the offer and represent you throughout the entire closing process.
+          </p>
+  
+          <p><strong>How I Find Deals:</strong></p>
+          <ul className="list-disc pl-5 space-y-2">
+            <li>
+              <strong>Cold Calling</strong>
+              <ul className="list-disc pl-5">
+                <li>I find property owners’ phone numbers from the County Auditor.</li>
+                <li>I call them to see if they’re open to receiving an offer on their home.</li>
+                <li>If the numbers make sense, I’ll share the info with you.</li>
+              </ul>
+            </li>
+  
+            <li>
+              <strong>My Network</strong>
+              <ul className="list-disc pl-5">
+                <li>I connect with as many people as possible in Ohio’s real estate market.</li>
+                <li>I ask agents, investors, property managers, and contractors about upcoming deals.</li>
+              </ul>
+            </li>
+  
+            <li>
+              <strong>The MLS (Multiple Listing Service)</strong>
+              <ul className="list-disc pl-5">
+                <li>
+                  <strong>Newly listed, low-priced properties</strong> – I move quickly to secure offers at asking price.
+                </li>
+                <li>
+                  <strong>Stale listings that have lost traction</strong> – I submit low offers to secure below-market deals.
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </>
+      ),
+      category: "Services",
+    },
+    {
+      question: "How do you find deals?",
+      answer: "I find deals through cold calling (contacting property owners directly), my network (other agents, investors, property managers, contractors), and the MLS (targeting both newly listed properties priced low and properties that have been sitting on the market).",
+      category: "Services",
+    },
+    {
+      question: "What are your fees?",
+      answer: "The seller usually pays my commission fee. I write in the purchase agreement that the seller pays the commission at closing. If the seller declines to pay any commission and it needs to be paid on the buy side, I'll make it very clear upfront so there are no surprises.",
+      category: "Fees",
+    },
+    {
+      question: "What happens during the inspection period?",
+      answer: "In your offer, we can add an inspection contingency that will give us a certain amount of time to send a licensed inspector to check the property's condition. This time period is normally 7-10 days. The inspection is your chance to make sure there are no hidden material defects (issues that may have a significant, adverse impact on the value of the property, or that pose an unreasonable risk to people).",
+      category: "Process",
+    },
+    {
+      question: "What is an appraisal gap?",
+      answer: "An 'appraisal gap' is the difference between the appraised value of a home and the purchase price in the sales contract. An 'appraisal gap clause' is used to guarantee that the buyer will cover the monetary gap between the appraisal and the sales contract if an appraisal gap becomes an issue. For example, with a $5k appraisal gap on a $100k property that appraises at $92k, you could either terminate, ask the seller to reduce their price to $97k, or cover the whole gap if the seller won't budge.",
+      category: "Financing",
+    },
+  ];
+
+  // Tab items for the tubelight navbar
+  const tabItems = [
+    { name: 'FAQ', url: '#faq', icon: Contact },
+    { name: 'Rolodex', url: '#rolodex', icon: Contact },
+    { name: 'Major Cities', url: '#major-cities', icon: TrendingUp },
+    { name: 'OMX', url: '#omx', icon: FileText },
+  ];
+
+  const [activeTab, setActiveTab] = useState('faq');
+
   return (
     <div className="min-h-screen">
-      <div className="pt-24 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl mb-4">
+      <div className="pt-16 sm:pt-20 md:pt-24 pb-12 sm:pb-16 px-3 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="text-center mb-8 sm:mb-12">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-gray-900 mb-3 sm:mb-4">
             Investor Package
           </h1>
-          <p className="max-w-2xl mx-auto text-xl text-gray-500">
+          <p className="max-w-2xl mx-auto text-lg sm:text-xl text-gray-500">
             Exclusive investment opportunities in the Austin real estate market
           </p>
         </div>
 
-        <div className="mb-16">
-          <Tabs defaultValue="rolodex" className="w-full h-full">
-            <TabsList className="grid w-full h-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 mb-8 px-2 pt-2 pb-2 bg-gray-100/80 rounded-lg">
-              <TabsTrigger value="rolodex" className="flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium transition-all data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm rounded-md hover:bg-white/50">
-                <Contact className="w-4 h-4" />
-                Rolodex
-              </TabsTrigger>
-              <TabsTrigger value="market" className="flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium transition-all data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm rounded-md hover:bg-white/50">
-                <TrendingUp className="w-4 h-4" />
-                Market Analysis
-              </TabsTrigger>
-              <TabsTrigger value="financing" className="flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium transition-all data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm rounded-md hover:bg-white/50">
-                <DollarSign className="w-4 h-4" />
-                Financing
-              </TabsTrigger>
-              <TabsTrigger value="resources" className="flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium transition-all data-[state=active]:bg-white data-[state=active]:text-blue-600 data-[state=active]:shadow-sm rounded-md hover:bg-white/50">
-                <FileText className="w-4 h-4" />
-                Resources
-              </TabsTrigger>
+        <div className="mb-10 sm:mb-16">
+          <Tabs defaultValue="faq" className="w-full h-full">
+            <TabsList className="flex justify-center mb-6 sm:mb-8 bg-transparent w-full">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 bg-gray-100/80 border border-gray-200 backdrop-blur-lg py-1 px-1 rounded-lg shadow-lg">
+                {tabItems.map((item) => {
+                  const Icon = item.icon;
+                  const tabValue = item.name.toLowerCase().replace(' ', '-');
+
+                  return (
+                    <TabsTrigger
+                      key={item.name}
+                      value={tabValue}
+                      className="relative cursor-pointer text-xs sm:text-sm font-semibold px-3 sm:px-6 py-2 rounded-full transition-colors text-gray-600 hover:text-blue-600 data-[state=active]:bg-white data-[state=active]:text-blue-600 whitespace-nowrap"
+                    >
+                      <span className="hidden sm:inline">{item.name}</span>
+                      <span className="sm:hidden">
+                        <Icon size={18} strokeWidth={2.5} />
+                      </span>
+                      <div
+                        className="absolute inset-0 w-full bg-white rounded-full -z-10 opacity-0 data-[state=active]:opacity-100"
+                      >
+                        <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-8 h-1 bg-blue-600 rounded-t-full">
+                          <div className="absolute w-12 h-6 bg-blue-600/20 rounded-full blur-md -top-2 -left-2" />
+                          <div className="absolute w-8 h-6 bg-blue-600/20 rounded-full blur-md -top-1" />
+                          <div className="absolute w-4 h-4 bg-blue-600/20 rounded-full blur-sm top-0 left-2" />
+                        </div>
+                      </div>
+                    </TabsTrigger>
+                  );
+                })}
+              </div>
             </TabsList>
+
+            <TabsContent value="faq" className="space-y-8">
+              <div className="space-y-6 sm:space-y-8">
+                <div className="w-full rounded-lg overflow-hidden shadow-md">
+                  <video 
+                    className="w-full h-auto" 
+                    controls 
+                    poster="/images/faq-poster.jpg"
+                  >
+                    <source src="/vids/FAQvid.mp4" type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+                
+                <FaqSectionWithCategories
+                  title="Frequently Asked Questions"
+                  description="Find answers to common questions about our real estate investment services"
+                  items={faqItems}
+                  contactInfo={{
+                    title: "Still have questions?",
+                    description: "Feel free to reach out for more information about our investment services.",
+                    buttonText: "Contact Me",
+                    onContact: () => console.log("Contact button clicked"),
+                  }}
+                />
+              </div>
+            </TabsContent>
 
             <TabsContent value="rolodex" className="space-y-8">
               <div className="flex flex-col md:flex-row gap-4 mb-6">
@@ -279,102 +400,45 @@ const InvestorPackage = () => {
               </div>
             </TabsContent>
 
-            <TabsContent value="market" className="space-y-6">
+            <TabsContent value="major-cities" className="space-y-4 sm:space-y-6">
               <Card>
-                <CardHeader>
-                  <CardTitle>Austin Market Analysis</CardTitle>
-                  <CardDescription>
-                    Current trends and forecasts for the Austin real estate market
+                <CardHeader className="pb-2 sm:pb-4">
+                  <CardTitle className="text-xl sm:text-2xl">Major Ohio Cities</CardTitle>
+                  <CardDescription className="text-sm sm:text-base">
+                    Explore investment opportunities in major Ohio cities
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-6">
-                    <div className="p-6 bg-gray-50 rounded-lg">
-                      <h3 className="text-lg font-medium mb-4 flex items-center">
-                        <BarChart className="w-5 h-5 mr-2 text-blue-600" />
-                        Market Highlights
-                      </h3>
-                      <ul className="space-y-3 text-sm">
-                        <li className="flex items-start">
-                          <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mr-3 mt-0.5">
-                            <span className="text-green-600 text-xs font-bold">↑</span>
-                          </div>
-                          <span>Property values increased by <strong>8.7%</strong> year-over-year</span>
-                        </li>
-                        <li className="flex items-start">
-                          <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mr-3 mt-0.5">
-                            <span className="text-green-600 text-xs font-bold">↑</span>
-                          </div>
-                          <span>Rental rates increased by <strong>5.2%</strong> year-over-year</span>
-                        </li>
-                        <li className="flex items-start">
-                          <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mr-3 mt-0.5">
-                            <span className="text-green-600 text-xs font-bold">↓</span>
-                          </div>
-                          <span>Average days on market decreased to <strong>21 days</strong></span>
-                        </li>
-                        <li className="flex items-start">
-                          <div className="flex-shrink-0 w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center mr-3 mt-0.5">
-                            <span className="text-blue-600 text-xs font-bold">→</span>
-                          </div>
-                          <span>Population growth rate of <strong>3.4%</strong> annually</span>
-                        </li>
-                      </ul>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="p-6 border rounded-lg">
-                        <h4 className="font-medium mb-3">Neighborhood Hotspots</h4>
-                        <ul className="space-y-2 text-sm">
-                          <li className="flex justify-between">
-                            <span>East Austin</span>
-                            <span className="font-medium text-green-600">12.3% growth</span>
-                          </li>
-                          <li className="flex justify-between">
-                            <span>South Congress</span>
-                            <span className="font-medium text-green-600">10.8% growth</span>
-                          </li>
-                          <li className="flex justify-between">
-                            <span>Mueller</span>
-                            <span className="font-medium text-green-600">9.5% growth</span>
-                          </li>
-                          <li className="flex justify-between">
-                            <span>Riverside</span>
-                            <span className="font-medium text-green-600">8.7% growth</span>
-                          </li>
-                        </ul>
-                      </div>
-                      
-                      <div className="p-6 border rounded-lg">
-                        <h4 className="font-medium mb-3">Investment Types</h4>
-                        <ul className="space-y-2 text-sm">
-                          <li className="flex justify-between">
-                            <span>Single Family Homes</span>
-                            <span className="font-medium text-blue-600">7.2% avg ROI</span>
-                          </li>
-                          <li className="flex justify-between">
-                            <span>Multi-Family Units</span>
-                            <span className="font-medium text-blue-600">8.5% avg ROI</span>
-                          </li>
-                          <li className="flex justify-between">
-                            <span>Condominiums</span>
-                            <span className="font-medium text-blue-600">6.8% avg ROI</span>
-                          </li>
-                          <li className="flex justify-between">
-                            <span>Short-Term Rentals</span>
-                            <span className="font-medium text-blue-600">11.2% avg ROI</span>
-                          </li>
-                        </ul>
-                      </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-4 sm:gap-6 justify-items-center">
+                      <AnimatedCityCard 
+                        cityName="Cleveland"
+                        description="Tech Hub"
+                        price="$625K median"
+                        bgImage="/images/Cleveland.png"
+                      />
+                      <AnimatedCityCard 
+                        cityName="Columbus"
+                        description="Business Center"
+                        price="$450K median"
+                        bgImage="/images/Columbus.png"
+                      />
+                      <AnimatedCityCard 
+                        cityName="Dayton"
+                        description="Energy Capital"
+                        price="$350K median"
+                        bgImage="/images/Dayton.png"
+                      />
+                      <AnimatedCityCard 
+                        cityName="Washington Court House "
+                        description="Historic City"
+                        price="$320K median"
+                        bgImage="/images/Washington.png"
+                      />
                     </div>
                   </div>
                 </CardContent>
-                <CardFooter>
-                  <Button className="w-full">
-                    <Download className="w-4 h-4 mr-2" />
-                    Download Full Market Report
-                  </Button>
-                </CardFooter>
+                
               </Card>
             </TabsContent>
 
@@ -517,90 +581,40 @@ const InvestorPackage = () => {
               </Card>
             </TabsContent>
 
-            <TabsContent value="resources" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Investor Resources</CardTitle>
-                  <CardDescription>
-                    Tools, guides, and resources to help you make informed investment decisions
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Card>
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-lg">Investment Guides</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <ul className="space-y-3">
-                          <li className="flex items-center">
-                            <FileText className="w-4 h-4 mr-2 text-blue-600" />
-                            <a href="#" className="text-blue-600 hover:underline">Austin Market Analysis 2023</a>
-                          </li>
-                          <li className="flex items-center">
-                            <FileText className="w-4 h-4 mr-2 text-blue-600" />
-                            <a href="#" className="text-blue-600 hover:underline">Rental Property Tax Guide</a>
-                          </li>
-                          <li className="flex items-center">
-                            <FileText className="w-4 h-4 mr-2 text-blue-600" />
-                            <a href="#" className="text-blue-600 hover:underline">Fix & Flip Strategy Guide</a>
-                          </li>
-                          <li className="flex items-center">
-                            <FileText className="w-4 h-4 mr-2 text-blue-600" />
-                            <a href="#" className="text-blue-600 hover:underline">Long-term Investment Blueprint</a>
-                          </li>
-                        </ul>
-                      </CardContent>
-                    </Card>
-                    
-                    <Card>
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-lg">Calculators & Tools</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <ul className="space-y-3">
-                          <li className="flex items-center">
-                            <Calculator className="w-4 h-4 mr-2 text-blue-600" />
-                            <a href="/calculators" className="text-blue-600 hover:underline">Mortgage Calculator</a>
-                          </li>
-                          <li className="flex items-center">
-                            <Calculator className="w-4 h-4 mr-2 text-blue-600" />
-                            <a href="#" className="text-blue-600 hover:underline">ROI Calculator</a>
-                          </li>
-                          <li className="flex items-center">
-                            <Calculator className="w-4 h-4 mr-2 text-blue-600" />
-                            <a href="#" className="text-blue-600 hover:underline">Cash Flow Analyzer</a>
-                          </li>
-                          <li className="flex items-center">
-                            <Calculator className="w-4 h-4 mr-2 text-blue-600" />
-                            <a href="#" className="text-blue-600 hover:underline">Rehab Cost Estimator</a>
-                          </li>
-                        </ul>
-                      </CardContent>
-                    </Card>
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button className="w-full">
-                    <Download className="w-4 h-4 mr-2" />
-                    Download Complete Investor Package
-                  </Button>
-                </CardFooter>
-              </Card>
+            <TabsContent value="omx" className="space-y-4 sm:space-y-6">
+            <div className="w-full rounded-lg overflow-hidden shadow-md">
+             <h2 style={{ textAlign: 'center' }}> Austin Off Market Exclusive Explaination</h2>
+             <br />
+                  <video 
+                    className="w-full h-auto" 
+                    controls 
+                    poster="/images/resourcesVid.jpg"
+                    onTimeUpdate={(e) => {
+                      // Limit playback to 43 seconds
+                      const video = e.target as HTMLVideoElement;
+                      if (video.currentTime > 43) {
+                        video.pause();
+                      }
+                    }}
+                  >
+                    <source src="/vids/resourcesVid.mp4" type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
             </TabsContent>
           </Tabs>
         </div>
 
-        <div className="bg-blue-50 rounded-xl p-8 text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Ready to start investing?</h2>
-          <p className="text-lg text-gray-600 mb-6 max-w-2xl mx-auto">
+        <div className="bg-blue-50 rounded-xl p-4 sm:p-8 text-center">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">Ready to start investing?</h2>
+          <p className="text-base sm:text-lg text-gray-600 mb-4 sm:mb-6 max-w-2xl mx-auto">
             Schedule a consultation to discuss your investment goals and get personalized recommendations.
           </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
+          <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
+            <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-sm sm:text-base">
               Schedule Consultation
             </Button>
-            <Button size="lg" variant="outline">
+            <Button size="lg" variant="outline" className="text-sm sm:text-base">
               Join Investor Network
             </Button>
           </div>

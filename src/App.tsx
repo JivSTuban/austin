@@ -12,7 +12,6 @@ import Forum from "./pages/Forum";
 import Maps from "./pages/Maps";
 import NotFound from "./pages/NotFound";
 import MortgageCalculator from "./pages/MortgageCalculator";
-import HomeEstimateCalculator from "./pages/HomeEstimateCalculator";
 import BackgroundShapes from "./components/BackgroundShapes";
 import InvestorPackage from "./pages/InvestorPackage";
 import Login from "./pages/Login";
@@ -48,7 +47,6 @@ const AppContent = () => {
           <Route path="/maps" element={<Maps />} />
           <Route path="/investor-package" element={<InvestorPackage />} />
           <Route path="/calculators" element={<MortgageCalculator />} />
-          <Route path="/home-estimate" element={<HomeEstimateCalculator />} />
           <Route path="/reviews" element={<Reviews />} />
           <Route path="/forum" element={<Forum />} />
           <Route path="/forum/thread/:threadId" element={<ThreadView />} />
