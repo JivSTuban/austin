@@ -1,10 +1,10 @@
-import React from 'react';
-import { cn } from '@/lib/utils';
-import { Badge } from '@/components/ui/badge';
-import { Home, MapPin, Calendar } from 'lucide-react';
-import { SoldProperty } from '@/hooks/useSoldProperties';
+import React from "react";
+import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import { Home, MapPin, Calendar } from "lucide-react";
+import { SoldProperty } from "@/hooks/useSoldProperties";
 import { motion } from "framer-motion";
-import { GlowingEffect } from '@/components/ui/glowing-effect';
+import { GlowingEffect } from "@/components/ui/glowing-effect";
 
 interface SoldPropertyCardProps {
   property: SoldProperty;
@@ -13,29 +13,31 @@ interface SoldPropertyCardProps {
 const SoldPropertyCard: React.FC<SoldPropertyCardProps> = ({ property }) => {
   // Format date to be more readable
   const formatDate = (dateString: string) => {
-    if (!dateString) return 'N/A';
+    if (!dateString) return "N/A";
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
   // Function to handle click and redirect to Zillow
   const handleZillowRedirect = () => {
     // Format the address for the URL - replace spaces with hyphens and make lowercase
-    const formattedAddress = property.address.replace(/\s+/g, '-').toLowerCase();
-    const formattedCity = property.city.replace(/\s+/g, '-').toLowerCase();
-    
+    const formattedAddress = property.address
+      .replace(/\s+/g, "-")
+      .toLowerCase();
+    const formattedCity = property.city.replace(/\s+/g, "-").toLowerCase();
+
     // Since state is not in the SoldProperty interface, we'll use a default
-    const defaultState = 'oh'; // Default state code
-    
+    const defaultState = "oh"; // Default state code
+
     // Create the Zillow URL format similar to the example provided
     const zillowUrl = `https://www.zillow.com/homes/${formattedAddress}-${formattedCity}-${defaultState}/`;
-    
+
     // Open in a new tab
-    window.open(zillowUrl, '_blank', 'noopener,noreferrer');
+    window.open(zillowUrl, "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -70,7 +72,9 @@ const SoldPropertyCard: React.FC<SoldPropertyCardProps> = ({ property }) => {
                 <div className="space-y-1">
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <MapPin className="h-4 w-4" />
-                    <span className="text-xs uppercase tracking-wider">Location</span>
+                    <span className="text-xs uppercase tracking-wider">
+                      Location
+                    </span>
                   </div>
                   <p className="text-sm font-medium text-foreground">
                     {property.city}
@@ -78,12 +82,12 @@ const SoldPropertyCard: React.FC<SoldPropertyCardProps> = ({ property }) => {
                 </div>
                 <div className="flex flex-col items-end gap-1">
                   <div className="flex items-center gap-2 text-muted-foreground">
-                    <span className="text-xs uppercase tracking-wider">Sold</span>
+                    <span className="text-xs uppercase tracking-wider">
+                      Sold
+                    </span>
                     <Calendar className="h-4 w-4" />
                   </div>
-                  <Badge 
-                    className="bg-[#F08A5D]/10 hover:bg-[#F08A5D]/20 text-[#F08A5D] border-[#F08A5D]/20"
-                  >
+                  <Badge className="bg-[#F08A5D]/10 hover:bg-[#F08A5D]/20 text-[#F08A5D] border-[#F08A5D]/20">
                     {property.year}
                   </Badge>
                 </div>

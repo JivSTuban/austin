@@ -62,7 +62,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #F08A5D;
+  background-color: #f08a5d;
   color: #1b2232;
   border-radius: 50%;
   font-size: 32px;
@@ -79,7 +79,7 @@
 
 .profile-title {
   font-size: 16px;
-  color: #F08A5D;
+  color: #f08a5d;
   margin-bottom: 15px;
 }
 
@@ -101,13 +101,13 @@
     width: 350px;
     height: 350px;
   }
-  
+
   .profile-initials {
     width: 60px;
     height: 60px;
     font-size: 24px;
   }
-  
+
   .profile-name {
     font-size: 20px;
   }

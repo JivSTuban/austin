@@ -86,7 +86,12 @@
 }
 
 .slider-button {
-  background-color: rgba(240, 138, 93, 0.7); /* Orange secondary color from the memory */
+  background-color: rgba(
+    240,
+    138,
+    93,
+    0.7
+  ); /* Orange secondary color from the memory */
   color: white;
   border: none;
   width: 40px;
@@ -102,7 +107,7 @@
 }
 
 .slider-button:hover {
-  background-color: #F08A5D; /* Full opacity on hover */
+  background-color: #f08a5d; /* Full opacity on hover */
   transform: scale(1.1);
 }
 
@@ -128,7 +133,7 @@
 
 .loader-bar {
   height: 100%;
-  background-color: #F08A5D; /* Orange secondary color from the memory */
+  background-color: #f08a5d; /* Orange secondary color from the memory */
   transition: width 0.3s ease;
 }
 
@@ -142,15 +147,15 @@
   .slider-container {
     height: 400px;
   }
-  
+
   .slide-content h2 {
     font-size: 1.5rem;
   }
-  
+
   .slide-content h3 {
     font-size: 1rem;
   }
-  
+
   .slide-content p {
     font-size: 0.9rem;
   }
@@ -160,19 +165,19 @@
   .slider-container {
     height: 300px;
   }
-  
+
   .slide-content {
     padding: 1rem;
   }
-  
+
   .slide-content h2 {
     font-size: 1.2rem;
   }
-  
+
   .slide-content h3 {
     font-size: 0.9rem;
   }
-  
+
   .slide-content p {
     font-size: 0.8rem;
   }

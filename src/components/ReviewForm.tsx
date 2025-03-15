@@ -1,9 +1,15 @@
-import React, { useState } from 'react';
-import { Star } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import React, { useState } from "react";
+import { Star } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface ReviewFormProps {
   initialData?: {
@@ -24,20 +30,30 @@ interface ReviewFormProps {
   isEditing?: boolean;
 }
 
-const propertyTypes = ['Single Family', 'Multi-Family', 'Condo', 'Apartment', 'Other'];
-const buyerTypes = ['Buyer', 'Seller', 'Both', 'Other'];
+const propertyTypes = [
+  "Single Family",
+  "Multi-Family",
+  "Condo",
+  "Apartment",
+  "Other",
+];
+const buyerTypes = ["Buyer", "Seller", "Both", "Other"];
 
 const ReviewForm: React.FC<ReviewFormProps> = ({
   initialData,
   onSubmit,
   onCancel,
-  isEditing = false
+  isEditing = false,
 }) => {
   const [rating, setRating] = useState(initialData?.rating || 0);
-  const [comment, setComment] = useState(initialData?.comment || '');
-  const [propertyType, setPropertyType] = useState(initialData?.propertyType || '');
-  const [buyerType, setBuyerType] = useState(initialData?.buyerType || '');
-  const [workDescription, setWorkDescription] = useState(initialData?.workDescription || '');
+  const [comment, setComment] = useState(initialData?.comment || "");
+  const [propertyType, setPropertyType] = useState(
+    initialData?.propertyType || ""
+  );
+  const [buyerType, setBuyerType] = useState(initialData?.buyerType || "");
+  const [workDescription, setWorkDescription] = useState(
+    initialData?.workDescription || ""
+  );
   const [hoveredStar, setHoveredStar] = useState<number | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -47,14 +63,16 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
       comment,
       propertyType,
       buyerType,
-      workDescription
+      workDescription,
     });
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Rating</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Rating
+        </label>
         <div className="flex gap-1">
           {[1, 2, 3, 4, 5].map((value) => (
             <button
@@ -68,8 +86,8 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
               <Star
                 className={`w-6 h-6 ${
                   value <= (hoveredStar || rating)
-                    ? 'fill-[#F08A5D] text-[#F08A5D]'
-                    : 'text-gray-300'
+                    ? "fill-[#F08A5D] text-[#F08A5D]"
+                    : "text-gray-300"
                 }`}
               />
             </button>
@@ -78,7 +96,9 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Property Type</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Property Type
+        </label>
         <Select value={propertyType} onValueChange={setPropertyType}>
           <SelectTrigger>
             <SelectValue placeholder="Select property type" />
@@ -94,7 +114,9 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Transaction Type</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Transaction Type
+        </label>
         <Select value={buyerType} onValueChange={setBuyerType}>
           <SelectTrigger>
             <SelectValue placeholder="Select transaction type" />
@@ -110,7 +132,9 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Work Description</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Work Description
+        </label>
         <Input
           value={workDescription}
           onChange={(e) => setWorkDescription(e.target.value)}
@@ -120,7 +144,9 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Review</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Review
+        </label>
         <Textarea
           value={comment}
           onChange={(e) => setComment(e.target.value)}
@@ -136,13 +162,19 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
         </Button>
         <Button
           type="submit"
-          disabled={!rating || !comment || !propertyType || !buyerType || !workDescription}
+          disabled={
+            !rating ||
+            !comment ||
+            !propertyType ||
+            !buyerType ||
+            !workDescription
+          }
         >
-          {isEditing ? 'Update Review' : 'Submit Review'}
+          {isEditing ? "Update Review" : "Submit Review"}
         </Button>
       </div>
     </form>
   );
 };
 
-export default ReviewForm; 
+export default ReviewForm;
