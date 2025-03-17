@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { Building, TrendingUp, DollarSign, FileText, Map, BarChart, Download, ChevronDown, ChevronUp, Home, Users, Calculator, Contact, ChevronLeft, ChevronRight } from 'lucide-react';
 import {
   Card,
@@ -84,73 +85,57 @@ const InvestorPackage = () => {
   };
 
   // FAQ data
-  const faqItems = [
-    {
-      question: "What do you do?",
-      answer: (
-        <>
-          <p>
-            I work as your deal finder and agent, spending most of my time searching for real estate deals. 
-            When I find a good one, I’ll send it to your email with as much detail as possible. 
-            If it matches your buying criteria, I’ll draft the offer and represent you throughout the entire closing process.
-          </p>
-  
-          <p><strong>How I Find Deals:</strong></p>
-          <ul className="list-disc pl-5 space-y-2">
-            <li>
-              <strong>Cold Calling</strong>
-              <ul className="list-disc pl-5">
-                <li>I find property owners’ phone numbers from the County Auditor.</li>
-                <li>I call them to see if they’re open to receiving an offer on their home.</li>
-                <li>If the numbers make sense, I’ll share the info with you.</li>
-              </ul>
-            </li>
-  
-            <li>
-              <strong>My Network</strong>
-              <ul className="list-disc pl-5">
-                <li>I connect with as many people as possible in Ohio’s real estate market.</li>
-                <li>I ask agents, investors, property managers, and contractors about upcoming deals.</li>
-              </ul>
-            </li>
-  
-            <li>
-              <strong>The MLS (Multiple Listing Service)</strong>
-              <ul className="list-disc pl-5">
-                <li>
-                  <strong>Newly listed, low-priced properties</strong> – I move quickly to secure offers at asking price.
-                </li>
-                <li>
-                  <strong>Stale listings that have lost traction</strong> – I submit low offers to secure below-market deals.
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </>
-      ),
-      category: "Services",
-    },
-    {
-      question: "How do you find deals?",
-      answer: "I find deals through cold calling (contacting property owners directly), my network (other agents, investors, property managers, contractors), and the MLS (targeting both newly listed properties priced low and properties that have been sitting on the market).",
-      category: "Services",
-    },
-    {
-      question: "What are your fees?",
-      answer: "The seller usually pays my commission fee. I write in the purchase agreement that the seller pays the commission at closing. If the seller declines to pay any commission and it needs to be paid on the buy side, I'll make it very clear upfront so there are no surprises.",
-      category: "Fees",
-    },
-    {
-      question: "What happens during the inspection period?",
-      answer: "In your offer, we can add an inspection contingency that will give us a certain amount of time to send a licensed inspector to check the property's condition. This time period is normally 7-10 days. The inspection is your chance to make sure there are no hidden material defects (issues that may have a significant, adverse impact on the value of the property, or that pose an unreasonable risk to people).",
-      category: "Process",
-    },
-    {
-      question: "What is an appraisal gap?",
-      answer: "An 'appraisal gap' is the difference between the appraised value of a home and the purchase price in the sales contract. An 'appraisal gap clause' is used to guarantee that the buyer will cover the monetary gap between the appraisal and the sales contract if an appraisal gap becomes an issue. For example, with a $5k appraisal gap on a $100k property that appraises at $92k, you could either terminate, ask the seller to reduce their price to $97k, or cover the whole gap if the seller won't budge.",
-      category: "Financing",
-    },
-  ];
+    const answer1 = `I work as your deal finder and agent, spending most of my time searching for real estate deals. When I find a good one, I’ll send it to your email with as much detail as possible. If it matches your buying criteria, I’ll draft the offer and represent you throughout the entire closing process.
+
+**How I Find Deals:**
+
+- **Cold Calling**
+  - I find property owners’ phone numbers from the County Auditor.
+  - I call them to see if they’re open to receiving an offer on their home.
+  - If the numbers make sense, I’ll share the info with you.
+
+- **My Network**
+  - I connect with as many people as possible in Ohio’s real estate market.
+  - I ask agents, investors, property managers, and contractors about upcoming deals.
+
+- **The MLS (Multiple Listing Service)**
+  - **Newly listed, low-priced properties** – I move quickly to secure offers at asking price.
+  - **Stale listings that have lost traction** – I submit low offers to secure below-market deals.`;
+
+    const answer2 = "I find deals through cold calling (contacting property owners directly), my network (other agents, investors, property managers, contractors), and the MLS (targeting both newly listed properties priced low and properties that have been sitting on the market).";
+    const answer3 = "The seller usually pays my commission fee. I write in the purchase agreement that the seller pays the commission at closing. If the seller declines to pay any commission and it needs to be paid on the buy side, I'll make it very clear upfront so there are no surprises.";
+    const answer4 = "In your offer, we can add an inspection contingency that will give us a certain amount of time to send a licensed inspector to check the property's condition. This time period is normally 7-10 days. The inspection is your chance to make sure there are no hidden material defects (issues that may have a significant, adverse impact on the value of the property, or that pose an unreasonable risk to people).";
+    const answer5 = "An 'appraisal gap' is the difference between the appraised value of a home and the purchase price in the sales contract. An 'appraisal gap clause' is used to guarantee that the buyer will cover the monetary gap between the appraisal and the sales contract if an appraisal gap becomes an issue. For example, with a $5k appraisal gap on a $100k property that appraises at $92k, you could either terminate, ask the seller to reduce their price to $97k, or cover the whole gap if the seller won't budge.";
+
+
+    // FAQ data
+    const faqItems = [
+      {
+        question: "What do you do?",
+        answer: answer1,
+        category: "Services",
+      },
+      {
+        question: "How do you find deals?",
+        answer: answer2,
+        category: "Services",
+      },
+      {
+        question: "What are your fees?",
+        answer: answer3,
+        category: "Fees",
+      },
+      {
+        question: "What happens during the inspection period?",
+        answer: answer4,
+        category: "Process",
+      },
+      {
+        question: "What is an appraisal gap?",
+        answer: answer5,
+        category: "Financing",
+      },
+    ];
 
   // Tab items for the tubelight navbar
   const tabItems = [
@@ -176,44 +161,31 @@ const InvestorPackage = () => {
 
         <div className="mb-10 sm:mb-16">
           <Tabs defaultValue="faq" className="w-full h-full">
-            <TabsList className="flex justify-center mb-6 sm:mb-8 bg-transparent w-full">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 bg-gray-100/80 border border-gray-200 backdrop-blur-lg py-1 px-1 rounded-lg shadow-lg">
-                {tabItems.map((item) => {
-                  const Icon = item.icon;
-                  const tabValue = item.name.toLowerCase().replace(' ', '-');
-
-                  return (
-                    <TabsTrigger
-                      key={item.name}
-                      value={tabValue}
-                      className="relative cursor-pointer text-xs sm:text-sm font-semibold px-3 sm:px-6 py-2 rounded-full transition-colors text-gray-600 hover:text-blue-600 data-[state=active]:bg-white data-[state=active]:text-blue-600 whitespace-nowrap"
-                    >
-                      <span className="hidden sm:inline">{item.name}</span>
-                      <span className="sm:hidden">
-                        <Icon size={18} strokeWidth={2.5} />
-                      </span>
-                      <div
-                        className="absolute inset-0 w-full bg-white rounded-full -z-10 opacity-0 data-[state=active]:opacity-100"
-                      >
-                        <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-8 h-1 bg-blue-600 rounded-t-full">
-                          <div className="absolute w-12 h-6 bg-blue-600/20 rounded-full blur-md -top-2 -left-2" />
-                          <div className="absolute w-8 h-6 bg-blue-600/20 rounded-full blur-md -top-1" />
-                          <div className="absolute w-4 h-4 bg-blue-600/20 rounded-full blur-sm top-0 left-2" />
-                        </div>
-                      </div>
-                    </TabsTrigger>
-                  );
-                })}
-              </div>
+            <TabsList className="flex w-full p-1 bg-blue-50 rounded-md">
+              {tabItems.map((item) => {
+                const Icon = item.icon;
+                const tabValue = item.name.toLowerCase().replace(' ', '-');
+                return (
+                  <TabsTrigger
+                    key={item.name}
+                    value={tabValue}
+                    className="relative flex-1 text-sm font-medium px-3 py-2 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 data-[state=active]:bg-blue-500 data-[state=active]:text-white"
+                  >
+                    {item.name}
+                  </TabsTrigger>
+                );
+              })}
             </TabsList>
 
-            <TabsContent value="faq" className="space-y-8">
+            <TabsContent value="faq" className="space-y-8 mt-20">
               <div className="space-y-6 sm:space-y-8">
                 <div className="w-full rounded-lg overflow-hidden shadow-md">
                   <video 
                     className="w-full h-auto" 
                     controls 
                     poster="/images/faq-poster.jpg"
+                    preload="metadata"
+                    playsInline
                   >
                     <source src="/vids/FAQvid.mp4" type="video/mp4" />
                     Your browser does not support the video tag.
@@ -224,23 +196,17 @@ const InvestorPackage = () => {
                   title="Frequently Asked Questions"
                   description="Find answers to common questions about our real estate investment services"
                   items={faqItems}
-                  contactInfo={{
-                    title: "Still have questions?",
-                    description: "Feel free to reach out for more information about our investment services.",
-                    buttonText: "Contact Me",
-                    onContact: () => console.log("Contact button clicked"),
-                  }}
                 />
               </div>
             </TabsContent>
 
-            <TabsContent value="rolodex" className="space-y-8">
+            <TabsContent value="rolodex" className="space-y-8 mt-20 ">
               <div className="flex flex-col md:flex-row gap-4 mb-6">
                 <div className="relative flex-grow">
                   <input
                     type="text"
                     placeholder="Search contacts..."
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                     onChange={(e) => setSearchQuery(e.target.value)}
                     value={searchQuery || ""}
                   />
@@ -251,7 +217,7 @@ const InvestorPackage = () => {
                   </div>
                 </div>
                 <select
-                  className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
                 >
@@ -261,7 +227,7 @@ const InvestorPackage = () => {
                   ))}
                 </select>
                 <select
-                  className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-1/2"
+                  className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-1/2 bg-white"
                   value={selectedArea}
                   onChange={(e) => setSelectedArea(e.target.value)}
                 >
@@ -273,7 +239,15 @@ const InvestorPackage = () => {
               </div>
 
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {currentContacts.length > 0 ? (
+                {isLoading ? (
+                  <div className="col-span-full text-center py-8">
+                    <p className="text-gray-500">Loading contacts...</p>
+                  </div>
+                ) : error ? (
+                  <div className="col-span-full text-center py-8">
+                    <p className="text-red-500">Error loading contacts: {typeof error === 'string' ? error : error.message}</p>
+                  </div>
+                ) : currentContacts.length > 0 ? (
                   currentContacts.map((contact) => (
                     <RolodexCard 
                       key={contact.id} 
@@ -314,7 +288,11 @@ const InvestorPackage = () => {
                             variant={pageNumber === currentPage ? "default" : "outline"}
                             size="sm"
                             onClick={() => handlePageChange(pageNumber)}
-                            className="w-8"
+                            className={`w-8 ${
+                              pageNumber === currentPage
+                                ? "bg-blue-600 text-white hover:bg-blue-700 hover:text-white"
+                                : "hover:bg-blue-100 hover:text-blue-600"
+                            }`}
                           >
                             {pageNumber}
                           </Button>
@@ -327,7 +305,11 @@ const InvestorPackage = () => {
                             variant={currentPage === 1 ? "default" : "outline"}
                             size="sm"
                             onClick={() => handlePageChange(1)}
-                            className="w-8"
+                            className={`w-8 ${
+                              currentPage === 1
+                                ? "bg-blue-600 text-white hover:bg-blue-700 hover:text-white"
+                                : "hover:bg-blue-100 hover:text-blue-600"
+                            }`}
                           >
                             1
                           </Button>
@@ -353,7 +335,11 @@ const InvestorPackage = () => {
                                 variant={pageNumber === currentPage ? "default" : "outline"}
                                 size="sm"
                                 onClick={() => handlePageChange(pageNumber)}
-                                className="w-8"
+                                className={`w-8 ${
+                                  pageNumber === currentPage
+                                    ? "bg-blue-600 text-white hover:bg-blue-700 hover:text-white"
+                                    : "hover:bg-blue-100 hover:text-blue-600"
+                                }`}
                               >
                                 {pageNumber}
                               </Button>
@@ -369,7 +355,11 @@ const InvestorPackage = () => {
                             variant={currentPage === totalPages ? "default" : "outline"}
                             size="sm"
                             onClick={() => handlePageChange(totalPages)}
-                            className="w-8"
+                            className={`w-8 ${
+                              currentPage === totalPages
+                                ? "bg-blue-600 text-white hover:bg-blue-700 hover:text-white"
+                                : "hover:bg-blue-100 hover:text-blue-600"
+                            }`}
                           >
                             {totalPages}
                           </Button>
@@ -400,7 +390,7 @@ const InvestorPackage = () => {
               </div>
             </TabsContent>
 
-            <TabsContent value="major-cities" className="space-y-4 sm:space-y-6">
+            <TabsContent value="major-cities" className="space-y-4 sm:space-y-6 mt-20">
               <Card>
                 <CardHeader className="pb-2 sm:pb-4">
                   <CardTitle className="text-xl sm:text-2xl">Major Ohio Cities</CardTitle>
@@ -581,7 +571,7 @@ const InvestorPackage = () => {
               </Card>
             </TabsContent>
 
-            <TabsContent value="omx" className="space-y-4 sm:space-y-6">
+            <TabsContent value="omx" className="space-y-4 sm:space-y-6 mt-20">
             <div className="w-full rounded-lg overflow-hidden shadow-md">
              <h2 style={{ textAlign: 'center' }}> Austin Off Market Exclusive Explaination</h2>
              <br />
@@ -589,6 +579,8 @@ const InvestorPackage = () => {
                     className="w-full h-auto" 
                     controls 
                     poster="/images/resourcesVid.jpg"
+                    preload="metadata"
+                    playsInline
                     onTimeUpdate={(e) => {
                       // Limit playback to 43 seconds
                       const video = e.target as HTMLVideoElement;
@@ -611,11 +603,11 @@ const InvestorPackage = () => {
             Schedule a consultation to discuss your investment goals and get personalized recommendations.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
-            <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-sm sm:text-base">
-              Schedule Consultation
+            <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-sm sm:text-base" asChild>
+              <a href="https://forms.gle/TByiP2G4KWQQmeRDA" target="_blank" rel="noopener noreferrer">Schedule Consultation</a>
             </Button>
-            <Button size="lg" variant="outline" className="text-sm sm:text-base">
-              Join Investor Network
+            <Button size="lg" variant="outline" className="text-sm sm:text-base" asChild>
+              <Link to="/forum">Join Investor Network</Link>
             </Button>
           </div>
         </div>

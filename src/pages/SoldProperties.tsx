@@ -4,18 +4,10 @@ import SoldPropertyCard from "@/components/SoldPropertyCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   Loader2,
   Search,
   Home,
   RefreshCw,
-  Calendar,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -28,12 +20,6 @@ import {
 } from "@/components/ui/card";
 
 const SoldProperties: React.FC = () => {
-  const [selectedCity, setSelectedCity] = useState<string | undefined>(
-    undefined
-  );
-  const [selectedYear, setSelectedYear] = useState<string | undefined>(
-    undefined
-  );
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const propertiesPerPage = 9;
@@ -41,21 +27,9 @@ const SoldProperties: React.FC = () => {
   const { properties, isLoading, error, retry, retryCount, maxRetries } =
     useSoldProperties();
 
-  // Get unique cities for the filter dropdown
-  const uniqueCities = Array.from(
-    new Set(properties.map((property) => property.city))
-  ).sort();
-
-  // Get unique years for the filter dropdown
-  const uniqueYears = Array.from(
-    new Set(properties.map((property) => property.year))
-  ).sort((a, b) => b - a); // Sort years in descending order
-
   // Filter properties based on search query, city, and year
   const filteredProperties = properties.filter(
     (property) =>
-      (selectedCity ? property.city === selectedCity : true) &&
-      (selectedYear ? property.year.toString() === selectedYear : true) &&
       (property.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
         property.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
         property.year.toString().includes(searchQuery))
@@ -75,80 +49,27 @@ const SoldProperties: React.FC = () => {
   };
 
   return (
-    <div className="container mt-10 py-8 px-4 md:px-6 ">
-      <div className="flex flex-col items-start gap-4 mb-8">
+    <div className="container mt-10 py-8 px-4 md:px-6">
+      <div className="flex flex-col items-start gap-4 mb-8 sticky top-0 z-20 pt-4 pb-2">
         <h1 className="text-3xl font-bold flex items-center gap-2">
-          <Home className="h-8 w-8 text-[#F08A5D]" />
+          
           <span>Sold Properties</span>
+          <Home className="h-8 w-8 text-blue-500" />
         </h1>
       </div>
 
-      {/* Filters and Search */}
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle>Filter Properties</CardTitle>
-          <CardDescription>
-            Use the filters below to narrow down the properties
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
-                <Input
-                  placeholder="Search by address, city, or year..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-8"
-                />
-              </div>
-            </div>
-            <div className="w-full md:w-64">
-              <Select
-                value={selectedCity}
-                onValueChange={(value) =>
-                  setSelectedCity(value === "all" ? undefined : value)
-                }
-              >
-                <SelectTrigger>
-                  <Home className="h-4 w-4 mr-2 text-gray-500" />
-                  <SelectValue placeholder="Filter by city" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Cities</SelectItem>
-                  {uniqueCities.map((city) => (
-                    <SelectItem key={city} value={city}>
-                      {city}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="w-full md:w-64">
-              <Select
-                value={selectedYear}
-                onValueChange={(value) =>
-                  setSelectedYear(value === "all" ? undefined : value)
-                }
-              >
-                <SelectTrigger>
-                  <Calendar className="h-4 w-4 mr-2 text-gray-500" />
-                  <SelectValue placeholder="Filter by year" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Years</SelectItem>
-                  {uniqueYears.map((year) => (
-                    <SelectItem key={year} value={year.toString()}>
-                      {year}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Search */}
+      <div className="mb-8">
+        <div className="relative">
+          <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+          <Input
+            placeholder="Search by address, city, or year..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-8"
+          />
+        </div>
+      </div>
 
       {/* Error State */}
       {error && (
@@ -176,7 +97,7 @@ const SoldProperties: React.FC = () => {
       {/* Loading State */}
       {isLoading && (
         <div className="flex justify-center items-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-[#F08A5D]" />
+          <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
           <span className="ml-2 text-lg">Loading properties...</span>
         </div>
       )}
@@ -184,7 +105,7 @@ const SoldProperties: React.FC = () => {
       {/* Properties Grid */}
       {!isLoading && !error && (
         <>
-          <div className="mb-4">
+          <div className="mb-4 mt-4">
             <p className="text-gray-600">
               {filteredProperties.length}{" "}
               {filteredProperties.length === 1 ? "property" : "properties"}{" "}
@@ -214,6 +135,7 @@ const SoldProperties: React.FC = () => {
                       size="sm"
                       onClick={() => handlePageChange(currentPage - 1)}
                       disabled={currentPage === 1}
+                      className="hover:bg-blue-500 hover:text-white transition-colors"
                     >
                       <ChevronLeft className="h-4 w-4" />
                       Previous
@@ -234,8 +156,8 @@ const SoldProperties: React.FC = () => {
                               onClick={() => handlePageChange(pageNumber)}
                               className={`w-8 ${
                                 pageNumber === currentPage
-                                  ? "bg-[#F08A5D] text-white hover:bg-[#F08A5D] hover:text-white"
-                                  : ""
+                                  ? "bg-blue-500 text-white hover:bg-blue-600 hover:text-white"
+                                  : "hover:bg-blue-100 hover:text-blue-600"
                               }`}
                             >
                               {pageNumber}
@@ -251,8 +173,8 @@ const SoldProperties: React.FC = () => {
                             onClick={() => handlePageChange(1)}
                             className={`w-8 ${
                               currentPage === 1
-                                ? "bg-[#F08A5D] text-white hover:bg-[#F08A5D] hover:text-white"
-                                : ""
+                                ? "bg-blue-500 text-white hover:bg-blue-600 hover:text-white"
+                                : "hover:bg-blue-100 hover:text-blue-600"
                             }`}
                           >
                             1
@@ -291,8 +213,8 @@ const SoldProperties: React.FC = () => {
                                 onClick={() => handlePageChange(pageNumber)}
                                 className={`w-8 ${
                                   pageNumber === currentPage
-                                    ? "bg-[#F08A5D] text-white hover:bg-[#F08A5D] hover:text-white"
-                                    : ""
+                                    ? "bg-blue-500 text-white hover:bg-blue-600 hover:text-white"
+                                    : "hover:bg-blue-100 hover:text-blue-600"
                                 }`}
                               >
                                 {pageNumber}
@@ -313,8 +235,8 @@ const SoldProperties: React.FC = () => {
                             onClick={() => handlePageChange(totalPages)}
                             className={`w-8 ${
                               currentPage === totalPages
-                                ? "bg-[#F08A5D] text-white hover:bg-[#F08A5D] hover:text-white"
-                                : ""
+                                ? "bg-blue-500 text-white hover:bg-blue-600 hover:text-white"
+                                : "hover:bg-blue-100 hover:text-blue-600"
                             }`}
                           >
                             {totalPages}
@@ -327,6 +249,7 @@ const SoldProperties: React.FC = () => {
                       size="sm"
                       onClick={() => handlePageChange(currentPage + 1)}
                       disabled={currentPage === totalPages}
+                      className="hover:bg-blue-500 hover:text-white transition-colors"
                     >
                       Next
                       <ChevronRight className="h-4 w-4" />
@@ -342,7 +265,7 @@ const SoldProperties: React.FC = () => {
                 No properties found
               </h3>
               <p className="text-gray-600 max-w-md">
-                Try adjusting your search or filter criteria to find properties.
+                Try adjusting your search to find properties.
               </p>
             </div>
           )}

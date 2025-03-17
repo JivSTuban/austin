@@ -154,7 +154,7 @@ export default function RolodexCard({
           />
           <div
             className={cn(
-              "relative flex h-full flex-col justify-between gap-6 overflow-hidden rounded-xl border-[0.75px] bg-background p-6 shadow-sm dark:shadow-[0px_0px_27px_0px_rgba(45,45,45,0.3)] md:p-6",
+              "relative flex h-full flex-col justify-between gap-6 overflow-hidden rounded-xl border-[0.75px] bg-white p-6 shadow-sm dark:shadow-[0px_0px_27px_0px_rgba(45,45,45,0.3)] md:p-6",
               "transition-all duration-500 transform-gpu",
               isFlipped ? "rotate-y-180" : "",
               className
@@ -164,7 +164,7 @@ export default function RolodexCard({
               // Front of card
               <div className="relative flex flex-1 flex-col justify-between gap-3">
                 <div className="w-fit rounded-lg border-[0.75px] border-border bg-muted p-2">
-                  <User className="h-4 w-4 text-[#F08A5D]" />
+                  <User className="h-4 w-4 text-blue-500" />
                 </div>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
@@ -208,19 +208,19 @@ export default function RolodexCard({
                   </div>
                   <div className="space-y-2">
                     <p className="flex items-center gap-2 text-sm">
-                      <Phone className="h-4 w-4 text-[#F08A5D]" />
+                      <Phone className="h-4 w-4 text-blue-500" />
                       <span className="text-foreground truncate max-w-[250px]">
                         {formData.number_1}
                       </span>
                     </p>
                     <p className="flex items-center gap-2 text-sm">
-                      <Mail className="h-4 w-4 text-[#F08A5D]" />
+                      <Mail className="h-4 w-4 text-blue-500" />
                       <span className="text-foreground truncate max-w-[250px]">
                         {formData.email}
                       </span>
                     </p>
                     <p className="flex items-center gap-2 text-sm">
-                      <MapPin className="h-4 w-4 text-[#F08A5D]" />
+                      <MapPin className="h-4 w-4 text-blue-500" />
                       <span className="text-foreground truncate max-w-[250px]">
                         {formData.area}
                       </span>
@@ -233,7 +233,7 @@ export default function RolodexCard({
                   </div>
                 </div>
                 <div className="flex justify-end">
-                  <Badge className="bg-[#F08A5D]/10 hover:bg-[#F08A5D]/20 text-[#F08A5D] border-[#F08A5D]/20">
+                  <Badge className="bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 border-blue-500/20">
                     Added: {formatDate(formData.date_added)}
                   </Badge>
                 </div>
@@ -415,19 +415,19 @@ export default function RolodexCard({
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <p className="flex items-center gap-2 text-base">
-                          <Phone className="w-4 h-4 text-[#F08A5D]" />
+                          <Phone className="w-4 h-4 text-blue-500" />
                           {formData.number_1}
                         </p>
                         {formData.number_2 && (
                           <p className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Phone className="w-4 h-4 text-[#F08A5D]/70" />
+                            <Phone className="w-4 h-4 text-blue-500/70" />
                             {formData.number_2}
                           </p>
                         )}
                       </div>
                       <div className="space-y-2">
                         <p className="flex items-center gap-2 text-base">
-                          <Mail className="w-4 h-4 text-[#F08A5D]" />
+                          <Mail className="w-4 h-4 text-blue-500" />
                           <a
                             href={`mailto:${formData.email}`}
                             className="hover:underline"
@@ -437,7 +437,7 @@ export default function RolodexCard({
                         </p>
                         {formData.website && (
                           <p className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Globe className="w-4 h-4 text-[#F08A5D]" />
+                            <Globe className="w-4 h-4 text-blue-500" />
                             <a
                               href={formData.website}
                               target="_blank"
@@ -454,7 +454,7 @@ export default function RolodexCard({
 
                   <DetailSection title="Location">
                     <p className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-[#F08A5D]" />
+                      <MapPin className="w-4 h-4 text-blue-500" />
                       {formData.area}
                     </p>
                   </DetailSection>
@@ -468,11 +468,11 @@ export default function RolodexCard({
                   <DetailSection title="Record Details">
                     <div className="grid sm:grid-cols-2 gap-4 text-sm text-muted-foreground">
                       <p className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-[#F08A5D]" />
+                        <Calendar className="w-4 h-4 text-blue-500" />
                         Added: {formatDate(formData.date_added)}
                       </p>
                       <p className="flex items-center gap-2">
-                        <RotateCw className="w-4 h-4 text-[#F08A5D]" />
+                        <RotateCw className="w-4 h-4 text-blue-500" />
                         Updated: {formatDate(formData.last_updated)}
                       </p>
                     </div>

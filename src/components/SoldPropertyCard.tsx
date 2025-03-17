@@ -57,37 +57,36 @@ const SoldPropertyCard: React.FC<SoldPropertyCardProps> = ({ property }) => {
           inactiveZone={0.01}
           borderWidth={3}
         />
-        <div className="relative flex h-full flex-col justify-between gap-6 overflow-hidden rounded-xl border-[0.75px] bg-background p-6 shadow-sm dark:shadow-[0px_0px_27px_0px_rgba(45,45,45,0.3)] md:p-6">
+        <div className="relative flex h-full flex-col justify-between gap-6 overflow-hidden cursor-pointer rounded-xl border-[0.75px] bg-white p-6 shadow-sm md:p-6">
           <div className="relative flex flex-1 flex-col justify-between gap-3">
-            <div className="w-fit rounded-lg border-[0.75px] border-border bg-muted p-2">
-              <Home className="h-4 w-4 text-[#F08A5D]" />
+            <div className="w-fit rounded-lg border-[0.75px] border-border bg-white p-2">
+              <Home className="h-4 w-4 text-blue-500" />
+              
             </div>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <h3 className="pt-0.5 text-xl leading-[1.375rem] font-semibold font-sans tracking-[-0.04em] md:text-2xl md:leading-[1.875rem] text-balance text-foreground truncate max-w-[300px]">
+            <h3 className="pt-0.5 text-xl leading-[1.375rem] font-semibold font-sans tracking-[-0.04em] md:text-2xl md:leading-[1.875rem] text-balance text-gray-900 truncate max-w-[300px]">
                   {property.address}
                 </h3>
-              </div>
+            <div className="space-y-3">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <div className="flex items-center gap-2 text-muted-foreground">
+                  <div className="flex items-center gap-2 text-gray-600">
                     <MapPin className="h-4 w-4" />
                     <span className="text-xs uppercase tracking-wider">
                       Location
                     </span>
                   </div>
-                  <p className="text-sm font-medium text-foreground">
+                  <p className="text-sm font-medium text-gray-900">
                     {property.city}
                   </p>
                 </div>
                 <div className="flex flex-col items-end gap-1">
-                  <div className="flex items-center gap-2 text-muted-foreground">
+                  <div className="flex items-center gap-2 text-gray-600">
                     <span className="text-xs uppercase tracking-wider">
                       Sold
                     </span>
                     <Calendar className="h-4 w-4" />
                   </div>
-                  <Badge className="bg-[#F08A5D]/10 hover:bg-[#F08A5D]/20 text-[#F08A5D] border-[#F08A5D]/20">
+                  <Badge className="bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 border-blue-500/20">
                     {property.year}
                   </Badge>
                 </div>

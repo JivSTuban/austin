@@ -10,8 +10,7 @@ import { Button } from '@/components/ui/button';
 import ReviewForm from '@/components/ReviewForm';
 import { supabase } from '@/lib/supabase';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { ReviewDialog } from '@/components/ReviewDialog';
 
 interface RawReview {
   reviewername: string | null;
@@ -254,78 +253,15 @@ export default function Reviews() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <h1 className="text-4xl font-bold">Client Reviews</h1>
           
-          <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+          <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto items-start">
             {session && !hasUserReview() && (
-              <>
-                {/* Desktop: Popover */}
-                <div className="hidden md:block">
-                  <Popover open={isFormOpen} onOpenChange={setIsFormOpen}>
-                    <PopoverTrigger asChild>
-                      <Button className="flex items-center gap-2">
-                        <Plus className="w-4 h-4" />
-                        Write a Review
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent 
-                      className="w-[600px] p-0" 
-                      align="end"
-                      side="bottom"
-                      sideOffset={8}
-                    >
-                      <div className="p-6">
-                        <h2 className="text-lg font-semibold mb-4">
-                          {editingReview ? 'Edit Review' : 'Write a Review'}
-                        </h2>
-                        <ReviewForm
-                          initialData={editingReview || undefined}
-                          onSubmit={handleReviewSubmit}
-                          onCancel={() => {
-                            setIsFormOpen(false);
-                            setEditingReview(null);
-                          }}
-                          isEditing={!!editingReview}
-                        />
-                      </div>
-                    </PopoverContent>
-                  </Popover>
-                </div>
-
-                {/* Mobile: Sheet */}
-                <div className="md:hidden">
-                  <Sheet open={isFormOpen} onOpenChange={setIsFormOpen}>
-                    <SheetTrigger asChild>
-                      <Button className="flex items-center gap-2 w-full">
-                        <Plus className="w-4 h-4" />
-                        Write a Review
-                      </Button>
-                    </SheetTrigger>
-                    <SheetContent 
-                      side="bottom" 
-                      className="h-[90vh] p-0"
-                      title={editingReview ? 'Edit Review' : 'Write a Review'}
-                      description="Submit your review of the property and service"
-                    >
-                      <SheetTitle className="p-6 pb-0 text-lg font-semibold">
-                        {editingReview ? 'Edit Review' : 'Write a Review'}
-                      </SheetTitle>
-                      <SheetDescription className="p-6 pt-2 pb-0 text-sm text-muted-foreground">
-                        Share your experience with the property and service
-                      </SheetDescription>
-                      <div className="p-6 pt-4 overflow-y-auto h-full">
-                        <ReviewForm
-                          initialData={editingReview || undefined}
-                          onSubmit={handleReviewSubmit}
-                          onCancel={() => {
-                            setIsFormOpen(false);
-                            setEditingReview(null);
-                          }}
-                          isEditing={!!editingReview}
-                        />
-                      </div>
-                    </SheetContent>
-                  </Sheet>
-                </div>
-              </>
+              <ReviewDialog
+                isOpen={isFormOpen}
+                onOpenChange={setIsFormOpen}
+                initialData={editingReview || undefined}
+                onSubmit={handleReviewSubmit}
+                isEditing={!!editingReview}
+              />
             )}
             
             <div className="relative flex-grow sm:max-w-md">
@@ -435,7 +371,7 @@ export default function Reviews() {
             </div>
           ) : (
             <ScrollArea className="h-[640px] rounded-lg border">
-              <div className="grid grid-cols-2 gap-4 p-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
                 {filteredReviews.map((review): Review => ({
                   rating: review.rating,
                   reviewer: review.author,

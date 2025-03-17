@@ -10,25 +10,40 @@ const AuthCallback = () => {
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
-        // Get hash parameters
+        // Parse hash parameters
         const hashParams = new URLSearchParams(window.location.hash.substring(1));
         const error = hashParams.get('error');
         const errorDescription = hashParams.get('error_description');
+        const accessToken = hashParams.get('access_token');
+        const refreshToken = hashParams.get('refresh_token');
 
         if (error) {
           throw new Error(errorDescription || error);
         }
 
-        // Wait for session to be established
-        const waitForSession = async (retries = 5, delay = 500) => {
+        // Wait for session to be established with increased retries and delay
+        const waitForSession = async (retries = 10, delay = 1000) => {
           for (let i = 0; i < retries; i++) {
+            console.log(`Attempt ${i + 1} to get session...`);
             const { data: { session } } = await supabase.auth.getSession();
-            if (session) return session;
+            if (session) {
+              console.log('Session found:', session);
+              return session;
+            }
+            // If we have tokens but no session, try setting them
+            if (accessToken && !session && i === 5) {
+              console.log('Attempting to set session manually...');
+              await supabase.auth.setSession({
+                access_token: accessToken,
+                refresh_token: refreshToken || ''
+              });
+            }
             await new Promise(resolve => setTimeout(resolve, delay));
           }
           return null;
         };
 
+        // Get the session
         const session = await waitForSession();
         console.log('Session in callback:', session);
 

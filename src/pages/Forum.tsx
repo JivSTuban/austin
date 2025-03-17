@@ -6,7 +6,6 @@ import { toast } from 'sonner';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ForumThread from '@/components/ForumThread';
-import SurveyForm from '@/components/SurveyForm';
 import { NewDiscussionModal, type DiscussionData } from '@/components/NewDiscussionModal';
 import { cn } from '@/lib/utils';
 import { useFadeIn, useStaggeredFadeIn } from '@/lib/animations';
@@ -51,7 +50,7 @@ const Forum = () => {
           replies_count,
           excerpt,
           category,
-          profiles (username, avatar_url)
+          profiles!inner (username, avatar_url)
         `)
         .order('date', { ascending: false });
 
@@ -98,7 +97,8 @@ const Forum = () => {
                 .from('profiles')
                 .select('username, avatar_url')
                 .eq('id', newThread.author_id)
-                .single();
+                .single()
+                .throwOnError();
                 
               if (error) throw error;
               
@@ -132,13 +132,31 @@ const Forum = () => {
           log('Real-time: Thread updated', payload);
           const updatedThread = payload.new as Thread;
           
-          setFilteredThreads(prevThreads => 
-            prevThreads.map(thread => 
-              thread.id === updatedThread.id ? 
-                { ...updatedThread, profiles: thread.profiles } : 
-                thread
-            )
-          );
+          // Fetch the updated profile information when thread is updated
+          const fetchUpdatedProfile = async () => {
+            try {
+              const { data, error } = await supabase
+                .from('profiles')
+                .select('username, avatar_url')
+                .eq('id', updatedThread.author_id)
+                .single()
+                .throwOnError();
+                
+              if (error) throw error;
+              
+              setFilteredThreads(prevThreads => 
+                prevThreads.map(thread => 
+                  thread.id === updatedThread.id ? 
+                    { ...updatedThread, profiles: data ? [data] : [] } : 
+                    thread
+                )
+              );
+            } catch (error) {
+              console.error('Error fetching updated profile:', error);
+            }
+          };
+          
+          fetchUpdatedProfile();
         }
       )
       .on('postgres_changes',
@@ -238,13 +256,6 @@ const Forum = () => {
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
             <div className="mb-4 md:mb-0">
-              <button
-                onClick={() => navigate(-1)}
-                className="inline-flex items-center text-gray-500 hover:text-blue-600 transition-colors mb-2"
-                style={getStyle(0)}
-              >
-                <ArrowLeft className="w-4 h-4 mr-1" /> Back
-              </button>
               <h1
                 className="text-3xl md:text-4xl font-semibold tracking-tight mb-1 bg-gradient-to-r from-blue-600 to-blue-500 text-transparent bg-clip-text"
                 style={getStyle(1)}
@@ -389,14 +400,9 @@ const Forum = () => {
             )}
           </div>
           
-          {/* Survey form */}
-          <div className="mb-12">
-            <SurveyForm />
-          </div>
         </div>
       </div>
       
-   
       
       {/* New discussion modal */}
       <NewDiscussionModal

@@ -69,8 +69,8 @@ export const supabase: SupabaseClient = createClient(supabaseUrl, supabaseKey, {
   auth: {
     persistSession: true,
     storageKey: import.meta.env.VITE_NEXT_PUBLIC_AUTH_STORAGE_KEY || 'austin-auth-token',
-    autoRefreshToken: false, // Disable automatic token refresh to avoid errors when no valid token exists
-    detectSessionInUrl: false, // Disable automatic session detection in URL
+    autoRefreshToken: true, // Enable automatic token refresh
+    detectSessionInUrl: true, // Enable automatic session detection in URL
   },
   global: {
     fetch: customFetch,

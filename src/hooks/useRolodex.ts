@@ -21,7 +21,7 @@ export interface RolodexContact {
 interface RolodexData {
   contacts: RolodexContact[];
   isLoading: boolean;
-  error: string | null;
+  error: Error | string | null;
   retryCount: number;
   maxRetries: number;
   retry: () => void;
@@ -37,7 +37,7 @@ const MAX_RETRIES = 3;
 export const useRolodex = (category?: string): RolodexData => {
   const [contacts, setContacts] = useState<RolodexContact[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<Error | string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
   const [retryKey, setRetryKey] = useState(0); // Used to force re-fetch
 

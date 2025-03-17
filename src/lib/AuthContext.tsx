@@ -21,16 +21,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        // Get initial session
-        const { data: { session: initialSession } } = await supabase.auth.getSession();
-        setSession(initialSession);
-        setUser(initialSession?.user ?? null);
+        // Check if session exists in session storage
+        const storedSession = sessionStorage.getItem('supabaseSession');
+        if (storedSession) {
+          const parsedSession = JSON.parse(storedSession) as Session | null;
+          setSession(parsedSession);
+          setUser(parsedSession?.user ?? null);
+          setLoading(false); // Set loading to false here as we have session from storage
+        } else {
+          // Get initial session from Supabase
+          const { data: { session: initialSession } } = await supabase.auth.getSession();
+          setSession(initialSession);
+          setUser(initialSession?.user ?? null);
+
+          // Store session in session storage
+          if (initialSession) {
+            sessionStorage.setItem('supabaseSession', JSON.stringify(initialSession));
+          }
+        }
         
         // Listen for auth changes
         const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
           setSession(session);
           setUser(session?.user ?? null);
           setLoading(false);
+          // Update session storage on auth changes
+          if (session) {
+            sessionStorage.setItem('supabaseSession', JSON.stringify(session));
+          } else {
+            sessionStorage.removeItem('supabaseSession');
+          }
 
           if (event === 'SIGNED_IN' && !hasShownWelcome) {
             // Ensure profile exists
