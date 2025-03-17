@@ -27,7 +27,7 @@ const AuthCallback = () => {
         // Set session immediately if we have tokens
         if (accessToken) {
           console.log('Setting session with tokens...');
-          const { data, error: sessionError } = await supabase.auth.setSession({
+          const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
             access_token: accessToken,
             refresh_token: refreshToken || ''
           });
@@ -36,16 +36,21 @@ const AuthCallback = () => {
             throw new Error(`Failed to set session: ${sessionError.message}`);
           }
           
-          if (!data.session) {
+          if (!sessionData.session) {
             throw new Error('No session established after setting tokens');
           }
           
-          return data.session;
-        };
+          console.log('Session established successfully');
+          return sessionData.session;
+        }
 
         // Get the session
-        const session = await waitForSession();
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         console.log('Session in callback:', session);
+
+        if (sessionError) {
+          throw new Error(`Failed to get session: ${sessionError.message}`);
+        }
 
         if (session?.user) {
           // Check if user already has a username set in their profile
@@ -57,6 +62,7 @@ const AuthCallback = () => {
 
           if (profileError) {
             console.error('Error fetching profile:', profileError);
+            // Continue with the flow even if profile fetch fails
           }
 
           // Only redirect to username page if user doesn't have a username or it's null
