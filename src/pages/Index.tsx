@@ -25,6 +25,7 @@ import {
   useForegroundParallax,
 } from "@/components/ui/parallax";
 
+import { Listing, useListings } from '@/hooks/useListings';
 const Index = () => {
   const { agent, reviews } = useAgentData("X1-ZUtpaayyyrapzd_82rpg");
   const [typedText, setTypedText] = useState("");
@@ -37,6 +38,7 @@ const Index = () => {
   const [offerDays, setOfferDays] = useState(3);
   const [offerHours, setOfferHours] = useState(12);
   const [offerMinutes, setOfferMinutes] = useState(45);
+  const { listings, isLoading, error, fetchListings } = useListings();
 
   // Scroll to top on page load
   useEffect(() => {
@@ -57,6 +59,7 @@ const Index = () => {
     const testimonialTimer = setTimeout(() => {
       setShowTestimonialPopup(true);
     }, 15000);
+    
 
     // Countdown timer for offer banner
     const countdownInterval = setInterval(() => {
@@ -81,6 +84,15 @@ const Index = () => {
       clearInterval(countdownInterval);
     };
   }, []);
+
+  //listings
+  useEffect(() => {
+    fetchListings(); // Initial fetch
+  }, [fetchListings]);
+
+  // Label configuration based on listing properties
+ 
+
 
   // Typing effect for headline
   useEffect(() => {
@@ -135,6 +147,23 @@ const Index = () => {
     responsiveness: review.responsiveness,
     negotiationSkills: review.negotiationskills,
   }));
+  const getListingLabel = (listing: Listing) => {
+    const lastUpdated = listing.last_updated_from_zillow 
+      ? new Date(listing.last_updated_from_zillow) 
+      : null;
+    const now = new Date();
+    const daysDiff = lastUpdated 
+      ? Math.floor((now.getTime() - lastUpdated.getTime()) / (1000 * 3600 * 24)) 
+      : Infinity;
+
+    if (daysDiff <= 7) {
+      return { text: "New Listing", color: "bg-green-600" };
+    }
+    if (listing.price && listing.price < 100000) {
+      return { text: "Great Value", color: "bg-blue-600" };
+    }
+    return { text: "Featured", color: "bg-amber-600" };
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -242,7 +271,8 @@ const Index = () => {
                         backgroundImage: `url(${
                           import.meta.env.BASE_URL || "/"
                         }indexImg/2.png)`,
-                        backgroundSize: "cover",
+                        backgroundSize: "100%",
+                        backgroundRepeat: "no-repeat",
                         backgroundPosition: "center",
                         scale: scrollProps.backgroundScale,
                         y: scrollProps.backgroundY,
@@ -257,7 +287,7 @@ const Index = () => {
                         backgroundSize: "100%",
                         backgroundPosition: "center 25%",
                         backgroundRepeat: "no-repeat",
-                        filter: "blur(3px)",
+                        filter: "blur(2px)",
                         opacity: scrollProps.watermarkOpacity,
                         y: scrollProps.watermarkY,
                       }}
@@ -288,7 +318,7 @@ const Index = () => {
                   duration: 5,
                   ease: "easeInOut",
                 }}
-              >
+              >@
                 <img
                   src={`${import.meta.env.BASE_URL || "/"}indexImg/name.svg`}
                   alt="Austin McClain"
@@ -466,80 +496,64 @@ const Index = () => {
           </FadeInWhenVisible>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            {[
-              {
-                title: "Modern Luxury Home",
-                address: "123 Main St, Austin, TX",
-                price: "$750,000",
-                beds: 4,
-                baths: 3,
-                sqft: "2,400",
-                img: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                label: "For Sale",
-                labelColor: "bg-blue-600",
-              },
-              {
-                title: "Charming Suburban Home",
-                address: "456 Oak St, Austin, TX",
-                price: "$525,000",
-                beds: 3,
-                baths: 2,
-                sqft: "1,850",
-                img: "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                label: "New Listing",
-                labelColor: "bg-green-600",
-              },
-              {
-                title: "Downtown Luxury Condo",
-                address: "789 Tower Ave, Austin, TX",
-                price: "$625,000",
-                beds: 2,
-                baths: 2,
-                sqft: "1,200",
-                img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                label: "Featured",
-                labelColor: "bg-amber-600",
-              },
-            ].map((property, index) => (
-              <FadeInWhenVisible
-                key={index}
-                delay={index * 0.2}
-                className="h-full"
-              >
-                <div className="bg-white rounded-xl overflow-hidden shadow-lg transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1 h-full">
-                  <div className="relative h-64">
-                    <ParallaxImage
-                      src={property.img}
-                      alt={property.title}
-                      className="w-full h-full"
-                      speed={0.1}
-                    />
-                    <div
-                      className={`absolute top-4 left-4 ${property.labelColor} text-white px-3 py-1 rounded-full text-sm font-medium`}
-                    >
-                      {property.label}
-                    </div>
-                  </div>
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">
-                      {property.title}
-                    </h3>
-                    <p className="text-gray-600 mb-4">{property.address}</p>
-                    <div className="flex justify-between items-center">
-                      <span className="text-xl font-bold text-blue-600">
-                        {property.price}
-                      </span>
-                      <div className="flex items-center text-gray-600 text-sm">
-                        <span className="mr-3">{property.beds} Beds</span>
-                        <span className="mr-3">{property.baths} Baths</span>
-                        <span>{property.sqft} Sq Ft</span>
+              {listings.slice(0, 3).map((listing, index) => {
+                const label = getListingLabel(listing);
+                return (
+                  <FadeInWhenVisible
+                    key={listing.id}
+                    delay={index * 0.2}
+                    className="h-full"
+                  >
+                    
+                    <div className="bg-white rounded-xl overflow-hidden shadow-lg transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1 h-full">
+                      <div className="relative h-64">
+                        <img
+                          src={listing.imagelink }
+                          alt={listing.title || "Property"}
+                          className="w-full h-full object-cover"
+                         
+                          loading="lazy"
+                        />
+                       
+                        <div
+                          className={`absolute top-4 left-4 ${label.color} text-white px-3 py-1 rounded-full text-sm font-medium`}
+                        >
+                          {label.text}
+                        </div>
+                      </div>
+                      <div className="p-6">
+                        <h3 className="text-xl font-bold text-gray-900 mb-2">
+                          {listing.title || "Untitled Listing"}
+                        </h3>
+                        <p className="text-gray-600 mb-4">{listing.address}</p>
+                        <div className="flex justify-between items-center">
+                          <span className="text-xl font-bold text-blue-600">
+                            {listing.price 
+                              ? `$${listing.price.toLocaleString()}`
+                              : "Price TBD"}
+                          </span>
+                          <div className="flex items-center text-gray-600 text-sm">
+                            <span className="mr-3">{listing.beds || 0} Beds</span>
+                            <span className="mr-3">{listing.baths || 0} Baths</span>
+                            <span className="mr-3">{listing.sqft || 0} Sq Ft</span>
+                          </div>
+                        </div>
+                        {listing.zillow_link && (
+                          <a
+                            href={listing.zillow_link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mt-4 inline-block text-blue-600 hover:underline text-sm"
+                          >
+                            View on Zillow
+                          </a>
+                        )}
                       </div>
                     </div>
-                  </div>
-                </div>
-              </FadeInWhenVisible>
-            ))}
-          </div>
+                  </FadeInWhenVisible>
+                );
+              })}
+            </div>
 
           <FadeInWhenVisible className="text-center mt-16" delay={0.4}>
             <Link
