@@ -10,37 +10,37 @@ const AuthCallback = () => {
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
-        // Parse hash parameters
+        // Parse hash parameters and clean up URL
         const hashParams = new URLSearchParams(window.location.hash.substring(1));
         const error = hashParams.get('error');
         const errorDescription = hashParams.get('error_description');
         const accessToken = hashParams.get('access_token');
         const refreshToken = hashParams.get('refresh_token');
+        
+        // Clean up the URL by removing the hash
+        window.history.replaceState(null, '', window.location.pathname);
 
         if (error) {
           throw new Error(errorDescription || error);
         }
 
-        // Wait for session to be established with increased retries and delay
-        const waitForSession = async (retries = 10, delay = 1000) => {
-          for (let i = 0; i < retries; i++) {
-            console.log(`Attempt ${i + 1} to get session...`);
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session) {
-              console.log('Session found:', session);
-              return session;
-            }
-            // If we have tokens but no session, try setting them
-            if (accessToken && !session && i === 5) {
-              console.log('Attempting to set session manually...');
-              await supabase.auth.setSession({
-                access_token: accessToken,
-                refresh_token: refreshToken || ''
-              });
-            }
-            await new Promise(resolve => setTimeout(resolve, delay));
+        // Set session immediately if we have tokens
+        if (accessToken) {
+          console.log('Setting session with tokens...');
+          const { data, error: sessionError } = await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken || ''
+          });
+          
+          if (sessionError) {
+            throw new Error(`Failed to set session: ${sessionError.message}`);
           }
-          return null;
+          
+          if (!data.session) {
+            throw new Error('No session established after setting tokens');
+          }
+          
+          return data.session;
         };
 
         // Get the session
