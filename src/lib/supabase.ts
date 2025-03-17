@@ -91,6 +91,27 @@ supabase.auth.getSession().then(({ data: { session } }) => {
   console.warn('Error loading initial session:', error.message);
 });
 
+// Listen for auth state changes
+supabase.auth.onAuthStateChange((event, session) => {
+  console.log('Auth state changed:', event);
+  
+  if (event === 'SIGNED_IN') {
+    // Handle successful sign in
+    console.log('User signed in:', session?.user.email);
+    // Redirect to home page or dashboard
+    window.location.href = '/';
+  } else if (event === 'SIGNED_OUT') {
+    // Handle sign out
+    console.log('User signed out');
+    // Clear any application state if needed
+    localStorage.removeItem(import.meta.env.VITE_NEXT_PUBLIC_AUTH_STORAGE_KEY || 'austin-auth-token');
+    // Redirect to login page
+    window.location.href = '/login';
+  } else if (event === 'TOKEN_REFRESHED') {
+    console.log('Auth token refreshed');
+  }
+});
+
 // Add a helper function to check if user is logged in
 export const isAuthenticated = async (): Promise<boolean> => {
   try {
