@@ -10,9 +10,15 @@ const AuthCallback = () => {
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
+        console.log('Full URL:', window.location.href);
+        console.log('Pathname:', window.location.pathname);
+        
         // Parse both hash and search parameters
         const hash = window.location.hash.substring(1);
         const search = window.location.search.substring(1);
+        console.log('Hash:', hash);
+        console.log('Search:', search);
+        
         const params = new URLSearchParams(search || hash);
         
         // Try to get params from hash if not in search
@@ -23,9 +29,14 @@ const AuthCallback = () => {
         
         // If tokens not found in regular params, try parsing hash fragment
         if (!accessToken && window.location.hash.includes('access_token')) {
-          const hashParams = new URLSearchParams(hash.split('#')[0]);
+          console.log('Tokens not found in regular params, trying hash fragment');
+          const hashParams = new URLSearchParams(hash);
           accessToken = hashParams.get('access_token');
           refreshToken = hashParams.get('refresh_token');
+          console.log('Hash fragment parsing result:', {
+            accessToken: accessToken ? 'present' : 'not present',
+            refreshToken: refreshToken ? 'present' : 'not present'
+          });
         }
         
         console.log('Hash params:', {

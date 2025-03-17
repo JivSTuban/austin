@@ -53,7 +53,7 @@ const AppContent = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/terms" element={<TermsOfService />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
-          <Route path="/auth/callback/google" element={<AuthCallback />} />
+          <Route path="/auth/callback/*" element={<AuthCallback />} />
           <Route path="/username" element={<UsernamePage />} />
           <Route path="/sold-properties" element={<SoldProperties />} /> 
           <Route path="*" element={<NotFound />} />
