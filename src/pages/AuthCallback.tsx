@@ -11,11 +11,19 @@ const AuthCallback = () => {
     const handleAuthCallback = async () => {
       try {
         // Parse hash parameters and clean up URL
-        const hashParams = new URLSearchParams(window.location.hash.substring(1));
+        const hash = window.location.hash.substring(1);
+        const hashParams = new URLSearchParams(hash.replace(/#/g, '&'));
         const error = hashParams.get('error');
         const errorDescription = hashParams.get('error_description');
         const accessToken = hashParams.get('access_token');
         const refreshToken = hashParams.get('refresh_token');
+        
+        console.log('Hash params:', {
+          error,
+          errorDescription,
+          accessToken: accessToken ? 'present' : 'not present',
+          refreshToken: refreshToken ? 'present' : 'not present'
+        });
         
         // Clean up the URL by removing the hash
         window.history.replaceState(null, '', window.location.pathname);
