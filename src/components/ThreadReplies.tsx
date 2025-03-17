@@ -7,30 +7,18 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { Send, Clock } from 'lucide-react';
 
-// Define the shape of profile data
 interface Profile {
   username: string;
   avatar_url: string | null;
 }
 
-// Define the shape of a reply from the database
 interface Reply {
   id: number;
   content: string;
-  created_at: string;
+  date: string;
   author_id: string;
   thread_id: number;
-  profiles: Profile | null;
-}
-
-// Define the shape of raw data from Supabase
-interface RawReplyData {
-  id: number;
-  content: string;
-  created_at: string;
-  author_id: string;
-  thread_id: number;
-  profiles: any; // This can be an array or an object depending on the query
+  author_profile?: Profile;
 }
 
 interface ThreadRepliesProps {
@@ -44,66 +32,31 @@ const ThreadReplies = ({ threadId }: ThreadRepliesProps) => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
-  // Helper function to extract profile data safely
-  const extractProfileData = (profileData: any): Profile => {
-    if (!profileData) {
-      return { username: 'Anonymous', avatar_url: null };
-    }
-    
-    if (Array.isArray(profileData)) {
-      if (profileData.length === 0) {
-        return { username: 'Anonymous', avatar_url: null };
-      }
-      return {
-        username: profileData[0]?.username || 'Anonymous',
-        avatar_url: profileData[0]?.avatar_url || null
-      };
-    }
-    
-    return {
-      username: profileData.username || 'Anonymous',
-      avatar_url: profileData.avatar_url || null
-    };
-  };
-
   const fetchReplies = useCallback(async () => {
     try {
       console.log('Fetching replies for thread:', threadId);
       const { data, error } = await supabase
-        .from('forum_replies')
-        .select(`
-          id,
-          thread_id,
-          author_id,
-          content,
-          created_at,
-          profiles (
-            username,
-            avatar_url
-          )
-        `)
+        .from('replies')
+        .select('*, author:profiles(username, avatar_url)')
         .eq('thread_id', threadId)
-        .order('created_at', { ascending: true });
+        .order('date', { ascending: true });
 
       if (error) {
         console.error('Error fetching replies:', error);
-        throw error;
+        toast.error('Failed to load replies', {
+          description: error.message
+        });
+        return;
+      }
+
+      if (!data) {
+        console.warn('No data returned from query');
+        setReplies([]);
+        return;
       }
 
       console.log('Replies data:', data);
-      if (data) {
-        // Transform the data to match the Reply interface
-        const formattedReplies = data.map((rawReply: RawReplyData) => ({
-          id: rawReply.id,
-          thread_id: rawReply.thread_id,
-          author_id: rawReply.author_id,
-          content: rawReply.content,
-          created_at: rawReply.created_at,
-          profiles: extractProfileData(rawReply.profiles)
-        }));
-        
-        setReplies(formattedReplies);
-      }
+      setReplies(data);
     } catch (error: unknown) {
       console.error('Full error details:', error);
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
@@ -120,7 +73,7 @@ const ThreadReplies = ({ threadId }: ThreadRepliesProps) => {
 
     // Subscribe to new replies
     const channel = supabase
-      .channel('forum_replies')
+      .channel('replies')
       .on(
         'postgres_changes',
         {
@@ -136,7 +89,7 @@ const ThreadReplies = ({ threadId }: ThreadRepliesProps) => {
       .subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+      channel.unsubscribe();
     };
   }, [threadId, fetchReplies]);
 
@@ -153,30 +106,25 @@ const ThreadReplies = ({ threadId }: ThreadRepliesProps) => {
 
     setSubmitting(true);
     try {
-      console.log('Submitting reply:', {
-        thread_id: threadId,
-        author_id: user.id,
-        content: newReply.trim()
-      });
-      
       const { data, error } = await supabase
-        .from('forum_replies')
+        .from('replies')
         .insert([
           {
             thread_id: threadId,
             author_id: user.id,
-            content: newReply.trim(),
-            created_at: new Date().toISOString()
+            content: newReply.trim()
           }
         ])
         .select();
 
       if (error) {
         console.error('Error posting reply:', error);
-        throw error;
+        toast.error('Failed to post reply', {
+          description: error.message
+        });
+        return;
       }
 
-      console.log('Reply posted successfully:', data);
       setNewReply('');
       toast.success('Reply posted successfully');
       await fetchReplies();
@@ -230,19 +178,19 @@ const ThreadReplies = ({ threadId }: ThreadRepliesProps) => {
             >
               <div className="flex items-start space-x-3">
                 <Avatar className="w-8 h-8">
-                  <AvatarImage src={reply.profiles?.avatar_url || undefined} />
+                  <AvatarImage src={(reply.author as Profile)?.avatar_url || undefined} />
                   <AvatarFallback>
-                    {reply.profiles?.username?.[0]?.toUpperCase() || 'A'}
+                    {(reply.author as Profile)?.username?.[0]?.toUpperCase() || 'A'}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-medium text-gray-900">
-                      {reply.profiles?.username || 'Anonymous'}
+                      {(reply.author as Profile)?.username || 'Anonymous'}
                     </span>
                     <div className="flex items-center text-gray-500 text-sm">
                       <Clock className="w-3 h-3 mr-1" />
-                      {formatDate(reply.created_at)}
+                      {formatDate(reply.date)}
                     </div>
                   </div>
                   <p className="text-gray-700 whitespace-pre-wrap">{reply.content}</p>
@@ -254,7 +202,7 @@ const ThreadReplies = ({ threadId }: ThreadRepliesProps) => {
       </div>
 
       {/* Reply form */}
-      {user && (
+      {user ? (
         <form onSubmit={handleSubmitReply} className="space-y-4">
           <Textarea
             value={newReply}
@@ -282,6 +230,10 @@ const ThreadReplies = ({ threadId }: ThreadRepliesProps) => {
             </Button>
           </div>
         </form>
+      ) : (
+        <div className="text-center p-4 bg-gray-50 rounded-lg">
+          <p className="text-gray-600">Please sign in to reply to this discussion.</p>
+        </div>
       )}
     </div>
   );

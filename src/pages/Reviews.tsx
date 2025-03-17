@@ -240,16 +240,6 @@ export default function Reviews() {
   return (
     <div className="min-h-screen flex flex-col">
       <main className="flex-grow container mx-auto px-4 py-8 mt-16">
-        <div className="mb-8">
-          <button
-            onClick={() => navigate('/')}
-            className="flex items-center text-gray-600 hover:text-gray-900 transition-colors mb-4"
-          >
-            <ArrowLeft className="w-5 h-5 mr-2" />
-            Back to Home
-          </button>
-        </div>
-
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <h1 className="text-4xl font-bold">Client Reviews</h1>
           
@@ -371,7 +361,7 @@ export default function Reviews() {
             </div>
           ) : (
             <ScrollArea className="h-[640px] rounded-lg border">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
                 {filteredReviews.map((review): Review => ({
                   rating: review.rating,
                   reviewer: review.author,
@@ -381,16 +371,16 @@ export default function Reviews() {
                 })).map(review => (
                   <article
                     key={review.reviewer}
-                    className="flex flex-col gap-4 rounded-lg border bg-card p-4"
+                    className="flex flex-col gap-4 rounded-lg border bg-card p-6 relative"
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-1">
-                        <h3 className="font-semibold text-lg">{review.reviewer}</h3>
-                        <p className="text-sm text-muted-foreground">
+                    <div className="flex items-start justify-between gap-4 w-full">
+                      <div className="space-y-1 min-w-0 flex-shrink">
+                        <h3 className="font-semibold text-lg truncate max-w-[200px]">{review.reviewer}</h3>
+                        <p className="text-sm text-muted-foreground truncate max-w-[200px]">
                           {review.roleReviewer} • {review.date}
                         </p>
                       </div>
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-1 flex-shrink-0">
                         {[...Array(5)].map((_, i) => (
                           <Star
                             key={i}
@@ -405,7 +395,7 @@ export default function Reviews() {
                         ))}
                       </div>
                     </div>
-                    <p className="text-pretty">{review.review}</p>
+                    <p className="text-pretty line-clamp-4">{review.review}</p>
                   </article>
                 ))}
               </div>

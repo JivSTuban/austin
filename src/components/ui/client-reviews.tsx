@@ -104,21 +104,22 @@ const ClientReviews = React.forwardRef<HTMLDivElement, ClientReviewsProps>(
           </div>
         </div>
 
-        <ScrollArea className="h-[320px] pr-4">
+        <ScrollArea className="max-h-[600px] pr-4">
           <div className="space-y-2">
             {reviews.map((review) => (
               <article
                 key={review.reviewer}
-                className="flex flex-col gap-4 rounded-lg border border-border bg-background p-4"
-              >
-                <div className="flex items-center justify-between gap-2">
+                className="flex flex-col gap-4 rounded-lg border border-border bg-background p-4"              >
+                <div className="flex items-center justify-between gap-2 w-full">
                   <p className="text-base font-semibold">{review.reviewer}</p>
-                  <Badge variant="secondary">{review.rating}</Badge>
+                  <Badge variant="secondary" className="flex-shrink-0">{review.rating}</Badge>
                 </div>
-                <p className="text-balance text-sm text-foreground/80">
-                  "{review.review}"
-                </p>
-                <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-foreground/80 whitespace-pre-wrap">
+                    "{review.review}"
+                  </p>
+                </div>
+                <div className="flex items-center justify-between mt-2">
                   <small className="text-foreground/60">
                     {review.reviewer}, {review.roleReviewer}
                   </small>

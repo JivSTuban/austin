@@ -98,10 +98,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [hasShownWelcome]);
 
   const signOut = async () => {
-    await supabase.auth.signOut();
-    toast.success("Successfully signed out", {
-      description: "You have been logged out of your account"
-    });
+    try {
+      // First clear storages to ensure clean state
+      localStorage.clear();
+      sessionStorage.clear();
+      
+      // Sign out from Supabase
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+
+      // Reset state
+      setSession(null);
+      setUser(null);
+      setHasShownWelcome(false);
+
+      // Immediately redirect to root path
+      window.location.href = '/';
+
+      toast.success("Successfully signed out", {
+        description: "You have been logged out of your account"
+      });
+
+    } catch (error: any) {
+      console.error('Sign out error:', error);
+      toast.error("Sign out failed", {
+        description: error.message
+      });
+    }
   };
 
   const value = {

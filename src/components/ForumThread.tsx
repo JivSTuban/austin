@@ -195,7 +195,9 @@ const ForumThread = ({ thread, index, style, onThreadDeleted }: ForumThreadProps
               <span className="text-gray-500 flex items-center">
                 <User className="w-3 h-3 mr-1" />
                 <span className="font-medium text-gray-700">
-                  {thread.profiles && thread.profiles[0]?.username ? thread.profiles[0].username : 'Anonymous'}
+                  {Array.isArray(thread.profiles) 
+                    ? thread.profiles.find(profile => profile.username === thread.author)?.username 
+                    : thread.profiles?.username || 'Anonymous'}
                 </span>
               </span>
               <span className="text-gray-500 flex items-center">

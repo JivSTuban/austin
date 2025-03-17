@@ -50,7 +50,7 @@ const Forum = () => {
           replies_count,
           excerpt,
           category,
-          profiles!inner (username, avatar_url)
+          profiles:author_id (username, avatar_url)
         `)
         .order('date', { ascending: false });
 

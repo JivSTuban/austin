@@ -52,8 +52,8 @@ const ProfileDropdown: FC = () => {
   if (!user) return null;
 
   return (
-    <div className="relative overflow-y-visible">
-      <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
+    <div className="relative">
+      <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="relative h-8 w-8 rounded-full">
             <Avatar className="h-8 w-8">
@@ -62,11 +62,11 @@ const ProfileDropdown: FC = () => {
             </Avatar>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
+        <DropdownMenuContent className="w-56" align="end">
           <DropdownMenuItem onSelect={handleEditPhoto}>
             Edit Profile Photo
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => signOut()}>
+          <DropdownMenuItem onSelect={signOut}>
             Sign Out
           </DropdownMenuItem>
         </DropdownMenuContent>

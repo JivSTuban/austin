@@ -466,10 +466,10 @@ const Index = () => {
                 initial={{ width: 0 }}
                 animate={{ width: "100%" }}
                 transition={{ duration: 1, delay: 0.5 }}
-                className="absolute top-1/2 left-0 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"
+                className="absolute top-1/2 left-0 h-px"
               />
               <motion.div
-                className="inline-block relative bg-gray-50 px-8"
+                className="inline-block relative px-8"
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.8 }}
@@ -505,7 +505,7 @@ const Index = () => {
                     className="h-full"
                   >
                     
-                    <div className="bg-white rounded-xl overflow-hidden shadow-lg transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1 h-full">
+                    <div className="rounded-xl overflow-hidden shadow-lg transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1 h-full">
                       <div className="relative h-64">
                         <img
                           src={listing.imagelink }
@@ -521,7 +521,7 @@ const Index = () => {
                           {label.text}
                         </div>
                       </div>
-                      <div className="p-6">
+                      <div className="p-6 bg-white/50 backdrop-blur-sm">
                         <h3 className="text-xl font-bold text-gray-900 mb-2">
                           {listing.title || "Untitled Listing"}
                         </h3>

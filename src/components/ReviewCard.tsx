@@ -29,8 +29,8 @@ const ReviewCard = ({ review, index }: ReviewCardProps) => {
     <Card 
       variant="lifted"
       className={cn(
-        "h-[400px] flex flex-col",
-        "relative overflow-hidden transition-all hover:shadow-lg",
+        "flex flex-col",
+        "relative transition-all hover:shadow-lg",
         "p-6 md:p-8 bg-background"
       )}
     >
@@ -62,7 +62,7 @@ const ReviewCard = ({ review, index }: ReviewCardProps) => {
       </CardHeader>
 
       <CardContent className="flex-grow pt-0">
-        <p className="text-pretty text-base text-muted-foreground line-clamp-[8]">
+        <p className="text-pretty text-base text-muted-foreground">
           {review.content}
         </p>
       </CardContent>
