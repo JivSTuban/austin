@@ -55,7 +55,7 @@ const ThreadReplies = ({ threadId }: ThreadRepliesProps) => {
         return;
       }
 
-      console.log('Replies data:', data);
+    
       setReplies(data);
     } catch (error: unknown) {
       console.error('Full error details:', error);

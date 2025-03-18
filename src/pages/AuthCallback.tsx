@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
@@ -6,18 +6,20 @@ import { Loader2 } from 'lucide-react';
 
 const AuthCallback = () => {
   const navigate = useNavigate();
+  const [isProcessing, setIsProcessing] = useState(true);
 
   useEffect(() => {
+    // Flag to ensure we only process the auth callback once
+    let isHandled = false;
+
     const handleAuthCallback = async () => {
+      if (isHandled) return;
+      isHandled = true;
+
       try {
-        console.log('Full URL:', window.location.href);
-        console.log('Pathname:', window.location.pathname);
-        
         // Parse both hash and search parameters
         const hash = window.location.hash.substring(1);
         const search = window.location.search.substring(1);
-        console.log('Hash:', hash);
-        console.log('Search:', search);
         
         const params = new URLSearchParams(search || hash);
         
@@ -29,22 +31,10 @@ const AuthCallback = () => {
         
         // If tokens not found in regular params, try parsing hash fragment
         if (!accessToken && window.location.hash.includes('access_token')) {
-          console.log('Tokens not found in regular params, trying hash fragment');
           const hashParams = new URLSearchParams(hash);
           accessToken = hashParams.get('access_token');
           refreshToken = hashParams.get('refresh_token');
-          console.log('Hash fragment parsing result:', {
-            accessToken: accessToken ? 'present' : 'not present',
-            refreshToken: refreshToken ? 'present' : 'not present'
-          });
         }
-        
-        console.log('Hash params:', {
-          error,
-          errorDescription,
-          accessToken: accessToken ? 'present' : 'not present',
-          refreshToken: refreshToken ? 'present' : 'not present'
-        });
         
         // Clean up the URL by removing the hash
         window.history.replaceState(null, '', window.location.pathname);
@@ -55,7 +45,6 @@ const AuthCallback = () => {
 
         // Set session immediately if we have tokens
         if (accessToken) {
-          console.log('Setting session with tokens...');
           const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
             access_token: accessToken,
             refresh_token: refreshToken || ''
@@ -69,13 +58,11 @@ const AuthCallback = () => {
             throw new Error('No session established after setting tokens');
           }
           
-          console.log('Session established successfully');
           return sessionData.session;
         }
 
         // Get the session
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-        console.log('Session in callback:', session);
 
         if (sessionError) {
           throw new Error(`Failed to get session: ${sessionError.message}`);
@@ -94,6 +81,9 @@ const AuthCallback = () => {
             // Continue with the flow even if profile fetch fails
           }
 
+          // Set processing to false to prevent multiple navigations
+          setIsProcessing(false);
+          
           // Only redirect to username page if user doesn't have a username or it's null
           if (!profile || !profile.username) {
             navigate(`/username?id=${session.user.id}&email=${session.user.email}`, { replace: true });
@@ -109,12 +99,19 @@ const AuthCallback = () => {
         toast.error('Authentication failed', {
           description: error instanceof Error ? error.message : 'Please try again'
         });
+        setIsProcessing(false);
         navigate('/login', { replace: true });
       }
     };
 
-    handleAuthCallback();
-  }, [navigate]);
+    if (isProcessing) {
+      handleAuthCallback();
+    }
+
+    return () => {
+      isHandled = true;
+    };
+  }, [navigate, isProcessing]);
 
   return (
     <div className="min-h-screen flex items-center justify-center">
