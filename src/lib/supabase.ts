@@ -8,6 +8,19 @@ const supabaseKey = import.meta.env.VITE_NEXT_PUBLIC_SUPABASE_ANON_KEY || proces
 const customFetch = async (url: string, options: RequestInit): Promise<Response> => {
   const maxRetries = Number(import.meta.env.VITE_NEXT_PUBLIC_API_RETRY_MAX) || 3;
   const baseDelay = Number(import.meta.env.VITE_NEXT_PUBLIC_API_RETRY_DELAY) || 1000; // 1 second
+  
+  // Check if this is a GET request to the listings table and implement pagination automatically
+  if (url.includes('/rest/v1/listings') && (!options.method || options.method === 'GET')) {
+    // Parse the current URL to see if pagination is already applied
+    const urlObj = new URL(url);
+    if (!urlObj.searchParams.has('limit')) {
+      // Add pagination parameters if not already present
+      urlObj.searchParams.append('limit', '50'); // Limit to 50 records per page
+      
+      // Use the modified URL
+      url = urlObj.toString();
+    }
+  }
 
   let lastError: Error | null = null;
 
@@ -41,6 +54,36 @@ const customFetch = async (url: string, options: RequestInit): Promise<Response>
       throw new Error(`Request failed with status: ${response.status}`);
     } catch (error) {
       lastError = error as Error;
+      
+      // Special handling for resource exhaustion errors
+      if (error instanceof Error && 
+          (error.message.includes('ERR_INSUFFICIENT_RESOURCES') || 
+           error.name === 'TypeError' && error.message.includes('Failed to fetch'))) {
+        
+        // For resource errors on listings endpoint, try to reduce the request size
+        if (url.includes('/rest/v1/listings')) {
+          const urlObj = new URL(url);
+          
+          // If we already have a limit, reduce it further
+          if (urlObj.searchParams.has('limit')) {
+            const currentLimit = parseInt(urlObj.searchParams.get('limit') || '100');
+            const newLimit = Math.max(10, Math.floor(currentLimit / 2)); // Reduce by half, but not below 10
+            urlObj.searchParams.set('limit', newLimit.toString());
+            
+            // Use the modified URL with smaller limit
+            url = urlObj.toString();
+            console.warn(`Resource exhaustion detected. Reducing request size to limit=${newLimit} and retrying...`);
+            
+            // Reset the attempt counter so we get full retries with the new limit
+            attempt = 0;
+            await new Promise(resolve => setTimeout(resolve, baseDelay));
+            continue;
+          }
+        }
+        
+        // If we can't modify the request or this isn't a listings request
+        throw new Error('Request failed due to insufficient resources. The dataset may be too large. Try using pagination with smaller page sizes.');
+      }
 
       // Don't retry on certain errors
       if (error instanceof Error && 
@@ -68,7 +111,7 @@ const customFetch = async (url: string, options: RequestInit): Promise<Response>
 export const supabase: SupabaseClient = createClient(supabaseUrl, supabaseKey, {
   auth: {
     persistSession: true,
-    storageKey: import.meta.env.VITE_NEXT_PUBLIC_AUTH_STORAGE_KEY || 'austin-auth-token',
+    storageKey: import.meta.env.VITE_NEXT_PUBLIC_AUTH_STORAGE_KEY,
     autoRefreshToken: true, // Enable automatic token refresh
     detectSessionInUrl: true, // Enable automatic session detection in URL
   },
@@ -104,7 +147,7 @@ supabase.auth.onAuthStateChange((event, session) => {
     // Handle sign out
     console.log('User signed out');
     // Clear any application state if needed
-    localStorage.removeItem(import.meta.env.VITE_NEXT_PUBLIC_AUTH_STORAGE_KEY || 'austin-auth-token');
+    // localStorage.removeItem(import.meta.env.VITE_NEXT_PUBLIC_AUTH_STORAGE_KEY || 'austin-auth-token');
     // Redirect to login page
     window.location.href = '/login';
   } else if (event === 'TOKEN_REFRESHED') {

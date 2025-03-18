@@ -92,7 +92,7 @@ export const useListings = (): ListingsData => {
         .single();
 
       if (error) throw error;
-
+    
       return data as Listing;
     } catch (err) {
       console.error('Error fetching listing:', err);

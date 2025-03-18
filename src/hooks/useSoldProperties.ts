@@ -66,7 +66,6 @@ export const useSoldProperties = (city?: string): SoldPropertiesData => {
         // Execute query
         const { data, error: fetchError } = await query
           .order('year', { ascending: false });
-        console.log('Fetched properties:', data);
         if (fetchError) {
           throw fetchError;
         }

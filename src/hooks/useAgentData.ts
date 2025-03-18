@@ -116,11 +116,7 @@ export const useAgentData = (encodedZuid: string): AgentData => {
           .eq('encodedzuid', encodedZuid)
           .order('"createdate"', { ascending: false });
 
-          console.log('Raw reviews from database:', reviewsData?.map(r => ({
-            id: r.reviewid,
-            date: r.createdate,
-            raw_date: r.createdate
-          })));
+          
         if (reviewsError) {
           throw reviewsError;
         }
