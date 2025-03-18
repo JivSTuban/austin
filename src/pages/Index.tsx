@@ -318,7 +318,7 @@ const Index = () => {
                   duration: 5,
                   ease: "easeInOut",
                 }}
-              >@
+              >
                 <img
                   src={`${import.meta.env.BASE_URL || "/"}indexImg/name.svg`}
                   alt="Austin McClain"

@@ -52,7 +52,7 @@ export const useSoldProperties = (city?: string): SoldPropertiesData => {
       try {
         setIsLoading(true);
         setError(null);
-        console.log('Fetching sold properties for city:', city);
+      
         // Build query
         let query = supabase
           .from('soldproperties')

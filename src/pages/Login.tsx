@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
@@ -11,13 +11,15 @@ const APP_URL = window.location.origin;
 
 const Login = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
   useEffect(() => {
-    if (user) {
-      navigate('/');
+    // Redirect user to home page if already logged in
+    // Only redirect once the auth state is no longer loading
+    if (user && !loading) {
+      navigate('/', { replace: true });
     }
-  }, [user, navigate]);
+  }, [user, navigate, loading]);
 
   const handleGoogleAuth = async () => {
     try {
@@ -50,6 +52,16 @@ const Login = () => {
     }
   };
 
+  // If still loading, show a loading indicator
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-pulse text-lg">Loading...</div>
+      </div>
+    );
+  }
+
+  // Only render login page if not logged in
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       <div className="w-full max-w-md px-4 sm:px-6 lg:px-8">

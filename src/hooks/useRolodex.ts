@@ -58,7 +58,7 @@ export const useRolodex = (category?: string): RolodexData => {
       try {
         setIsLoading(true);
         setError(null);
-        console.log('Fetching contacts for category:', category);
+     
         // Build query
         let query = supabase
           .from('rolodex')
