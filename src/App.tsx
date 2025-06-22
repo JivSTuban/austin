@@ -1,7 +1,6 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import Chatbot from "@/components/Chatbot";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from "@/lib/AuthContext";
@@ -20,6 +19,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import ThreadView from "./pages/ThreadView";
 import UsernamePage from "./pages/UsernamePage"; // Import UsernamePage
 import SoldProperties from "./pages/SoldProperties"; // Import SoldProperties
+import Admin from "./pages/Admin"; // Import Admin
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
@@ -41,7 +41,6 @@ const AppContent = () => {
           closeButton
         />
         <BackgroundShapes />
-        <Chatbot />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/maps" element={<Maps />} />
@@ -57,6 +56,7 @@ const AppContent = () => {
           <Route path="/auth/callback/google" element={<AuthCallback />} />
           <Route path="/username" element={<UsernamePage />} />
           <Route path="/sold-properties" element={<SoldProperties />} /> 
+          <Route path="/admin" element={<Admin />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Footer />

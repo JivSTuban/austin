@@ -378,16 +378,6 @@ const InvestorPackage = () => {
                   </div>
                 </div>
               )}
-              
-              <div className="flex justify-center mt-8">
-                <Button variant="outline" className="mr-4">
-                  Load More Contacts
-                </Button>
-                <Button>
-                  <FileText className="w-4 h-4 mr-2" />
-                  Add New Contact
-                </Button>
-              </div>
             </TabsContent>
 
             <TabsContent value="major-cities" className="space-y-4 sm:space-y-6 mt-20">

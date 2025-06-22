@@ -4,11 +4,15 @@ import { Menu, X, Home, Star, MessageSquare, Map, Calculator, Building, Coins, D
 import { cn } from '@/lib/utils';
 import ProfileDropdown from './ProfileDropdown';
 import { useAuth } from '@/lib/AuthContext';
+import { supabase } from '../lib/supabase';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  const { user, signOut } = useAuth();
+  const [userInitials, setUserInitials] = useState('');
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
@@ -40,6 +44,38 @@ const Navbar = () => {
   useEffect(() => {
     setIsOpen(false);
   }, [location.pathname]);
+
+  useEffect(() => {
+    if (user?.user_metadata?.full_name) {
+      const names = user.user_metadata.full_name.split(' ');
+      const initials = names.map((name) => name.charAt(0)).join('');
+      setUserInitials(initials);
+    }
+
+    // Check if user is admin
+    const checkAdminStatus = async () => {
+      if (!user) return;
+
+      try {
+        const { data, error } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('id', user.id)
+          .single();
+
+        if (error) throw error;
+        
+        setIsAdmin(data?.role === 'admin');
+      } catch (error) {
+        console.error('Error checking admin status:', error);
+        setIsAdmin(false);
+      }
+    };
+
+    if (user) {
+      checkAdminStatus();
+    }
+  }, [user]);
 
   return (
     <nav 
@@ -86,7 +122,7 @@ const Navbar = () => {
             </Link>
           ))}
           <div className="ml-4 pl-4 border-l border-gray-200">
-            <ProfileDropdown />
+            <ProfileDropdown isAdmin={isAdmin} />
           </div>
         </div>
 

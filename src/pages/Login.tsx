@@ -11,15 +11,14 @@ const APP_URL = window.location.origin;
 
 const Login = () => {
   const navigate = useNavigate();
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
 
   useEffect(() => {
     // Redirect user to home page if already logged in
-    // Only redirect once the auth state is no longer loading
-    if (user && !loading) {
+    if (user) {
       navigate('/', { replace: true });
     }
-  }, [user, navigate, loading]);
+  }, [user, navigate]);
 
   const handleGoogleAuth = async () => {
     try {
@@ -29,7 +28,7 @@ const Login = () => {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: `${APP_URL}/auth/callback`,
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
@@ -51,15 +50,6 @@ const Login = () => {
       });
     }
   };
-
-  // If still loading, show a loading indicator
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-pulse text-lg">Loading...</div>
-      </div>
-    );
-  }
 
   // Only render login page if not logged in
   return (

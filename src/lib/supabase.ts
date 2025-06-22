@@ -111,9 +111,10 @@ const customFetch = async (url: string, options: RequestInit): Promise<Response>
 export const supabase: SupabaseClient = createClient(supabaseUrl, supabaseKey, {
   auth: {
     persistSession: true,
-    storageKey: import.meta.env.VITE_NEXT_PUBLIC_AUTH_STORAGE_KEY,
-    autoRefreshToken: false, // Enable automatic token refresh
-    detectSessionInUrl: false, // Enable automatic session detection in URL
+    storageKey: import.meta.env.VITE_NEXT_PUBLIC_AUTH_STORAGE_KEY || 'supabase.auth.token',
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+    flowType: 'pkce',
   },
   global: {
     fetch: customFetch,
@@ -138,18 +139,13 @@ supabase.auth.getSession().then(({ data: { session } }) => {
 supabase.auth.onAuthStateChange((event, session) => {
   console.log('Auth state changed:', event);
   
-  if (event === 'SIGNED_IN') {
-    // Handle successful sign in
-    console.log('User signed in:', session?.user.email);
-    // Redirect to home page or dashboard
-    window.location.href = '/';
-  } else if (event === 'SIGNED_OUT') {
-    // Handle sign out
+  // Only handle SIGNED_OUT event for redirects
+  // Let the AuthCallback component handle SIGNED_IN navigation
+  if (event === 'SIGNED_OUT') {
     console.log('User signed out');
-    // Clear any application state if needed
-    // localStorage.removeItem(import.meta.env.VITE_NEXT_PUBLIC_AUTH_STORAGE_KEY || 'austin-auth-token');
-    // Redirect to login page
-    window.location.href = '/login';
+    if (window.location.pathname !== '/login') {
+      window.location.href = '/login';
+    }
   } else if (event === 'TOKEN_REFRESHED') {
     console.log('Auth token refreshed');
   }

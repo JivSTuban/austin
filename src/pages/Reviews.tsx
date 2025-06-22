@@ -141,6 +141,10 @@ export default function Reviews() {
     return filteredReviews.some(review => review.userId === user?.id);
   };
 
+  const getUserReview = () => {
+    return filteredReviews.find(review => review.userId === user?.id) || null;
+  };
+
   const handleReviewSubmit = async (data: {
     rating: number;
     comment: string;
@@ -244,14 +248,55 @@ export default function Reviews() {
           <h1 className="text-4xl font-bold">Client Reviews</h1>
           
           <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto items-start">
-            {session && !hasUserReview() && (
-              <ReviewDialog
-                isOpen={isFormOpen}
-                onOpenChange={setIsFormOpen}
-                initialData={editingReview || undefined}
-                onSubmit={handleReviewSubmit}
-                isEditing={!!editingReview}
-              />
+            {session ? (
+              hasUserReview() ? (
+                <>
+                  <Button 
+                    variant="outline" 
+                    className="flex items-center gap-2 w-full sm:w-auto"
+                    onClick={() => {
+                      const userReview = getUserReview();
+                      if (userReview) {
+                        setEditingReview({
+                          ...userReview,
+                          propertyType: userReview.propertyType,
+                          buyerType: userReview.buyerType,
+                          workDescription: userReview.workDescription,
+                          comment: userReview.comment
+                        });
+                        setIsFormOpen(true);
+                      }
+                    }}
+                  >
+                    <Star className="w-4 h-4" />
+                    Edit Your Review
+                  </Button>
+                  <ReviewDialog
+                    isOpen={isFormOpen}
+                    onOpenChange={setIsFormOpen}
+                    initialData={editingReview || undefined}
+                    onSubmit={handleReviewSubmit}
+                    isEditing={true}
+                  />
+                </>
+              ) : (
+                <ReviewDialog
+                  isOpen={isFormOpen}
+                  onOpenChange={setIsFormOpen}
+                  initialData={undefined}
+                  onSubmit={handleReviewSubmit}
+                  isEditing={false}
+                />
+              )
+            ) : (
+              <Button 
+                variant="outline" 
+                className="flex items-center gap-2 w-full sm:w-auto"
+                onClick={() => navigate('/login')}
+              >
+                <Star className="w-4 h-4" />
+                Sign In to Write a Review
+              </Button>
             )}
             
             <div className="relative flex-grow sm:max-w-md">
