@@ -85,17 +85,17 @@ const InvestorPackage = () => {
   };
 
   // FAQ data
-    const answer1 = `I work as your deal finder and agent, spending most of my time searching for real estate deals. When I find a good one, I’ll send it to your email with as much detail as possible. If it matches your buying criteria, I’ll draft the offer and represent you throughout the entire closing process.
+    const answer1 = `I work as your deal finder and agent, spending most of my time searching for real estate deals. When I find a good one, I'll send it to your email with as much detail as possible. If it matches your buying criteria, I'll draft the offer and represent you throughout the entire closing process.
 
 **How I Find Deals:**
 
 - **Cold Calling**
-  - I find property owners’ phone numbers from the County Auditor.
-  - I call them to see if they’re open to receiving an offer on their home.
-  - If the numbers make sense, I’ll share the info with you.
+  - I find property owners' phone numbers from the County Auditor.
+  - I call them to see if they're open to receiving an offer on their home.
+  - If the numbers make sense, I'll share the info with you.
 
 - **My Network**
-  - I connect with as many people as possible in Ohio’s real estate market.
+  - I connect with as many people as possible in Ohio's real estate market.
   - I ask agents, investors, property managers, and contractors about upcoming deals.
 
 - **The MLS (Multiple Listing Service)**
@@ -380,46 +380,185 @@ const InvestorPackage = () => {
               )}
             </TabsContent>
 
-            <TabsContent value="major-cities" className="space-y-4 sm:space-y-6 mt-20">
-              <Card>
-                <CardHeader className="pb-2 sm:pb-4">
-                  <CardTitle className="text-xl sm:text-2xl">Major Ohio Cities</CardTitle>
-                  <CardDescription className="text-sm sm:text-base">
-                    Explore investment opportunities in major Ohio cities
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-6">
-                    <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-4 sm:gap-6 justify-items-center">
-                      <AnimatedCityCard 
-                        cityName="Cleveland"
-                        description="Tech Hub"
-                        price="$625K median"
-                        bgImage="/images/Cleveland.png"
-                      />
-                      <AnimatedCityCard 
-                        cityName="Columbus"
-                        description="Business Center"
-                        price="$450K median"
-                        bgImage="/images/Columbus.png"
-                      />
-                      <AnimatedCityCard 
-                        cityName="Dayton"
-                        description="Energy Capital"
-                        price="$350K median"
-                        bgImage="/images/Dayton.png"
-                      />
-                      <AnimatedCityCard 
-                        cityName="Washington Court House "
-                        description="Historic City"
-                        price="$320K median"
-                        bgImage="/images/Washington.png"
-                      />
-                    </div>
-                  </div>
-                </CardContent>
+            <TabsContent value="major-cities" className="mt-20">
+              <div className="space-y-8">
+                <div className="text-center mb-8">
+                  <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-500 bg-clip-text text-transparent mb-3">Major Ohio Cities</h2>
+                  <p className="text-gray-600 max-w-2xl mx-auto">
+                    Explore high-potential investment markets across Ohio's dynamic real estate landscape
+                  </p>
+                </div>
                 
-              </Card>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {/* Cleveland */}
+                  <motion.div 
+                    className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300"
+                    whileHover={{ y: -5 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20 z-10" />
+                    <img 
+                      src="/images/Cleveland.png" 
+                      alt="Cleveland" 
+                      className="w-full h-[300px] object-cover transition-transform duration-700 group-hover:scale-110" 
+                    />
+                    <div className="absolute inset-0 z-20 flex flex-col justify-end p-6 text-white">
+                      <div className="flex items-center justify-between mb-3">
+                        <h3 className="text-2xl font-bold">Cleveland</h3>
+                        <span className="bg-blue-500/80 text-white px-3 py-1 rounded-full text-sm font-medium">Tech Hub</span>
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <div className="flex items-center gap-2">
+                          <DollarSign className="h-4 w-4 text-green-400" />
+                          <span className="font-medium">$625K median price</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <TrendingUp className="h-4 w-4 text-blue-400" />
+                          <span>8.2% annual appreciation</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Building className="h-4 w-4 text-purple-400" />
+                          <span>Strong rental market</span>
+                        </div>
+                      </div>
+                      <Button className="mt-4 bg-white/20 backdrop-blur-sm hover:bg-white/40 text-white border-white/40">
+                        View Market Report
+                      </Button>
+                    </div>
+                  </motion.div>
+
+                  {/* Columbus */}
+                  <motion.div 
+                    className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300"
+                    whileHover={{ y: -5 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.1 }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20 z-10" />
+                    <img 
+                      src="/images/Columbus.png" 
+                      alt="Columbus" 
+                      className="w-full h-[300px] object-cover transition-transform duration-700 group-hover:scale-110" 
+                    />
+                    <div className="absolute inset-0 z-20 flex flex-col justify-end p-6 text-white">
+                      <div className="flex items-center justify-between mb-3">
+                        <h3 className="text-2xl font-bold">Columbus</h3>
+                        <span className="bg-indigo-500/80 text-white px-3 py-1 rounded-full text-sm font-medium">Business Center</span>
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <div className="flex items-center gap-2">
+                          <DollarSign className="h-4 w-4 text-green-400" />
+                          <span className="font-medium">$450K median price</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <TrendingUp className="h-4 w-4 text-blue-400" />
+                          <span>7.5% annual appreciation</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Users className="h-4 w-4 text-yellow-400" />
+                          <span>Growing population</span>
+                        </div>
+                      </div>
+                      <Button className="mt-4 bg-white/20 backdrop-blur-sm hover:bg-white/40 text-white border-white/40">
+                        View Market Report
+                      </Button>
+                    </div>
+                  </motion.div>
+
+                  {/* Dayton */}
+                  <motion.div 
+                    className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300"
+                    whileHover={{ y: -5 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20 z-10" />
+                    <img 
+                      src="/images/Dayton.png" 
+                      alt="Dayton" 
+                      className="w-full h-[300px] object-cover transition-transform duration-700 group-hover:scale-110" 
+                    />
+                    <div className="absolute inset-0 z-20 flex flex-col justify-end p-6 text-white">
+                      <div className="flex items-center justify-between mb-3">
+                        <h3 className="text-2xl font-bold">Dayton</h3>
+                        <span className="bg-amber-500/80 text-white px-3 py-1 rounded-full text-sm font-medium">Energy Capital</span>
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <div className="flex items-center gap-2">
+                          <DollarSign className="h-4 w-4 text-green-400" />
+                          <span className="font-medium">$350K median price</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Calculator className="h-4 w-4 text-red-400" />
+                          <span>9.1% average ROI</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Building className="h-4 w-4 text-purple-400" />
+                          <span>Affordable entry point</span>
+                        </div>
+                      </div>
+                      <Button className="mt-4 bg-white/20 backdrop-blur-sm hover:bg-white/40 text-white border-white/40">
+                        View Market Report
+                      </Button>
+                    </div>
+                  </motion.div>
+
+                  {/* Washington Court House */}
+                  <motion.div 
+                    className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300"
+                    whileHover={{ y: -5 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.3 }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20 z-10" />
+                    <img 
+                      src="/images/Washington.png" 
+                      alt="Washington Court House" 
+                      className="w-full h-[300px] object-cover transition-transform duration-700 group-hover:scale-110" 
+                    />
+                    <div className="absolute inset-0 z-20 flex flex-col justify-end p-6 text-white">
+                      <div className="flex items-center justify-between mb-3">
+                        <h3 className="text-2xl font-bold">Washington CH</h3>
+                        <span className="bg-emerald-500/80 text-white px-3 py-1 rounded-full text-sm font-medium">Historic City</span>
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <div className="flex items-center gap-2">
+                          <DollarSign className="h-4 w-4 text-green-400" />
+                          <span className="font-medium">$320K median price</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Home className="h-4 w-4 text-orange-400" />
+                          <span>High rental demand</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Map className="h-4 w-4 text-blue-400" />
+                          <span>Emerging market</span>
+                        </div>
+                      </div>
+                      <Button className="mt-4 bg-white/20 backdrop-blur-sm hover:bg-white/40 text-white border-white/40">
+                        View Market Report
+                      </Button>
+                    </div>
+                  </motion.div>
+                </div>
+
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-8 mt-12">
+                  <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div className="text-center md:text-left">
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">Want to explore more investment markets?</h3>
+                      <p className="text-gray-600 max-w-md">Get our comprehensive Ohio real estate market report with data-driven insights on emerging opportunities.</p>
+                    </div>
+                    <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
+                      Download Market Report
+                    </Button>
+                  </div>
+                </div>
+              </div>
             </TabsContent>
 
             <TabsContent value="financing" className="space-y-6">

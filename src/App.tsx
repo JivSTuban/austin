@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -22,6 +23,8 @@ import SoldProperties from "./pages/SoldProperties"; // Import SoldProperties
 import Admin from "./pages/Admin"; // Import Admin
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import { ensureForumRepliesTable } from "./lib/helpers/migrateDatabase";
+import { ensureSoldPropertiesTable } from "./lib/helpers/ensureSoldPropertiesTable";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +32,20 @@ const queryClient = new QueryClient();
 const AppContent = () => {
   const location = useLocation();
   const showNavbar = location.pathname !== "/username";
+  
+  // Initialize database tables if needed
+  useEffect(() => {
+    const initializeTables = async () => {
+      try {
+        await ensureForumRepliesTable();
+        await ensureSoldPropertiesTable();
+      } catch (error) {
+        console.error("Error initializing database tables:", error);
+      }
+    };
+
+    initializeTables();
+  }, []);
   
   return (
     <AuthProvider>

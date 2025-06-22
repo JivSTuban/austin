@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/parallax";
 
 import { Listing, useListings } from '@/hooks/useListings';
+import { usePageTracking } from '@/hooks/useVisitors';
 const Index = () => {
   const { agent, reviews } = useAgentData("X1-ZUtpaayyyrapzd_82rpg");
   const [typedText, setTypedText] = useState("");
@@ -38,7 +39,10 @@ const Index = () => {
   const [offerDays, setOfferDays] = useState(3);
   const [offerHours, setOfferHours] = useState(12);
   const [offerMinutes, setOfferMinutes] = useState(45);
-  const { listings, isLoading, error, fetchListings } = useListings();
+  const { listings, loading: isLoading, refetch } = useListings(1, 50); // Get more listings for homepage
+
+  // Track page visit
+  usePageTracking('/');
 
   // Scroll to top on page load
   useEffect(() => {
@@ -85,10 +89,7 @@ const Index = () => {
     };
   }, []);
 
-  //listings
-  useEffect(() => {
-    fetchListings(); // Initial fetch
-  }, [fetchListings]);
+  // Listings are automatically fetched by the hook, no need for separate useEffect
 
   // Label configuration based on listing properties
  
