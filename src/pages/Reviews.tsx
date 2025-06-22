@@ -6,6 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAgentData } from '@/hooks/useAgentData';
 import type { Review } from '@/components/ui/client-reviews';
 import { useAuth } from '@/lib/AuthContext';
+import { usePageTracking } from '@/hooks/useVisitors';
 import { Button } from '@/components/ui/button';
 import ReviewForm from '@/components/ReviewForm';
 import { supabase } from '@/lib/supabase';
@@ -62,6 +63,9 @@ export default function Reviews() {
   const [editingReview, setEditingReview] = useState<ProcessedReview | null>(null);
   const { user, session } = useAuth();
   const { reviews } = useAgentData('X1-ZUtpaayyyrapzd_82rpg');
+
+  // Track page visit
+  usePageTracking('/reviews');
 
   // Same useEffect and handlers from before...
   useEffect(() => {

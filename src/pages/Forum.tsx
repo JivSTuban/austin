@@ -10,6 +10,7 @@ import { NewDiscussionModal, type DiscussionData } from '@/components/NewDiscuss
 import { cn } from '@/lib/utils';
 import { useFadeIn, useStaggeredFadeIn } from '@/lib/animations';
 import { useAuth } from '@/lib/AuthContext';
+import { usePageTracking } from '@/hooks/useVisitors';
 import { createForumThread } from '@/lib/helpers';
 
 interface Thread {
@@ -34,6 +35,9 @@ const Forum = () => {
   const navigate = useNavigate();
   const fadeIn = useFadeIn(100, 400);
   const { getStyle } = useStaggeredFadeIn(5, 150, 100);
+
+  // Track page visit
+  usePageTracking('/forum');
 
   // Fetch threads from Supabase
   const fetchThreads = async () => {

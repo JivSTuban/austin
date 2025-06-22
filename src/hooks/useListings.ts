@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { PostgrestError } from '@supabase/supabase-js';
+import { toast } from 'sonner';
 
 // Listing interface based on the schema with title, address, price, beds, baths, sqft, zillow_link, and imageLink
 export interface Listing {
   id: number;
   title: string | null;
-  address: string;
+  address: string | null;
   price: number | null;
   beds: number | null;
   baths: number | null;
@@ -18,138 +19,88 @@ export interface Listing {
 
 interface ListingsData {
   listings: Listing[];
-  isLoading: boolean;
-  error: string | null;
-  fetchListings: (filters?: ListingFilters) => Promise<void>;
-  getListing: (id: number) => Promise<Listing | null>;
-  createListing: (listing: Omit<Listing, 'id' | 'last_updated_from_zillow'>) => Promise<Listing | null>;
-  updateListing: (id: number, updates: Partial<Omit<Listing, 'id' | 'last_updated_from_zillow'>>) => Promise<Listing | null>;
-  deleteListing: (id: number) => Promise<boolean>;
+  loading: boolean;
+  totalCount: number;
+  addListing: (listing: Omit<Listing, 'id'>) => Promise<void>;
+  updateListing: (id: number, updates: Partial<Listing>) => Promise<void>;
+  deleteListing: (id: number) => Promise<void>;
+  refetch: () => Promise<void>;
 }
 
-// Filter interface for querying listings
-interface ListingFilters {
-  minPrice?: number;
-  maxPrice?: number;
-  minBeds?: number;
-  minBaths?: number;
-  minSqft?: number;
-  searchTerm?: string;
-}
-
-export const useListings = (): ListingsData => {
+export function useListings(page: number = 1, pageSize: number = 10) {
   const [listings, setListings] = useState<Listing[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [totalCount, setTotalCount] = useState(0);
 
-  // Fetch listings with optional filters
-  const fetchListings = async (filters?: ListingFilters) => {
+  const fetchListings = async () => {
     try {
-      setIsLoading(true);
-      setError(null);
+      setLoading(true);
+      
+      // Get total count
+      const { count } = await supabase
+        .from('listings')
+        .select('*', { count: 'exact', head: true });
+      
+      setTotalCount(count || 0);
 
-      let query = supabase
+      // Get paginated data
+      const { data, error } = await supabase
         .from('listings')
         .select('*')
-        .order('price', { ascending: true, nullsLast: true });
+        .range((page - 1) * pageSize, page * pageSize - 1)
+        .order('id', { ascending: true });
 
-      // Apply filters if provided
-      if (filters) {
-        if (filters.minPrice) query = query.gte('price', filters.minPrice);
-        if (filters.maxPrice) query = query.lte('price', filters.maxPrice);
-        if (filters.minBeds) query = query.gte('beds', filters.minBeds);
-        if (filters.minBaths) query = query.gte('baths', filters.minBaths);
-        if (filters.minSqft) query = query.gte('sqft', filters.minSqft);
-        if (filters.searchTerm) {
-          query = query.or(
-            `address.ilike.%${filters.searchTerm}%,title.ilike.%${filters.searchTerm}%`
-          );
-        }
-      }
-
-      const { data, error: fetchError } = await query;
-
-      if (fetchError) throw fetchError;
-
-      setListings(data as Listing[]);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 
-        (err as PostgrestError)?.message || 'Failed to fetch listings';
-      setError(errorMessage);
-      setListings([]);
+      if (error) throw error;
+      setListings(data || []);
+    } catch (error) {
+      console.error('Error fetching listings:', error);
+      toast.error('Failed to fetch listings');
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  // Get single listing by ID
-  const getListing = async (id: number): Promise<Listing | null> => {
+  const addListing = async (listing: Omit<Listing, 'id'>) => {
     try {
-      const { data, error } = await supabase
+      // Get the next ID
+      const { data: maxIdData } = await supabase
         .from('listings')
-        .select('*')
-        .eq('id', id)
-        .single();
+        .select('id')
+        .order('id', { ascending: false })
+        .limit(1);
+
+      const nextId = maxIdData && maxIdData.length > 0 ? maxIdData[0].id + 1 : 1;
+
+      const { error } = await supabase
+        .from('listings')
+        .insert([{ ...listing, id: nextId }]);
 
       if (error) throw error;
-    
-      return data as Listing;
-    } catch (err) {
-      console.error('Error fetching listing:', err);
-      return null;
+      toast.success('Listing added successfully');
+      await fetchListings();
+    } catch (error) {
+      console.error('Error adding listing:', error);
+      toast.error('Failed to add listing');
     }
   };
 
-  // Create new listing
-  const createListing = async (
-    listing: Omit<Listing, 'id' | 'last_updated_from_zillow'>
-  ): Promise<Listing | null> => {
+  const updateListing = async (id: number, updates: Partial<Listing>) => {
     try {
-      const { data, error } = await supabase
-        .from('listings')
-        .insert(listing)
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      const newListing = data as Listing;
-      setListings(prev => [...prev, newListing]);
-      return newListing;
-    } catch (err) {
-      console.error('Error creating listing:', err);
-      return null;
-    }
-  };
-
-  // Update existing listing
-  const updateListing = async (
-    id: number,
-    updates: Partial<Omit<Listing, 'id' | 'last_updated_from_zillow'>>
-  ): Promise<Listing | null> => {
-    try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('listings')
         .update(updates)
-        .eq('id', id)
-        .select()
-        .single();
+        .eq('id', id);
 
       if (error) throw error;
-
-      const updatedListing = data as Listing;
-      setListings(prev =>
-        prev.map(listing => (listing.id === id ? updatedListing : listing))
-      );
-      return updatedListing;
-    } catch (err) {
-      console.error('Error updating listing:', err);
-      return null;
+      toast.success('Listing updated successfully');
+      await fetchListings();
+    } catch (error) {
+      console.error('Error updating listing:', error);
+      toast.error('Failed to update listing');
     }
   };
 
-  // Delete listing
-  const deleteListing = async (id: number): Promise<boolean> => {
+  const deleteListing = async (id: number) => {
     try {
       const { error } = await supabase
         .from('listings')
@@ -157,28 +108,25 @@ export const useListings = (): ListingsData => {
         .eq('id', id);
 
       if (error) throw error;
-
-      setListings(prev => prev.filter(listing => listing.id !== id));
-      return true;
-    } catch (err) {
-      console.error('Error deleting listing:', err);
-      return false;
+      toast.success('Listing deleted successfully');
+      await fetchListings();
+    } catch (error) {
+      console.error('Error deleting listing:', error);
+      toast.error('Failed to delete listing');
     }
   };
 
-  // Initial fetch on mount
   useEffect(() => {
     fetchListings();
-  }, []);
+  }, [page, pageSize]);
 
   return {
     listings,
-    isLoading,
-    error,
-    fetchListings,
-    getListing,
-    createListing,
+    loading,
+    totalCount,
+    addListing,
     updateListing,
     deleteListing,
+    refetch: fetchListings
   };
-};
+}
