@@ -123,7 +123,7 @@ export function EditDiscussionModal({ isOpen, onClose, onSuccess, threadId, init
         handleClose();
       }
     }}>
-      <DialogContent className="sm:max-w-xl overflow-y-auto max-h-[90vh]">
+      <DialogContent className="sm:max-w-xl overflow-y-auto max-h-[90vh] bg-white">
         <DialogHeader>
           <div className="flex items-center space-x-2">
             <Edit className="w-5 h-5 text-blue-600" />
@@ -141,10 +141,10 @@ export function EditDiscussionModal({ isOpen, onClose, onSuccess, threadId, init
               onValueChange={value => handleChange('category', value)}
               disabled={isSubmitting}
             >
-              <SelectTrigger>
+              <SelectTrigger className="bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-200">
                 <SelectValue placeholder="Select a category" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white border shadow-lg">
                 {categories.map(cat => (
                   <SelectItem key={cat.id} value={cat.id}>
                     {cat.name}
@@ -163,6 +163,7 @@ export function EditDiscussionModal({ isOpen, onClose, onSuccess, threadId, init
               onChange={e => handleChange('title', e.target.value)}
               placeholder="What's your discussion about?"
               disabled={isSubmitting}
+              className="bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-200"
             />
           </div>
           
@@ -174,7 +175,7 @@ export function EditDiscussionModal({ isOpen, onClose, onSuccess, threadId, init
               value={formData.content}
               onChange={e => handleChange('content', e.target.value)}
               placeholder="Share your thoughts, questions, or experiences..."
-              className="min-h-[150px]"
+              className="min-h-[150px] bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-200"
               disabled={isSubmitting}
             />
           </div>

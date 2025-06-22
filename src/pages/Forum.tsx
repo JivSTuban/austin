@@ -26,6 +26,7 @@ interface Thread {
 const Forum = () => {
   const { user, loading: checkingAuth } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
+  const [allThreads, setAllThreads] = useState<Thread[]>([]);
   const [filteredThreads, setFilteredThreads] = useState<Thread[]>([]);
   const [activeTab, setActiveTab] = useState('discussions');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -62,9 +63,11 @@ const Forum = () => {
       log('Threads fetched successfully:', data?.length || 0, 'threads');
       if (data) {
         // Type casting to ensure data matches Thread interface
+        setAllThreads(data as Thread[]);
         setFilteredThreads(data as Thread[]);
       } else {
         log('No threads returned');
+        setAllThreads([]);
         setFilteredThreads([]);
       }
     } catch (error: any) {
@@ -82,10 +85,19 @@ const Forum = () => {
     fetchThreads();
     
     // Set up real-time subscription for forum_threads
-    const subscription = supabase
-      .channel('forum_threads_changes')
+    const channel = supabase
+      .channel('public:forum_threads', {
+        config: {
+          broadcast: { self: true }, // Include own changes
+          presence: { key: 'forum_presence' }
+        }
+      })
       .on('postgres_changes', 
-        { event: 'INSERT', schema: 'public', table: 'forum_threads' },
+        { 
+          event: 'INSERT', 
+          schema: 'public', 
+          table: 'forum_threads' 
+        },
         (payload) => {
           log('Real-time: New thread inserted', payload);
           const newThread = payload.new as Thread;
@@ -97,23 +109,26 @@ const Forum = () => {
                 .from('profiles')
                 .select('username, avatar_url')
                 .eq('id', newThread.author_id)
-                .single()
-                .throwOnError();
+                .single();
                 
-              if (error) throw error;
+              if (error) {
+                console.warn('Profile fetch error (non-critical):', error);
+              }
               
               // Add the new thread to the state with profile information
-              setFilteredThreads(prevThreads => [
+              setAllThreads(prevThreads => [
                 {
                   ...newThread,
                   profiles: data ? [data] : []
                 } as Thread,
                 ...prevThreads
               ]);
+              
+              toast.success('New discussion added!');
             } catch (error) {
               console.error('Error fetching profile for new thread:', error);
               // Still add the thread even if profile fetch fails
-              setFilteredThreads(prevThreads => [
+              setAllThreads(prevThreads => [
                 {
                   ...newThread,
                   profiles: []
@@ -127,54 +142,68 @@ const Forum = () => {
         }
       )
       .on('postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'forum_threads' },
+        { 
+          event: 'UPDATE', 
+          schema: 'public', 
+          table: 'forum_threads' 
+        },
         (payload) => {
           log('Real-time: Thread updated', payload);
+          log('Old data:', payload.old);
+          log('New data:', payload.new);
           const updatedThread = payload.new as Thread;
           
-          // Fetch the updated profile information when thread is updated
-          const fetchUpdatedProfile = async () => {
-            try {
-              const { data, error } = await supabase
-                .from('profiles')
-                .select('username, avatar_url')
-                .eq('id', updatedThread.author_id)
-                .single()
-                .throwOnError();
-                
-              if (error) throw error;
-              
-              setFilteredThreads(prevThreads => 
-                prevThreads.map(thread => 
-                  thread.id === updatedThread.id ? 
-                    { ...updatedThread, profiles: data ? [data] : [] } : 
-                    thread
-                )
-              );
-            } catch (error) {
-              console.error('Error fetching updated profile:', error);
-            }
-          };
+          // Update the thread in state immediately
+          setAllThreads(prevThreads => 
+            prevThreads.map(thread => 
+              thread.id === updatedThread.id ? 
+                { ...thread, ...updatedThread, profiles: thread.profiles } : 
+                thread
+            )
+          );
           
-          fetchUpdatedProfile();
+          toast.success('Discussion updated!');
         }
       )
       .on('postgres_changes',
-        { event: 'DELETE', schema: 'public', table: 'forum_threads' },
+        { 
+          event: 'DELETE', 
+          schema: 'public', 
+          table: 'forum_threads' 
+        },
         (payload) => {
           log('Real-time: Thread deleted', payload);
           const deletedThreadId = payload.old.id;
           
-          setFilteredThreads(prevThreads => 
+          setAllThreads(prevThreads => 
             prevThreads.filter(thread => thread.id !== deletedThreadId)
           );
+          
+          toast.success('Discussion deleted!');
         }
       )
-      .subscribe();
+      .subscribe((status, err) => {
+        log('Subscription status:', status);
+        if (err) {
+          log('Subscription error:', err);
+        }
+        if (status === 'SUBSCRIBED') {
+          log('Successfully subscribed to forum_threads changes');
+        } else if (status === 'CHANNEL_ERROR') {
+          log('Error subscribing to forum_threads changes');
+          toast.error('Real-time updates may not work properly');
+        } else if (status === 'TIMED_OUT') {
+          log('Subscription timed out');
+          toast.error('Connection timed out - please refresh');
+        } else if (status === 'CLOSED') {
+          log('Subscription closed');
+        }
+      });
       
     // Clean up subscription when component unmounts
     return () => {
-      subscription.unsubscribe();
+      log('Cleaning up subscription');
+      supabase.removeChannel(channel);
     };
   }, []);
 
@@ -182,19 +211,19 @@ const Forum = () => {
   useEffect(() => {
     const lowercasedTerm = searchTerm.toLowerCase();
 
-    const filterThreads = (threads: Thread[]) => {
-      if (!lowercasedTerm) {
-        return threads;
-      }
-      return threads.filter((thread) =>
-        thread.title.toLowerCase().includes(lowercasedTerm) ||
-        thread.excerpt.toLowerCase().includes(lowercasedTerm) ||
-        (thread.profiles && Array.isArray(thread.profiles) && thread.profiles[0]?.username?.toLowerCase().includes(lowercasedTerm))
-      );
-    };
+    if (!lowercasedTerm) {
+      setFilteredThreads(allThreads);
+      return;
+    }
 
-    setFilteredThreads(filterThreads(filteredThreads));
-  }, [searchTerm, filteredThreads]);
+    const filtered = allThreads.filter((thread) =>
+      thread.title.toLowerCase().includes(lowercasedTerm) ||
+      thread.excerpt.toLowerCase().includes(lowercasedTerm) ||
+      (thread.profiles && Array.isArray(thread.profiles) && thread.profiles[0]?.username?.toLowerCase().includes(lowercasedTerm))
+    );
+
+    setFilteredThreads(filtered);
+  }, [searchTerm, allThreads]);
 
   // Scroll to top on page load
   useEffect(() => {
@@ -223,11 +252,27 @@ const Forum = () => {
       );
 
       log('Thread created:', thread);
-      // We don't need to manually update the state here anymore
-      // as the real-time subscription will handle it
+      // Optimistic update - add to state immediately for better UX
+      const optimisticThread = {
+        id: Date.now(), // Temporary ID
+        title: data.title,
+        author_id: user.id,
+        date: new Date().toISOString(),
+        replies_count: 0,
+        excerpt: data.content,
+        category: data.category,
+        profiles: [{
+          username: user.email || 'Anonymous',
+          avatar_url: user.user_metadata?.avatar_url || null
+        }]
+      };
+      
+      // Add optimistic update
+      setAllThreads(prevThreads => [optimisticThread as Thread, ...prevThreads]);
+      
       setIsModalOpen(false);
       toast.success('Discussion created successfully!');
-      log('State will be updated via real-time subscription');
+      log('Optimistic update applied, real-time will sync the actual data');
 
     } catch (error: any) {
       log('Error creating discussion:', error);
@@ -369,8 +414,8 @@ const Forum = () => {
                       }}
                       index={index}
                       onThreadDeleted={(threadId) => {
-                        // Filter out the deleted thread from state
-                        setFilteredThreads(prevThreads => 
+                        // Remove thread from both all threads and filtered threads
+                        setAllThreads(prevThreads => 
                           prevThreads.filter(t => t.id !== threadId)
                         );
                       }}

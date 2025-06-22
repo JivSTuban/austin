@@ -28,6 +28,7 @@ interface ReviewFormProps {
   }) => void;
   onCancel: () => void;
   isEditing?: boolean;
+  isSubmitting?: boolean;
 }
 
 const propertyTypes = [
@@ -44,6 +45,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
   onSubmit,
   onCancel,
   isEditing = false,
+  isSubmitting = false,
 }) => {
   const [rating, setRating] = useState(initialData?.rating || 0);
   const [comment, setComment] = useState(initialData?.comment || "");
@@ -68,11 +70,12 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Rating
-        </label>
+    <div className="w-full">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Rating
+          </label>
         <div className="flex gap-1">
           {[1, 2, 3, 4, 5].map((value) => (
             <button
@@ -86,7 +89,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
               <Star
                 className={`w-6 h-6 ${
                   value <= (hoveredStar || rating)
-                    ? "fill-[#F08A5D] text-[#F08A5D]"
+                    ? "fill-yellow-400 text-yellow-400"
                     : "text-gray-300"
                 }`}
               />
@@ -100,10 +103,16 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
           Property Type
         </label>
         <Select value={propertyType} onValueChange={setPropertyType}>
-          <SelectTrigger>
+          <SelectTrigger className="bg-white">
             <SelectValue placeholder="Select property type" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent 
+            className="bg-white border shadow-lg" 
+            position="popper" 
+            side="bottom" 
+            align="start"
+            sideOffset={4}
+          >
             {propertyTypes.map((type) => (
               <SelectItem key={type} value={type}>
                 {type}
@@ -118,10 +127,16 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
           Transaction Type
         </label>
         <Select value={buyerType} onValueChange={setBuyerType}>
-          <SelectTrigger>
+          <SelectTrigger className="bg-white">
             <SelectValue placeholder="Select transaction type" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent 
+            className="bg-white border shadow-lg" 
+            position="popper" 
+            side="bottom" 
+            align="start"
+            sideOffset={4}
+          >
             {buyerTypes.map((type) => (
               <SelectItem key={type} value={type}>
                 {type}
@@ -140,6 +155,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
           onChange={(e) => setWorkDescription(e.target.value)}
           placeholder="e.g., Bought a Single Family home in 2024"
           required
+          className="bg-white"
         />
       </div>
 
@@ -152,7 +168,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
           onChange={(e) => setComment(e.target.value)}
           placeholder="Share your experience..."
           required
-          className="min-h-[100px]"
+          className="min-h-[100px] bg-white"
         />
       </div>
 
@@ -163,6 +179,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
         <Button
           type="submit"
           disabled={
+            isSubmitting ||
             !rating ||
             !comment ||
             !propertyType ||
@@ -170,10 +187,14 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
             !workDescription
           }
         >
-          {isEditing ? "Update Review" : "Submit Review"}
+          {isSubmitting 
+            ? (isEditing ? "Updating..." : "Submitting...") 
+            : (isEditing ? "Update Review" : "Submit Review")
+          }
         </Button>
       </div>
     </form>
+    </div>
   );
 };
 

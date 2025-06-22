@@ -89,7 +89,7 @@ const ClientReviews = React.forwardRef<HTMLDivElement, ClientReviewsProps>(
       <div
         ref={ref}
         className={cn(
-          "rounded-lg border border-border bg-background py-4 pl-4",
+          "rounded-lg border border-border bg-background py-8 pl-4",
           className
         )}
         {...props}

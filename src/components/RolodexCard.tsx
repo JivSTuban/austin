@@ -132,6 +132,16 @@ export default function RolodexCard({
     });
   };
 
+  // Format website URL to ensure it has a protocol
+  const formatWebsiteUrl = (url: string) => {
+    if (!url) return "";
+    // If URL doesn't start with http:// or https://, add https://
+    if (!url.match(/^https?:\/\//)) {
+      return `https://${url}`;
+    }
+    return url;
+  };
+
   return (
     <>
       <motion.div
@@ -143,7 +153,7 @@ export default function RolodexCard({
         onMouseLeave={() => setIsFlipped(false)}
         onClick={() => setShowDetails(true)}
       >
-        <div className="relative h-full rounded-[1.25rem] border-[0.75px] border-border p-2 md:rounded-[1.5rem] md:p-3">
+        <div className="relative h-full rounded-[1.25rem] border-[0.75px] border-border p-2 md:rounded-[1.5rem] md:p-3 cursor-pointer">
           <GlowingEffect
             spread={40}
             glow={true}
@@ -439,7 +449,7 @@ export default function RolodexCard({
                           <p className="flex items-center gap-2 text-sm text-muted-foreground">
                             <Globe className="w-4 h-4 text-blue-500" />
                             <a
-                              href={formData.website}
+                              href={formatWebsiteUrl(formData.website)}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="hover:underline"
