@@ -142,24 +142,6 @@ export default function RolodexCard({
     return url;
   };
 
-  // Truncate URL for display while preserving the full URL for linking
-  const truncateUrl = (url: string, maxLength: number = 30) => {
-    if (!url) return "";
-    
-    // Remove protocol for display
-    let displayUrl = url.replace(/^https?:\/\//, "");
-    
-    // Remove trailing slash
-    displayUrl = displayUrl.replace(/\/$/, "");
-    
-    // If still too long, truncate and add ellipsis
-    if (displayUrl.length > maxLength) {
-      return displayUrl.substring(0, maxLength - 3) + "...";
-    }
-    
-    return displayUrl;
-  };
-
   return (
     <>
       <motion.div
@@ -471,9 +453,8 @@ export default function RolodexCard({
                               target="_blank"
                               rel="noopener noreferrer"
                               className="hover:underline"
-                              title={formData.website}
                             >
-                              {truncateUrl(formData.website)}
+                              {formData.website}
                             </a>
                           </p>
                         )}
