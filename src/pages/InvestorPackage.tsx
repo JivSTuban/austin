@@ -275,6 +275,7 @@ const InvestorPackage = () => {
                       size="sm"
                       onClick={() => handlePageChange(currentPage - 1)}
                       disabled={currentPage === 1}
+                      className="bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
                     >
                       <ChevronLeft className="h-4 w-4" />
                       Previous
@@ -291,7 +292,7 @@ const InvestorPackage = () => {
                             className={`w-8 ${
                               pageNumber === currentPage
                                 ? "bg-blue-600 text-white hover:bg-blue-700 hover:text-white"
-                                : "hover:bg-blue-100 hover:text-blue-600"
+                                : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
                             }`}
                           >
                             {pageNumber}
@@ -308,7 +309,7 @@ const InvestorPackage = () => {
                             className={`w-8 ${
                               currentPage === 1
                                 ? "bg-blue-600 text-white hover:bg-blue-700 hover:text-white"
-                                : "hover:bg-blue-100 hover:text-blue-600"
+                                : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
                             }`}
                           >
                             1
@@ -338,7 +339,7 @@ const InvestorPackage = () => {
                                 className={`w-8 ${
                                   pageNumber === currentPage
                                     ? "bg-blue-600 text-white hover:bg-blue-700 hover:text-white"
-                                    : "hover:bg-blue-100 hover:text-blue-600"
+                                    : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
                                 }`}
                               >
                                 {pageNumber}
@@ -358,7 +359,7 @@ const InvestorPackage = () => {
                             className={`w-8 ${
                               currentPage === totalPages
                                 ? "bg-blue-600 text-white hover:bg-blue-700 hover:text-white"
-                                : "hover:bg-blue-100 hover:text-blue-600"
+                                : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
                             }`}
                           >
                             {totalPages}
@@ -371,6 +372,7 @@ const InvestorPackage = () => {
                       size="sm"
                       onClick={() => handlePageChange(currentPage + 1)}
                       disabled={currentPage === totalPages}
+                      className="bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
                     >
                       Next
                       <ChevronRight className="h-4 w-4" />

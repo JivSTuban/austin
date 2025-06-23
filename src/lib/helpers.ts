@@ -134,14 +134,14 @@ export const updateForumThread = async (
         title: data.title,
         excerpt: data.content,
         category: data.category
-        // Removed updated_at as it doesn't exist in the schema
       })
-      .eq('id', threadId);
+      .eq('id', threadId)
+      .eq('author_id', userId); // Extra security check
 
     if (updateError) {
       log('Thread update error:', updateError);
       console.error('Full update error details:', JSON.stringify(updateError));
-      throw new Error('Failed to update thread');
+      throw new Error(`Failed to update thread: ${updateError.message}`);
     }
 
     log('Thread updated successfully');
