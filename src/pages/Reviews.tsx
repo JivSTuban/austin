@@ -6,6 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAgentData } from '@/hooks/useAgentData';
 import type { Review } from '@/components/ui/client-reviews';
 import { useAuth } from '@/lib/AuthContext';
+import { usePageTracking } from '@/hooks/useVisitors';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import ReviewForm from '@/components/ReviewForm';
@@ -236,6 +237,11 @@ export default function Reviews() {
       });
     }
   }, [reviewsError]);
+
+  // Track page visit
+  usePageTracking('/reviews');
+
+  // Same useEffect and handlers from before...
 
   useEffect(() => {
     try {
