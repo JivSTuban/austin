@@ -1,8 +1,8 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 // Supabase configuration
-const supabaseUrl = 'https://adzokgnahnkjoubwryhj.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkem9rZ25haG5ram91YndyeWhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE1Nzk4MTMsImV4cCI6MjA1NzE1NTgxM30.OeW5BTQphpXYZhyun7OnGgdeq71hcduW0J83wIBxrhM';
+const supabaseUrl = 'https://swydfnzelahgypuefhsm.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN3eWRmbnplbGFoZ3lwdWVmaHNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzg5NzY4MjcsImV4cCI6MjA1NDU1MjgyN30.Mn6OJkVLuJUFjPo2C8xnqkJlZ4UjJBcSFUd6LRUFVJk';
 
 // Custom fetch with retry logic and better error messages
 const customFetch = async (url: string, options: RequestInit): Promise<Response> => {

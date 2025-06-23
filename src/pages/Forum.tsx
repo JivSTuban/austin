@@ -256,27 +256,10 @@ const Forum = () => {
       );
 
       log('Thread created:', thread);
-      // Optimistic update - add to state immediately for better UX
-      const optimisticThread = {
-        id: Date.now(), // Temporary ID
-        title: data.title,
-        author_id: user.id,
-        date: new Date().toISOString(),
-        replies_count: 0,
-        excerpt: data.content,
-        category: data.category,
-        profiles: [{
-          username: user.email || 'Anonymous',
-          avatar_url: user.user_metadata?.avatar_url || null
-        }]
-      };
-      
-      // Add optimistic update
-      setAllThreads(prevThreads => [optimisticThread as Thread, ...prevThreads]);
       
       setIsModalOpen(false);
       toast.success('Discussion created successfully!');
-      log('Optimistic update applied, real-time will sync the actual data');
+      log('Thread creation successful, real-time subscription will update the UI');
 
     } catch (error: any) {
       log('Error creating discussion:', error);

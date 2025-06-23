@@ -5,7 +5,7 @@ import path from 'path';
 async function applyForumPolicies() {
   try {
     // Enable RLS
-    await supabase.from('forum_replies').select('*').limit(0);
+    await supabase.from('replies').select('*').limit(0);
     
     // Create read access policy
     await supabase.rpc('create_forum_replies_policies', {
@@ -13,21 +13,21 @@ async function applyForumPolicies() {
         // Public read access
         `
         create policy "Public can read all forum replies"
-        on forum_replies for select
+        on replies for select
         to authenticated, anon
         using (true)
         `,
         // Authenticated user insert
         `
         create policy "Authenticated users can create replies"
-        on forum_replies for insert
+        on replies for insert
         to authenticated
         with check (author_id = auth.uid())
         `,
         // User update own replies
         `
         create policy "Users can update own replies"
-        on forum_replies for update
+        on replies for update
         to authenticated
         using (author_id = auth.uid())
         with check (author_id = auth.uid())
@@ -35,7 +35,7 @@ async function applyForumPolicies() {
         // User delete own replies
         `
         create policy "Users can delete own replies"
-        on forum_replies for delete
+        on replies for delete
         to authenticated
         using (author_id = auth.uid())
         `
@@ -60,8 +60,8 @@ async function createPolicyFunction() {
         SECURITY DEFINER
         AS $$
         BEGIN
-          -- Enable RLS on forum_replies
-          ALTER TABLE forum_replies ENABLE ROW LEVEL SECURITY;
+          -- Enable RLS on replies
+          ALTER TABLE replies ENABLE ROW LEVEL SECURITY;
           
           -- Apply each policy statement
           FOR i IN 1..array_length(policy_statements, 1) LOOP

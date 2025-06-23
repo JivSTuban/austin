@@ -7,8 +7,8 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 // Supabase configuration
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://adzokgnahnkjoubwryhj.supabase.co'
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkem9rZ25haG5ram91YndyeWhqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE1Nzk4MTMsImV4cCI6MjA1NzE1NTgxM30.OeW5BTQphpXYZhyun7OnGgdeq71hcduW0J83wIBxrhM'
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://swydfnzelahgypuefhsm.supabase.co'
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN3eWRmbnplbGFoZ3lwdWVmaHNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzg5NzY4MjcsImV4cCI6MjA1NDU1MjgyN30.Mn6OJkVLuJUFjPo2C8xnqkJlZ4UjJBcSFUd6LRUFVJk'
 const supabase = createClient(supabaseUrl, supabaseKey)
 
 function parseArrayField(field) {

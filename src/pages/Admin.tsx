@@ -264,40 +264,20 @@ const Admin = () => {
   // Fetch users
   const fetchUsers = async () => {
     try {
-      // Get users from auth.users
-      const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers();
+      // Use the secure RPC function that has admin privileges
+      const { data: users, error } = await supabase
+        .rpc('get_all_users_admin');
       
-      if (authError) throw authError;
+      if (error) {
+        console.error('Error fetching users:', error);
+        if (error.message.includes('Access denied')) {
+          toast.error('Access denied. Admin privileges required.');
+          return;
+        }
+        throw error;
+      }
 
-      // Get roles
-      const { data: roles, error: rolesError } = await supabase
-        .from('user_roles')
-        .select('id, role');
-
-      if (rolesError) throw rolesError;
-
-      // Get profiles
-      const { data: profiles, error: profilesError } = await supabase
-        .from('profiles')
-        .select('id, username, avatar_url');
-
-      if (profilesError) throw profilesError;
-
-      // Combine data
-      const rolesMap = new Map(roles?.map(r => [r.id, r.role]) || []);
-      const profilesMap = new Map(profiles?.map(p => [p.id, { username: p.username, avatar_url: p.avatar_url }]) || []);
-
-      const combinedUsers = authUsers?.users.map(u => ({
-        id: u.id,
-        email: u.email || '',
-        created_at: u.created_at,
-        last_sign_in_at: u.last_sign_in_at,
-        role: rolesMap.get(u.id) || 'user',
-        username: profilesMap.get(u.id)?.username || null,
-        avatar_url: profilesMap.get(u.id)?.avatar_url || null
-      })) || [];
-
-      setUsers(combinedUsers);
+      setUsers(users || []);
     } catch (error) {
       console.error('Error fetching users:', error);
       toast.error('Failed to load users');
@@ -400,10 +380,11 @@ const Admin = () => {
   // Update user role
   const updateUserRole = async (userId: string, newRole: string) => {
     try {
-      const { error } = await supabase
-        .from('user_roles')
-        .update({ role: newRole })
-        .eq('id', userId);
+      const { data, error } = await supabase
+        .rpc('update_user_role', {
+          target_user_id: userId,
+          new_role: newRole
+        });
 
       if (error) throw error;
 
@@ -420,7 +401,7 @@ const Admin = () => {
     try {
       // First delete all replies
       const { error: repliesError } = await supabase
-        .from('forum_replies')
+        .from('replies')
         .delete()
         .eq('thread_id', threadId);
 
@@ -845,7 +826,7 @@ const Admin = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100">
+    <div className="min-h-screen">
       <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8 max-w-7xl">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-10 gap-4 pt-16">
