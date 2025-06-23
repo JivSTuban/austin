@@ -20,17 +20,17 @@ const ProfileDropdown: FC<ProfileDropdownProps> = ({ isAdmin = false }) => {
   if (!user) return null;
 
   return (
-    <div className="relative">
-      <DropdownMenu>
+    <div style={{ isolation: 'isolate' }} className="relative z-50">
+      <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+          <Button variant="ghost" className="relative h-8 w-8 rounded-full focus-visible:ring-offset-0">
             <Avatar className="h-8 w-8">
               <AvatarImage src={user.user_metadata?.avatar_url} />
               <AvatarFallback>{user.email?.charAt(0).toUpperCase()}</AvatarFallback>
             </Avatar>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56" align="end">
+        <DropdownMenuContent className="w-56 min-w-[220px]" align="end" sideOffset={8} alignOffset={0}>
           {isAdmin && (
             <DropdownMenuItem asChild>
               <Link to="/admin">Admin Dashboard</Link>

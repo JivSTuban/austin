@@ -64,7 +64,7 @@ export function DeleteDiscussionModal({
         handleClose();
       }
     }}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md bg-white">
         <DialogHeader>
           <div className="flex items-center space-x-2 text-red-600">
             <AlertTriangle className="w-5 h-5" />

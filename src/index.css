@@ -412,3 +412,40 @@
   top: 10%;
   right: 15%;
 }
+
+/* Prevent layout shifts when modals open */
+.dialog-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+}
+
+/* Ensure modal content doesn't affect page layout */
+[data-state="open"] body {
+  padding-right: 0 !important;
+}
+
+/* Prevent scrollbar shifts */
+body {
+  scrollbar-gutter: stable;
+}
+
+/* Custom modal positioning to prevent layout shifts */
+[data-radix-dialog-content] {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  margin: 0 !important;
+  max-height: 90vh !important;
+  overflow-y: auto !important;
+}
+
+/* Ensure dialog doesn't affect other elements */
+[data-radix-dialog-overlay] {
+  position: fixed !important;
+  z-index: 100 !important;
+}
+
+[data-radix-dialog-content] {
+  z-index: 150 !important;
+}

@@ -60,13 +60,13 @@ const SoldProperties: React.FC = () => {
 
       {/* Search */}
       <div className="mb-8">
-        <div className="relative">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+        <div className="relative bg-white rounded-lg shadow-sm border border-gray-200 p-1">
+          <Search className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
           <Input
             placeholder="Search by address, city, or year..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-8"
+            className="pl-8 bg-white border-0 shadow-none focus:ring-0 focus:border-0 focus-visible:ring-2 focus-visible:ring-blue-500"
           />
         </div>
       </div>
@@ -123,7 +123,7 @@ const SoldProperties: React.FC = () => {
 
               {/* Pagination */}
               {filteredProperties.length > propertiesPerPage && (
-                <div className="flex items-center justify-between mt-8">
+                <div className="flex items-center justify-between mt-8 bg-white rounded-lg shadow-sm border border-gray-200 p-4">
                   <div className="text-sm text-muted-foreground">
                     Showing {startIndex + 1}-
                     {Math.min(endIndex, filteredProperties.length)} of{" "}
@@ -135,7 +135,7 @@ const SoldProperties: React.FC = () => {
                       size="sm"
                       onClick={() => handlePageChange(currentPage - 1)}
                       disabled={currentPage === 1}
-                      className="hover:bg-blue-500 hover:text-white transition-colors"
+                      className="bg-white hover:bg-blue-50 hover:text-blue-600 transition-colors border-gray-200"
                     >
                       <ChevronLeft className="h-4 w-4" />
                       Previous
@@ -154,10 +154,10 @@ const SoldProperties: React.FC = () => {
                               }
                               size="sm"
                               onClick={() => handlePageChange(pageNumber)}
-                              className={`w-8 ${
+                              className={`w-8 bg-white border-gray-200 ${
                                 pageNumber === currentPage
-                                  ? "bg-blue-500 text-white hover:bg-blue-600 hover:text-white"
-                                  : "hover:bg-blue-100 hover:text-blue-600"
+                                  ? "bg-blue-500 text-white hover:bg-blue-600 hover:text-white border-blue-500"
+                                  : "hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300"
                               }`}
                             >
                               {pageNumber}
@@ -171,10 +171,10 @@ const SoldProperties: React.FC = () => {
                             variant={currentPage === 1 ? "outline" : "outline"}
                             size="sm"
                             onClick={() => handlePageChange(1)}
-                            className={`w-8 ${
+                            className={`w-8 bg-white border-gray-200 ${
                               currentPage === 1
-                                ? "bg-blue-500 text-white hover:bg-blue-600 hover:text-white"
-                                : "hover:bg-blue-100 hover:text-blue-600"
+                                ? "bg-blue-500 text-white hover:bg-blue-600 hover:text-white border-blue-500"
+                                : "hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300"
                             }`}
                           >
                             1
@@ -211,10 +211,10 @@ const SoldProperties: React.FC = () => {
                                 }
                                 size="sm"
                                 onClick={() => handlePageChange(pageNumber)}
-                                className={`w-8 ${
+                                className={`w-8 bg-white border-gray-200 ${
                                   pageNumber === currentPage
-                                    ? "bg-blue-500 text-white hover:bg-blue-600 hover:text-white"
-                                    : "hover:bg-blue-100 hover:text-blue-600"
+                                    ? "bg-blue-500 text-white hover:bg-blue-600 hover:text-white border-blue-500"
+                                    : "hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300"
                                 }`}
                               >
                                 {pageNumber}
@@ -233,10 +233,10 @@ const SoldProperties: React.FC = () => {
                             }
                             size="sm"
                             onClick={() => handlePageChange(totalPages)}
-                            className={`w-8 ${
+                            className={`w-8 bg-white border-gray-200 ${
                               currentPage === totalPages
-                                ? "bg-blue-500 text-white hover:bg-blue-600 hover:text-white"
-                                : "hover:bg-blue-100 hover:text-blue-600"
+                                ? "bg-blue-500 text-white hover:bg-blue-600 hover:text-white border-blue-500"
+                                : "hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300"
                             }`}
                           >
                             {totalPages}
@@ -249,7 +249,7 @@ const SoldProperties: React.FC = () => {
                       size="sm"
                       onClick={() => handlePageChange(currentPage + 1)}
                       disabled={currentPage === totalPages}
-                      className="hover:bg-blue-500 hover:text-white transition-colors"
+                      className="bg-white hover:bg-blue-50 hover:text-blue-600 transition-colors border-gray-200"
                     >
                       Next
                       <ChevronRight className="h-4 w-4" />

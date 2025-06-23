@@ -114,7 +114,7 @@ export const useAgentData = (encodedZuid: string): AgentData => {
           .from('reviews')
           .select()
           .eq('encodedzuid', encodedZuid)
-          .order('"createdate"', { ascending: false });
+          .order('createdate', { ascending: false });
 
           
         if (reviewsError) {
