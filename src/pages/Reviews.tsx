@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAgentData } from '@/hooks/useAgentData';
 import type { Review } from '@/components/ui/client-reviews';
+import { usePageTracking } from '@/hooks/useVisitors';
 import { useAuth } from '@/lib/AuthContext';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
@@ -236,6 +237,9 @@ export default function Reviews() {
       });
     }
   }, [reviewsError]);
+
+  // Track page visit
+  usePageTracking('/reviews');
 
   useEffect(() => {
     try {
