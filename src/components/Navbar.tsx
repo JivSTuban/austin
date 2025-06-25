@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Home, Star, MessageSquare, Map, Calculator, Building, Coins, DollarSign } from 'lucide-react';
+import { Menu, X, Home, Star, MessageSquare, Map, Calculator, Building, Coins, DollarSign, List } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import ProfileDropdown from './ProfileDropdown';
 import { useAuth } from '@/lib/AuthContext';
@@ -19,6 +19,7 @@ const Navbar = () => {
   const navItems = [
     { path: '/', label: 'Home', icon: Home },
     { path: '/maps', label: 'Maps', icon: Map },
+    { path: '/listings', label: 'Listings', icon: List },
     { path: '/investor-package', label: 'Investor Package', icon: Coins },
     { path: '/calculators', label: 'Calculators', icon: Calculator },
     { path: '/sold-properties', label: 'Sold Properties', icon: DollarSign },

@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { Loader2, UserPlus, Users, MessageSquare, Home, ListFilter, Settings, Shield, Building, Plus, Eye, TrendingUp } from 'lucide-react';
+import { Loader2, Users, MessageSquare, Home, ListFilter, Settings, Shield, Building, Plus, Eye, TrendingUp } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -520,6 +520,40 @@ const Admin = () => {
     });
   };
 
+  // Export users as CSV
+  const exportUsersAsCSV = () => {
+    const csvHeaders = ['ID', 'Email', 'Username', 'Role', 'Created At', 'Last Sign In'];
+    const csvData = [
+      csvHeaders,
+      ...users.map(user => [
+        user.id,
+        user.email,
+        user.username || '',
+        user.role,
+        user.created_at,
+        user.last_sign_in_at || ''
+      ])
+    ];
+
+    const csvContent = csvData.map(row => 
+      row.map(field => `"${String(field).replace(/"/g, '""')}"`).join(',')
+    ).join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `users_export_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+    
+    toast.success('Users exported successfully');
+  };
+
   // Initialize tables
   useEffect(() => {
     const initTables = async () => {
@@ -984,12 +1018,12 @@ const Admin = () => {
                     <p className="text-gray-600 mt-1">View and manage user accounts and permissions.</p>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Button variant="outline" className="shadow-sm hover:shadow-md transition-all duration-200">
+                    <Button 
+                      variant="outline" 
+                      onClick={exportUsersAsCSV}
+                      className="shadow-sm hover:shadow-md transition-all duration-200"
+                    >
                       Export Users
-                    </Button>
-                    <Button className="flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-200">
-                      <UserPlus className="h-4 w-4" />
-                      Add User
                     </Button>
                   </div>
                 </div>

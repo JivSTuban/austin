@@ -558,7 +558,7 @@ const Index = () => {
 
           <FadeInWhenVisible className="text-center mt-16" delay={0.4}>
             <Link
-              to="/investor-package"
+              to="/listings"
               className="inline-flex items-center justify-center px-8 py-4 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors text-lg font-medium"
             >
               View All Properties <ArrowRight className="w-5 h-5 ml-2" />

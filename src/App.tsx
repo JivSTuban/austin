@@ -20,11 +20,13 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import ThreadView from "./pages/ThreadView";
 import UsernamePage from "./pages/UsernamePage"; // Import UsernamePage
 import SoldProperties from "./pages/SoldProperties"; // Import SoldProperties
+import Listings from "./pages/Listings"; // Import Listings
 import Admin from "./pages/Admin"; // Import Admin
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { ensureForumRepliesTable } from "./lib/helpers/migrateDatabase";
 import { ensureSoldPropertiesTable } from "./lib/helpers/ensureSoldPropertiesTable";
+import { ensureListingsTable } from "./lib/helpers/ensureListingsTable";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +41,7 @@ const AppContent = () => {
       try {
         await ensureForumRepliesTable();
         await ensureSoldPropertiesTable();
+        await ensureListingsTable();
       } catch (error) {
         console.error("Error initializing database tables:", error);
       }
@@ -61,6 +64,7 @@ const AppContent = () => {
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/maps" element={<Maps />} />
+          <Route path="/listings" element={<Listings />} />
           <Route path="/investor-package" element={<InvestorPackage />} />
           <Route path="/calculators" element={<MortgageCalculator />} />
           <Route path="/reviews" element={<Reviews />} />
